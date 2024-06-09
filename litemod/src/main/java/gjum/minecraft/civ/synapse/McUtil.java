@@ -13,8 +13,8 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.*;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,8 +38,8 @@ public class McUtil {
 	/**
 	 * does the rounding correctly for negative coordinates
 	 */
-	@Nonnull
-	public static Pos getEntityPosition(@Nonnull Entity entity) {
+	@NotNull
+	public static Pos getEntityPosition(@NotNull Entity entity) {
 		return new Pos(
 				MathHelper.floor(entity.posX),
 				MathHelper.floor(entity.posY),
@@ -54,7 +54,7 @@ public class McUtil {
 		return new BlockPos(pos.x, pos.y, pos.z);
 	}
 
-	@Nonnull
+	@NotNull
 	public static String getDisplayNameFromTablist(NetworkPlayerInfo info) {
 		if (info.getDisplayName() != null) {
 			return info.getDisplayName().getUnformattedText().replaceAll("§.", "");
@@ -62,7 +62,7 @@ public class McUtil {
 		return info.getGameProfile().getName().replaceAll("§.", "");
 	}
 
-	@Nonnull
+	@NotNull
 	public static String getSelfAccount() {
 		if (getMc().getConnection() != null) {
 			final NetworkPlayerInfo tabEntry = getMc().getConnection().getPlayerInfo(getMc().getSession().getPlayerID());
@@ -93,7 +93,7 @@ public class McUtil {
 				&& getPotionFromItem(stack) == PotionTypes.STRONG_HEALING;
 	}
 
-	public static int blockIdAtPos(@Nonnull BlockPos pos) {
+	public static int blockIdAtPos(@NotNull BlockPos pos) {
 		return Block.getIdFromBlock(getMc().world.getBlockState(pos).getBlock());
 	}
 
@@ -114,12 +114,12 @@ public class McUtil {
 		return lore;
 	}
 
-	public static boolean isSameBlock(@Nonnull BlockPos posA, @Nonnull BlockPos posB) {
+	public static boolean isSameBlock(@NotNull BlockPos posA, @NotNull BlockPos posB) {
 		return getMc().world.getBlockState(posA).getBlock() == getMc().world.getBlockState(posB).getBlock();
 	}
 
-	@Nonnull
-	public static String getBiomeName(@Nonnull BlockPos pos) {
+	@NotNull
+	public static String getBiomeName(@NotNull BlockPos pos) {
 		return getMc().world.getBiome(pos).getBiomeName();
 	}
 

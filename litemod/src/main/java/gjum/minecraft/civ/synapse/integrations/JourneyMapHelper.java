@@ -2,7 +2,7 @@ package gjum.minecraft.civ.synapse.integrations;
 
 import journeymap.client.api.display.Waypoint;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import static gjum.minecraft.civ.synapse.LiteModSynapse.MOD_NAME;
 import static gjum.minecraft.civ.synapse.McUtil.blockPos;
@@ -10,7 +10,7 @@ import static gjum.minecraft.civ.synapse.McUtil.isJourneyMapLoaded;
 import static gjum.minecraft.civ.synapse.integrations.JourneyMapPlugin.jmApi;
 
 public class JourneyMapHelper {
-	public static void createWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void createWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (!isJourneyMapLoaded()) return;
 		waypoint.jmWaypoint = new Waypoint(MOD_NAME, waypoint.getName(), waypoint.getDimension(), blockPos(waypoint.pos));
 		waypoint.jmWaypoint.setColor(waypoint.color.getHex());
@@ -25,7 +25,7 @@ public class JourneyMapHelper {
 		}
 	}
 
-	public static void updateWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void updateWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (!isJourneyMapLoaded()) return;
 		if (waypoint.jmWaypoint == null) createWaypoint(waypoint);
 		if (waypoint.jmWaypoint == null) return; // could not create
@@ -41,7 +41,7 @@ public class JourneyMapHelper {
 		}
 	}
 
-	public static void deleteWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void deleteWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (!isJourneyMapLoaded()) return;
 		if (waypoint.jmWaypoint == null) return;
 		jmApi.remove(waypoint.jmWaypoint);

@@ -7,8 +7,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -49,7 +49,7 @@ public class FactionGui extends GuiRoot {
 			mod.showGuiAndRemember(parentScreen);
 			return null;
 		}
-		@Nonnull final ServerConfig serverConfig = mod.serverConfig;
+		@NotNull final ServerConfig serverConfig = mod.serverConfig;
 
 		final FlexListLayout titleRow = makeTitleRow(this, "Faction: " + faction);
 
@@ -255,7 +255,7 @@ public class FactionGui extends GuiRoot {
 		});
 	}
 
-	private void addOtherFactions(@Nonnull Person person, @Nonnull FlexListLayout row) {
+	private void addOtherFactions(@NotNull Person person, @NotNull FlexListLayout row) {
 		final Collection<String> otherFactions = person.getFactions();
 		otherFactions.remove(Optional.ofNullable(person.hasFaction(faction)).orElse(faction));
 		otherFactions.stream()

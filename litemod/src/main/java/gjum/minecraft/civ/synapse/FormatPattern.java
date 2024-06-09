@@ -6,7 +6,7 @@ import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -21,10 +21,10 @@ import static gjum.minecraft.civ.synapse.common.Util.dateFmtHms;
  * {[{coords}]$suggest$at [{coords}]} - put `at [{coords}]` in chat
  */
 public class FormatPattern {
-	@Nonnull
+	@NotNull
 	private final CollectionNode root;
 
-	@Nonnull
+	@NotNull
 	private final String fmt;
 
 	public FormatPattern(String fmt) {
@@ -125,12 +125,12 @@ public class FormatPattern {
 		return num != -1 ? num : other;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getFmt() {
 		return fmt;
 	}
 
-	@Nonnull
+	@NotNull
 	public ITextComponent format(Observation observation) {
 		return root.format(observation);
 	}

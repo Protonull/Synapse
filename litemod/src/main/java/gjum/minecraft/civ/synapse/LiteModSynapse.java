@@ -44,8 +44,8 @@ import net.minecraft.world.GameType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.io.File;
 import java.lang.reflect.Field;
@@ -77,9 +77,9 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	@Nullable
 	public String worldName = null;
 
-	@Nonnull
+	@NotNull
 	public GlobalConfig config = new GlobalConfig();
-	@Nonnull
+	@NotNull
 	public AccountsConfig accountsConfig = new AccountsConfig();
 	@Nullable
 	public ServerConfig serverConfig;
@@ -88,14 +88,14 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	@Nullable
 	public WaypointManager waypointManager;
 
-	@Nonnull
+	@NotNull
 	private PlayerTracker playerTracker = new PlayerTrackerIngame(null);
 	private long lastSync = 0;
 
-	@Nonnull
+	@NotNull
 	private Client comms = new Client("none?", "none?");
 
-	@Nonnull
+	@NotNull
 	private Collection<String> focusedAccountNames = Collections.emptyList();
 
 	@Nullable
@@ -271,7 +271,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	 * Allows omitting 25565 default port.
 	 */
 	@Nullable
-	private static File getServerConfigDir(@Nonnull String gameAddress, boolean create) {
+	private static File getServerConfigDir(@NotNull String gameAddress, boolean create) {
 		final String[] addressTries = {
 				gameAddress,
 				gameAddress.endsWith(":25565")
@@ -451,7 +451,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		return !player.isInvisible() && !player.isSneaking();
 	}
 
-	private void prepareRenderPlayerDecorations(@Nonnull Entity entity, float partialTicks) {
+	private void prepareRenderPlayerDecorations(@NotNull Entity entity, float partialTicks) {
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 		GlStateManager.disableTexture2D();
 		GlStateManager.disableLighting();
@@ -631,7 +631,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		return personsConfig.getPersonsRegistry();
 	}
 
-	@Nonnull
+	@NotNull
 	public PlayerTracker getPlayerTracker() {
 		return playerTracker;
 	}
@@ -640,7 +640,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	 * null means unknown observation type; caller should show original message in that case.
 	 */
 	@Nullable
-	public String getObservationFormat(@Nonnull Observation observation) {
+	public String getObservationFormat(@NotNull Observation observation) {
 		if (observation instanceof SnitchHit) return config.getSnitchHitFormat();
 		if (observation instanceof RadarChange) return config.getRadarFormat();
 		if (observation instanceof Skynet) return config.getSkynetFormat();
@@ -657,7 +657,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	@Nullable
 	public ITextComponent formatObservationWithVisibility(
 			@Nullable String fmtStr,
-			@Nonnull Observation observation,
+			@NotNull Observation observation,
 			@Nullable ITextComponent originalMsg
 	) {
 		try {
@@ -705,7 +705,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	 */
 	// XXX get rid of method: use {format} stuff
 	@Nullable
-	public TextFormatting getChatColor(@Nonnull Observation observation) {
+	public TextFormatting getChatColor(@NotNull Observation observation) {
 		final Visibility visibility = getObservationVisibility(observation);
 		switch (visibility) {
 			case ALERT:
@@ -720,8 +720,8 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		}
 	}
 
-	@Nonnull
-	public Visibility getObservationVisibility(@Nonnull Observation observation) {
+	@NotNull
+	public Visibility getObservationVisibility(@NotNull Observation observation) {
 		if (!(observation instanceof AccountObservation)) return Visibility.SHOW;
 		final AccountObservation accObs = (AccountObservation) observation;
 		final Standing standing = getStanding(accObs.getAccount());
@@ -736,7 +736,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		return config.getChatVisibility(isClose, standing);
 	}
 
-	private boolean isClose(@Nonnull AccountObservation observation) {
+	private boolean isClose(@NotNull AccountObservation observation) {
 		final EntityPlayer playerEntity = getMc().world.getPlayerEntityByName(observation.getAccount());
 		boolean isClose = playerEntity != null;
 		final EntityPlayerSP self = getMc().player;
@@ -752,14 +752,14 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		return isClose;
 	}
 
-	@Nonnull
+	@NotNull
 	public static Color getStandingColor(@Nullable Standing standing) {
 		final TextFormatting standingFmt = LiteModSynapse.instance.config
 				.getStandingColor(standing);
 		return FloatColor.fromTextFormatting(standingFmt).toColor();
 	}
 
-	@Nonnull
+	@NotNull
 	public TextFormatting getDistanceColor(int distance) {
 		if (distance < closeDistance) return TextFormatting.GOLD;
 		if (distance < 500) return TextFormatting.YELLOW;
@@ -767,11 +767,11 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		return TextFormatting.GRAY;
 	}
 
-	public void handleObservation(@Nonnull Observation obs) {
+	public void handleObservation(@NotNull Observation obs) {
 		handleChatObservation(obs, null);
 	}
 
-	public void handleChatObservation(@Nonnull Observation obs, @Nullable ITextComponent originalChat) {
+	public void handleChatObservation(@NotNull Observation obs, @Nullable ITextComponent originalChat) {
 		final boolean isNew = getPlayerTracker().recordObservation(obs);
 
 		if (obs instanceof PlayerState) {
@@ -831,7 +831,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		this.worldName = world;
 	}
 
-	public boolean isFocusedAccount(@Nonnull String account) {
+	public boolean isFocusedAccount(@NotNull String account) {
 		if (focusedAccountNames.isEmpty()) return false;
 		return focusedAccountNames.contains(account.toLowerCase());
 	}
@@ -874,11 +874,11 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		if (waypointManager != null) waypointManager.updateAllWaypoints();
 	}
 
-	public void announceFocusedAccount(@Nonnull String account) {
+	public void announceFocusedAccount(@NotNull String account) {
 		announceFocusedAccounts(Collections.singletonList(account));
 	}
 
-	public void announceFocusedAccounts(@Nonnull Collection<String> focusedAccounts) {
+	public void announceFocusedAccounts(@NotNull Collection<String> focusedAccounts) {
 		focusedAccounts = sortedUniqListIgnoreCase(focusedAccounts);
 		setFocusedAccountNames(focusedAccounts);
 		comms.sendEncrypted(new JsonPacket(new FocusAnnouncement(
@@ -887,13 +887,13 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 				"Focusing: " + String.join(" ", focusedAccounts)));
 	}
 
-	@Nonnull
+	@NotNull
 	public Standing getStanding(String account) {
 		if (serverConfig == null) return Standing.UNSET;
 		return serverConfig.getAccountStanding(account);
 	}
 
-	public ITextComponent getDisplayNameForAccount(@Nonnull String accountName) {
+	public ITextComponent getDisplayNameForAccount(@NotNull String accountName) {
 		accountName = accountName.replaceAll("§.", "");
 		if (!isModActive() || !config.isReplaceNamePlates()) return new TextComponentString(accountName);
 		if (getPersonsRegistry() == null || serverConfig == null) return new TextComponentString(accountName);
@@ -1038,7 +1038,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 		}
 	}
 
-	public static void playSound(@Nonnull String soundName, @Nonnull UUID playerUuid) {
+	public static void playSound(@NotNull String soundName, @NotNull UUID playerUuid) {
 		if (soundName.isEmpty() || "none".equalsIgnoreCase(soundName)) return;
 		float playerPitch = 0.5F + 1.5F * (new Random(playerUuid.hashCode())).nextFloat();
 		final ResourceLocation resource = new ResourceLocation(soundName);

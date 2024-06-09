@@ -1,6 +1,6 @@
 package gjum.minecraft.civ.synapse;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 public interface PersonChangeHandler {

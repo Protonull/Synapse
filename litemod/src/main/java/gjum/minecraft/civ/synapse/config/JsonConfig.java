@@ -5,7 +5,7 @@ import com.google.gson.stream.*;
 import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import net.minecraft.util.text.TextFormatting;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.io.*;
 import java.util.ConcurrentModificationException;
 import java.util.concurrent.*;

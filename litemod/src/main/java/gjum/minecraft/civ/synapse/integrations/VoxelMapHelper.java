@@ -6,8 +6,8 @@ import com.mamiyaotaru.voxelmap.util.Waypoint;
 import com.mumfrey.liteloader.core.LiteLoader;
 import gjum.minecraft.civ.synapse.FloatColor;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,7 +20,7 @@ public class VoxelMapHelper {
 		return instance == null ? null : instance.getWaypointManager();
 	}
 
-	public static void createWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void createWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (getWaypointManager() == null) return;
 		waypoint.vmWaypoint = new Waypoint(waypoint.getName(),
 				waypoint.pos.x, waypoint.pos.y, waypoint.pos.z,
@@ -31,7 +31,7 @@ public class VoxelMapHelper {
 		getWaypointManager().addWaypoint(waypoint.vmWaypoint);
 	}
 
-	public static void updateWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void updateWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (getWaypointManager() == null) return;
 		if (waypoint.vmWaypoint == null) createWaypoint(waypoint);
 		if (waypoint.vmWaypoint == null) return;
@@ -56,14 +56,14 @@ public class VoxelMapHelper {
 		getWaypointManager().addWaypoint(waypoint.vmWaypoint);
 	}
 
-	public static void deleteWaypoint(@Nonnull MultiWaypoint waypoint) {
+	public static void deleteWaypoint(@NotNull MultiWaypoint waypoint) {
 		if (getWaypointManager() == null) return;
 		if (waypoint.vmWaypoint == null) return;
 		getWaypointManager().deleteWaypoint(waypoint.vmWaypoint);
 		waypoint.vmWaypoint = null;
 	}
 
-	public static void deleteWaypoint(@Nonnull Waypoint waypoint) {
+	public static void deleteWaypoint(@NotNull Waypoint waypoint) {
 		if (getWaypointManager() == null) return;
 		getWaypointManager().deleteWaypoint(waypoint);
 	}

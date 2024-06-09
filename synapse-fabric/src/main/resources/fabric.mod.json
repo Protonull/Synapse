@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "synapse-fabric",
+    "version": "${mod_version}",
+    "name": "${mod_name}",
+    "description": "${mod_description}",
+    "license": "${copyright_licence}",
+    "authors": [
+        "Protonull",
+        "Gjum",
+        "boristats"
+    ],
+    "contact": {
+        "homepage": "${mod_home_url}",
+        "sources": "${mod_source_url}"
+    },
+    "icon": "assets/synapse-fabric/icon.png",
+    "environment": "client",
+    "entrypoints": {
+        "modmenu": [
+            "uk.protonull.civ.synapse.mod.fabric.SynapseMod"
+        ]
+    },
+    "depends": {
+        "minecraft": "${minecraft_version}",
+        "fabricloader": ">=${fabric_loader_version}",
+        "fabric": "*"
+    },
+    "mixins": [
+        "synapse.fabric.mixins.json"
+    ]
+}

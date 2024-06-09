@@ -6,8 +6,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.SoundEvents;
 import org.lwjgl.input.Keyboard;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.awt.Color;
 import java.util.function.Predicate;
 
@@ -34,7 +34,7 @@ public class TextField extends Clickable {
 		}
 
 		@Override
-		public void setEntryValue(int i, @Nonnull String s) {
+		public void setEntryValue(int i, @NotNull String s) {
 			onChanged();
 		}
 	};

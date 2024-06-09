@@ -3,7 +3,7 @@ package gjum.minecraft.civ.synapse.config;
 import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import gjum.minecraft.civ.synapse.*;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 
 import static gjum.minecraft.civ.synapse.LiteModSynapse.MOD_NAME;

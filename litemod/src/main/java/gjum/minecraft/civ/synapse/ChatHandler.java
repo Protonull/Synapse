@@ -10,8 +10,8 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.HoverEvent;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -63,7 +63,7 @@ public class ChatHandler {
 			"^(?<account>[A-Za-z0-9_]{2,16}) is brand new.*", CASE_INSENSITIVE);
 
 	@Nullable
-	public static ObservationImpl observationFromChat(@Nonnull ITextComponent originalMessage) {
+	public static ObservationImpl observationFromChat(@NotNull ITextComponent originalMessage) {
 		final String msgColored = originalMessage.getFormattedText();
 		final ObservationImpl observation = observationFromChatInternal(originalMessage, msgColored);
 		if (observation != null) observation.setMessagePlain(msgColored);
@@ -71,7 +71,7 @@ public class ChatHandler {
 	}
 
 	@Nullable
-	private static ObservationImpl observationFromChatInternal(@Nonnull ITextComponent originalMessage, String msgColored) {
+	private static ObservationImpl observationFromChatInternal(@NotNull ITextComponent originalMessage, String msgColored) {
 		final LiteModSynapse mod = LiteModSynapse.instance;
 
 		msgColored = msgColored.replaceAll("§r", "").trim();
@@ -233,7 +233,7 @@ public class ChatHandler {
 		return null;
 	}
 
-	@Nonnull
+	@NotNull
 	private static ObservationImpl makePearlLocationOrTransport(String witness, Pos pos, String world, String prisoner, String holder) {
 		if (isPlayerHolder(holder)) return new PearlTransport(witness, pos, world, prisoner, holder);
 		else return new PearlLocation(witness, pos, world, prisoner, holder);

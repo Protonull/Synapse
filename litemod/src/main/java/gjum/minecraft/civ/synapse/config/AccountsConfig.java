@@ -7,8 +7,8 @@ import net.minecraft.util.Tuple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -53,7 +53,7 @@ public class AccountsConfig extends LinesConfig {
 		return wasNew;
 	}
 
-	@Nonnull
+	@NotNull
 	public List<String> findSimilar(String query, int limit) {
 		return findSimilarScoredStream(query)
 				.limit(limit)
@@ -61,14 +61,14 @@ public class AccountsConfig extends LinesConfig {
 				.collect(Collectors.toList());
 	}
 
-	@Nonnull
+	@NotNull
 	public List<Tuple<String, Float>> findSimilarScored(String query, int limit) {
 		return findSimilarScoredStream(query)
 				.limit(limit)
 				.collect(Collectors.toList());
 	}
 
-	@Nonnull
+	@NotNull
 	public Stream<Tuple<String, Float>> findSimilarScoredStream(String query) {
 		final String queryLower = query.toLowerCase();
 		return streamAccounts()
@@ -79,7 +79,7 @@ public class AccountsConfig extends LinesConfig {
 				).reversed()); // highest scores first
 	}
 
-	@Nonnull
+	@NotNull
 	public Stream<String> streamAccounts() {
 		if (LiteModSynapse.instance.getPersonsRegistry() == null) {
 			return accounts.values().stream();

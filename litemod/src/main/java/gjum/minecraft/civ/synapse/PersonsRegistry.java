@@ -2,8 +2,8 @@ package gjum.minecraft.civ.synapse;
 
 import net.minecraft.util.Tuple;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,7 +31,7 @@ public class PersonsRegistry {
 		propagatePersonChange(person, null);
 	}
 
-	@Nonnull
+	@NotNull
 	public Collection<Person> getPersons() {
 		return personsByName.values();
 	}
@@ -57,8 +57,8 @@ public class PersonsRegistry {
 		return personsByAccount.get(accountName.toLowerCase());
 	}
 
-	@Nonnull
-	public Person personByAccountNameOrCreate(@Nonnull String account) {
+	@NotNull
+	public Person personByAccountNameOrCreate(@NotNull String account) {
 		Person person = personByAccountName(account);
 		if (person == null) {
 			final HashSet<String> accounts = new HashSet<>(Collections.singleton(account));
@@ -74,14 +74,14 @@ public class PersonsRegistry {
 	}
 
 	@Nullable
-	public Person personByNameOrAccount(@Nonnull String nameOrAccount) {
+	public Person personByNameOrAccount(@NotNull String nameOrAccount) {
 		final Person person = personByName(nameOrAccount);
 		if (person != null) return person;
 		return personByAccountName(nameOrAccount);
 	}
 
-	@Nonnull
-	public Collection<Person> personsInFaction(@Nonnull String faction) {
+	@NotNull
+	public Collection<Person> personsInFaction(@NotNull String faction) {
 		return getPersons().stream()
 				.filter(p -> p.hasFaction(faction) != null)
 				.collect(Collectors.toList());
@@ -107,7 +107,7 @@ public class PersonsRegistry {
 				.sorted(Comparator.comparing(Tuple<Person, Float>::getSecond).reversed());
 	}
 
-	public void registerChangeHandler(@Nonnull PersonChangeHandler changeHandler) {
+	public void registerChangeHandler(@NotNull PersonChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}
 
