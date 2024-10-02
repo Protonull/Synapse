@@ -13,3 +13,4 @@ pluginManagement {
 rootProject.name = "Synapse"
 
 include(":synapse-common")
+include(":synapse-server")
