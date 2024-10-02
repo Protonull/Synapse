@@ -1,130 +1,145 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import static gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin.jmApi;
-import static net.minecraft.potion.PotionUtils.getPotionFromItem;
-
 import gjum.minecraft.civ.synapse.common.Pos;
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.block.Block;
+import gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin;
+import java.util.Collection;
+import java.util.function.Predicate;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.init.PotionTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.util.math.*;
+import net.minecraft.client.User;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public class McUtil {
-	public static Minecraft getMc() {
-		return Minecraft.getMinecraft();
+	public static @NotNull Minecraft getMc() {
+		return Minecraft.getInstance();
 	}
 
 	public static boolean isJourneyMapLoaded() {
-		try {
-			Class.forName("journeymap.common.Journeymap");
-			return jmApi != null;
-		} catch (ClassNotFoundException | NoClassDefFoundError var1) {
-		}
-		return false;
+		return FabricLoader.getInstance().isModLoaded("journeymap") && JourneyMapPlugin.jmApi != null;
 	}
 
 	/**
 	 * does the rounding correctly for negative coordinates
 	 */
-	@NotNull
-	public static Pos getEntityPosition(@NotNull Entity entity) {
+	public static @NotNull Pos getEntityPosition(
+		final @NotNull Entity entity
+	) {
 		return new Pos(
-				MathHelper.floor(entity.posX),
-				MathHelper.floor(entity.posY),
-				MathHelper.floor(entity.posZ));
+			Mth.floor(entity.getX()),
+			Mth.floor(entity.getY()),
+			Mth.floor(entity.getZ())
+		);
 	}
 
-	public static Pos pos(BlockPos pos) {
-		return new Pos(pos.getX(), pos.getY(), pos.getZ());
+	public static @NotNull Pos pos(
+		final @NotNull BlockPos pos
+	) {
+		return new Pos(
+			pos.getX(),
+			pos.getY(),
+			pos.getZ()
+		);
 	}
 
-	public static BlockPos blockPos(Pos pos) {
-		return new BlockPos(pos.x, pos.y, pos.z);
+	public static @NotNull BlockPos blockPos(
+		final @NotNull Pos pos
+	) {
+		return new BlockPos(
+			pos.x,
+			pos.y,
+			pos.z
+		);
 	}
 
-	@NotNull
-	public static String getDisplayNameFromTablist(NetworkPlayerInfo info) {
-		if (info.getDisplayName() != null) {
-			return info.getDisplayName().getUnformattedText().replaceAll("§.", "");
+	public static @NotNull String getDisplayNameFromTablist(
+		final @NotNull PlayerInfo info
+	) {
+		final Component tabListName = info.getTabListDisplayName();
+		if (tabListName != null) {
+			return fullySanitiseComponent(tabListName);
 		}
-		return info.getGameProfile().getName().replaceAll("§.", "");
+		return fullySanitiseString(info.getProfile().getName());
 	}
 
-	@NotNull
-	public static String getSelfAccount() {
-		if (getMc().getConnection() != null) {
-			final NetworkPlayerInfo tabEntry = getMc().getConnection().getPlayerInfo(getMc().getSession().getPlayerID());
-			if (tabEntry != null) {
-				return tabEntry.getGameProfile().getName();
+	public static @NotNull String fullySanitiseComponent(
+		final @NotNull Component component
+	) {
+		return fullySanitiseString(component.getString());
+	}
+
+	public static @NotNull String fullySanitiseString(
+		final @NotNull String string
+	) {
+		return string.replaceAll("§.", "");
+	}
+
+	public static @NotNull String getSelfAccount() {
+		final User account = Minecraft.getInstance().getUser();
+		final ClientPacketListener connection = Minecraft.getInstance().getConnection();
+		if (connection != null) {
+			final PlayerInfo info = connection.getPlayerInfo(account.getProfileId());
+			if (info != null) {
+				return fullySanitiseString(info.getProfile().getName());
 			}
 		}
-		if (getMc().player != null) {
-			return getMc().player.getName();
+		final LocalPlayer player = Minecraft.getInstance().player;
+		if (player != null) {
+			return fullySanitiseComponent(player.getName());
 		}
-		return getMc().getSession().getUsername();
-	}
-
-	public static float getHealth() {
-		if (getMc().player == null) return -1;
-		return getMc().player.getHealth();
+		return fullySanitiseString(account.getName());
 	}
 
 	public static int getNumHealthPots() {
-		// TODO cache health pot count instead of recomputing each frame; invalidate cache when inventory packet received
-		final InventoryPlayer inv = getMc().player.inventory;
-		return (int) (inv.mainInventory.stream().filter(McUtil::isHealthPot).count()
-				+ inv.offHandInventory.stream().filter(McUtil::isHealthPot).count());
+		final Inventory playerInventory = Minecraft.getInstance().player.getInventory();
+		return countMatches(playerInventory.items, McUtil::isHealthPot)
+			+ countMatches(playerInventory.offhand, McUtil::isHealthPot);
 	}
 
-	public static boolean isHealthPot(ItemStack stack) {
-		return stack.getItem() == Items.SPLASH_POTION
-				&& getPotionFromItem(stack) == PotionTypes.STRONG_HEALING;
-	}
-
-	public static int blockIdAtPos(@NotNull BlockPos pos) {
-		return Block.getIdFromBlock(getMc().world.getBlockState(pos).getBlock());
-	}
-
-	@Nullable
-	public static List<String> getLore(@Nullable ItemStack item) {
-		if (item == null) return null;
-		NBTTagCompound itemTag = item.getTagCompound();
-		if (itemTag == null) return null;
-		if (!itemTag.hasKey("display", 10)) return null;
-		NBTTagCompound displayTag = itemTag.getCompoundTag("display");
-		if (displayTag.getTagId("Lore") != 9) return null;
-		NBTTagList loreTag = displayTag.getTagList("Lore", 8);
-		if (loreTag.hasNoTags()) return null;
-		List<String> lore = new ArrayList<String>(loreTag.tagCount());
-		for (int i = 0; i < loreTag.tagCount(); i++) {
-			lore.add(loreTag.getStringTagAt(i));
+	public static <T> @Range(from = 0, to = Integer.MAX_VALUE) int countMatches(
+		final @NotNull Collection<T> collection,
+		final @NotNull Predicate<T> predicate
+	) {
+		int count = 0;
+		for (final T element : collection) {
+			if (predicate.test(element)) {
+				count++;
+			}
 		}
-		return lore;
+		return count;
 	}
 
-	public static boolean isSameBlock(@NotNull BlockPos posA, @NotNull BlockPos posB) {
-		return getMc().world.getBlockState(posA).getBlock() == getMc().world.getBlockState(posB).getBlock();
+	private static boolean isHealthPot(
+		final @NotNull ItemStack item
+	) {
+		if (item.getItem() != Items.SPLASH_POTION) {
+			return false;
+		}
+		final PotionContents potion = item.get(DataComponents.POTION_CONTENTS);
+		if (potion == null) {
+			return false;
+		}
+		return potion.is(Potions.HEALING);
 	}
 
-	@NotNull
-	public static String getBiomeName(@NotNull BlockPos pos) {
-		return getMc().world.getBiome(pos).getBiomeName();
-	}
-
-	@Nullable
-	public static BlockPos getLookedAtBlockPos(int reach) {
-		final RayTraceResult trace = getMc().player.rayTrace(reach, getMc().getRenderPartialTicks());
-		return (trace == null) ? null : trace.getBlockPos();
+	public static @Nullable BlockPos getLookedAtBlockPos(
+		final int reach
+	) {
+		throw new NotImplementedException("CivMC illegal");
 	}
 }
