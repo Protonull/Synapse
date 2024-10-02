@@ -4,23 +4,23 @@ import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PearledChat extends ObservationImpl implements AccountObservation {
 	@Expose
 	public static final String msgType = "PearledChat";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String holder;
 	@Expose
 	@Nullable
 	public final String pearlType;
 
 	public PearledChat(
-			@Nonnull String witness,
-			@Nonnull String holder,
+			@NotNull String witness,
+			@NotNull String holder,
 			@Nullable String pearlType
 	) {
 		super(witness);
@@ -48,7 +48,7 @@ public class PearledChat extends ObservationImpl implements AccountObservation {
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return holder;

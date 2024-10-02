@@ -1,8 +1,8 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface AccountObservation extends Observation {
-	@Nonnull
+	@NotNull
 	String getAccount();
 }

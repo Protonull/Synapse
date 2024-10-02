@@ -13,15 +13,15 @@ import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
 import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.NotNull;
 
 class MultiWaypoint {
 	static final Pattern namePattern = Pattern.compile("^(?:Pearl of )?(?<account>[_A-Za-z0-9]{2,16})(?: ?[*+(]\\S+\\)?)? (?<age>now|[0-9]+s|(?:[0-9]+h ?)?[0-9]+min|[0-9]+/[0-9]+ [0-9]+:[0-9]+|old)$");
 
 	String prefix;
 	String account;
-	@Nonnull
+	@NotNull
 	Pos pos;
 	FloatColor color;
 	String world = "";
@@ -48,7 +48,7 @@ class MultiWaypoint {
 	// periodically update age in waypoint names (fresh ones every 10s, older ones every minute)
 	long nextUpdate = 0;
 
-	public MultiWaypoint(@Nonnull Pos pos, String prefix, String account) {
+	public MultiWaypoint(@NotNull Pos pos, String prefix, String account) {
 		this.pos = pos;
 		this.prefix = prefix;
 		this.account = account;
@@ -73,7 +73,7 @@ class MultiWaypoint {
 		return 0; // custom named worlds (shards) show as overworld
 	}
 
-	public MultiWaypoint setPos(@Nonnull Pos pos) {
+	public MultiWaypoint setPos(@NotNull Pos pos) {
 		this.pos = pos;
 		lastPosUpdate = System.currentTimeMillis();
 		updateMapWaypoints();

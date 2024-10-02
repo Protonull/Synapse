@@ -21,10 +21,10 @@ import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
 import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ObservationFormatter {
 	public static ITextComponent formatObservationStatic(String fmtStr, Observation observation) {
@@ -47,7 +47,7 @@ public class ObservationFormatter {
 	private static String lastAPObsCacheAccount = null;
 	private static long lastAPObsCacheTime = 0;
 
-	private static AccountPosObservation lookUpLastAPObsInPlayerTracker(@Nonnull String account) {
+	private static AccountPosObservation lookUpLastAPObsInPlayerTracker(@NotNull String account) {
 		account = account.toLowerCase();
 		if (lastAPObsCacheTime < System.currentTimeMillis() - 1000) lastAPObsCache = null; // outdated
 		if (lastAPObsCache != null && account.equals(lastAPObsCacheAccount)) return lastAPObsCache;
@@ -61,8 +61,8 @@ public class ObservationFormatter {
 		return apobs;
 	}
 
-	@Nonnull
-	private static ITextComponent formatKey(@Nonnull Observation observation, @Nonnull String key) {
+	@NotNull
+	private static ITextComponent formatKey(@NotNull Observation observation, @NotNull String key) {
 		if ("".equals(key)) return new TextComponentString("%"); // escaped percent sign (%%)
 		ITextComponent formatted;
 		if (observation instanceof CombatTagChat) {
@@ -121,7 +121,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	private static ITextComponent formatKeyAccount(@Nonnull String key, @Nonnull AccountObservation observation) {
+	private static ITextComponent formatKeyAccount(@NotNull String key, @NotNull AccountObservation observation) {
 		switch (key) {
 			case "ACCOUNT": {
 				return setStandingColor(observation.getAccount(), new TextComponentString(observation.getAccount()));
@@ -142,7 +142,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	private static ITextComponent formatKeyPos(@Nonnull String key, @Nonnull PosObservation observation) {
+	private static ITextComponent formatKeyPos(@NotNull String key, @NotNull PosObservation observation) {
 		switch (key) {
 			case "XYZ":
 				return new TextComponentString(String.format("%d %d %d",
@@ -190,7 +190,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	private static ITextComponent formatKeyAccountPos(@Nonnull String key, @Nonnull AccountPosObservation observation) {
+	private static ITextComponent formatKeyAccountPos(@NotNull String key, @NotNull AccountPosObservation observation) {
 		switch (key) {
 			case "HEADING": {
 				final AccountPosObservation prevObs = LiteModSynapse.instance.getPlayerTracker()
@@ -219,7 +219,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyCombatTagChat(@Nonnull String key, @Nonnull CombatTagChat combatTag) {
+	public static ITextComponent formatKeyCombatTagChat(@NotNull String key, @NotNull CombatTagChat combatTag) {
 		if ("CALLER".equals(key)) {
 			return new TextComponentString(combatTag.witness);
 		}
@@ -227,7 +227,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyFocusInstruction(@Nonnull String key, @Nonnull FocusAnnouncement focus) {
+	public static ITextComponent formatKeyFocusInstruction(@NotNull String key, @NotNull FocusAnnouncement focus) {
 		if ("CALLER".equals(key)) {
 			return new TextComponentString(focus.witness);
 		}
@@ -235,7 +235,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyGroupChat(@Nonnull String key, @Nonnull GroupChat observation) {
+	public static ITextComponent formatKeyGroupChat(@NotNull String key, @NotNull GroupChat observation) {
 		switch (key) {
 			case "GROUP":
 				return new TextComponentString(nonNullOr(observation.group, "<local>"));
@@ -248,7 +248,7 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyPearlLocation(@Nonnull String key, @Nonnull PearlLocation pearl) {
+	public static ITextComponent formatKeyPearlLocation(@NotNull String key, @NotNull PearlLocation pearl) {
 		if ("PRISONER".equals(key)) {
 			return setStandingColor(pearl.prisoner,
 					new TextComponentString(pearl.prisoner));
@@ -265,21 +265,21 @@ public class ObservationFormatter {
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyRadarChange(@Nonnull String key, @Nonnull RadarChange radar) {
+	public static ITextComponent formatKeyRadarChange(@NotNull String key, @NotNull RadarChange radar) {
 		if ("ACTION".equals(key)) return new TextComponentString(radar.action.name().toLowerCase());
 		if ("ACTIONSHORT".equals(key)) return new TextComponentString(radar.action.shortName);
 		return null;
 	}
 
 	@Nullable
-	public static ITextComponent formatKeyLoginout(@Nonnull String key, @Nonnull Skynet skynet) {
+	public static ITextComponent formatKeyLoginout(@NotNull String key, @NotNull Skynet skynet) {
 		if ("ACTION".equals(key)) return new TextComponentString(skynet.action.name().toLowerCase());
 		if ("ACTIONSHORT".equals(key)) return new TextComponentString(skynet.action.shortName);
 		return null;
 	}
 
 	@Nullable
-	public static ITextComponent formatKeySnitchHit(@Nonnull String key, @Nonnull SnitchHit snitchHit) {
+	public static ITextComponent formatKeySnitchHit(@NotNull String key, @NotNull SnitchHit snitchHit) {
 		switch (key) {
 			case "SNITCH":
 				return new TextComponentString(snitchHit.snitchName);
@@ -296,10 +296,10 @@ public class ObservationFormatter {
 		}
 	}
 
-	@Nonnull
+	@NotNull
 	private static ITextComponent setStandingColor(
-			@Nonnull String account,
-			@Nonnull ITextComponent component
+			@NotNull String account,
+			@NotNull ITextComponent component
 	) {
 		final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
 		if (serverConfig != null) {
@@ -312,8 +312,8 @@ public class ObservationFormatter {
 	}
 
 	public static void addCoordClickEvent(
-			@Nonnull ITextComponent component,
-			@Nonnull Observation observation,
+			@NotNull ITextComponent component,
+			@NotNull Observation observation,
 			@Nullable String waypointCommandFormat
 	) {
 		if (waypointCommandFormat == null) return;

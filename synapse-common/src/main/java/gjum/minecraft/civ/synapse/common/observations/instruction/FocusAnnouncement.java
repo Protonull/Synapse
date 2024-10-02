@@ -6,19 +6,19 @@ import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Collection;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class FocusAnnouncement extends ObservationImpl {
 	@Expose
 	public static final String msgType = "FocusAnnouncement";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Collection<String> accounts;
 
 	public FocusAnnouncement(
-			@Nonnull String witness,
-			@Nonnull Collection<String> accounts
+			@NotNull String witness,
+			@NotNull Collection<String> accounts
 	) {
 		super(witness);
 		accounts = sortedUniqListIgnoreCase(accounts);

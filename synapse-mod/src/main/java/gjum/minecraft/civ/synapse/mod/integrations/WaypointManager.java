@@ -16,9 +16,9 @@ import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class WaypointManager implements PersonChangeHandler {
 	private static VmImage accountImageVm = VmImage.person;
@@ -32,7 +32,7 @@ public class WaypointManager implements PersonChangeHandler {
 
 	private boolean needSynchronizeVoxelmapWaypoints = true;
 
-	public void updateAccountLocation(@Nonnull AccountPosObservation update) {
+	public void updateAccountLocation(@NotNull AccountPosObservation update) {
 		final MultiWaypoint point = managedAccountWaypoints.computeIfAbsent(update.getAccount().toLowerCase(), accountLower -> {
 			final MultiWaypoint point1 = new MultiWaypoint(update.getPos(), accountPrefix, update.getAccount());
 			point1.setImage(accountImageVm);
@@ -42,7 +42,7 @@ public class WaypointManager implements PersonChangeHandler {
 		point.setPos(update.getPos());
 	}
 
-	public void updatePearlLocation(@Nonnull PearlLocation update) {
+	public void updatePearlLocation(@NotNull PearlLocation update) {
 		final MultiWaypoint point = managedPearlWaypoints.computeIfAbsent(update.prisoner.toLowerCase(), accountLower -> {
 			final MultiWaypoint p = new MultiWaypoint(update.pos, pearlPrefix, update.prisoner);
 			p.setImage(pearlImageVm);
@@ -54,8 +54,8 @@ public class WaypointManager implements PersonChangeHandler {
 		point.setHiddenForOverlap(update.isPlayerHolder());
 	}
 
-	@Nonnull
-	private FloatColor getStandingColor(@Nonnull String accountName) {
+	@NotNull
+	private FloatColor getStandingColor(@NotNull String accountName) {
 		Standing standing = null;
 		final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
 		if (serverConfig != null) {
@@ -65,8 +65,8 @@ public class WaypointManager implements PersonChangeHandler {
 		return FloatColor.fromTextFormatting(standingColor);
 	}
 
-	@Nonnull
-	private FloatColor getStandingColor(@Nonnull Person person) {
+	@NotNull
+	private FloatColor getStandingColor(@NotNull Person person) {
 		Standing standing = null;
 		final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
 		if (serverConfig != null) {

@@ -5,26 +5,26 @@ import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Person implements Cloneable {
-	@Nonnull
+	@NotNull
 	private final PersonsRegistry registry;
-	@Nonnull
+	@NotNull
 	private String name;
-	@Nonnull
+	@NotNull
 	private Collection<String> factions;
-	@Nonnull
+	@NotNull
 	private Collection<String> accounts;
 	@Nullable
 	private String notes;
 
 	public Person(
-			@Nonnull PersonsRegistry registry,
-			@Nonnull String name,
-			@Nonnull Collection<String> factions,
-			@Nonnull Collection<String> accounts,
+			@NotNull PersonsRegistry registry,
+			@NotNull String name,
+			@NotNull Collection<String> factions,
+			@NotNull Collection<String> accounts,
 			@Nullable String notes
 	) {
 		this.registry = registry;
@@ -42,7 +42,7 @@ public class Person implements Cloneable {
 		}
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		return name;
 	}
@@ -63,7 +63,7 @@ public class Person implements Cloneable {
 				|| personClean.startsWith(accountClean) || personClean.endsWith(accountClean);
 	}
 
-	@Nonnull
+	@NotNull
 	public Collection<String> getAccounts() {
 		return accounts;
 	}
@@ -97,7 +97,7 @@ public class Person implements Cloneable {
 		registry.propagatePersonChange(oldPerson, this);
 	}
 
-	@Nonnull
+	@NotNull
 	public Collection<String> getFactions() {
 		return new ArrayList<>(factions);
 	}
@@ -131,7 +131,7 @@ public class Person implements Cloneable {
 		registry.propagatePersonChange(oldPerson, this);
 	}
 
-	@Nonnull
+	@NotNull
 	public String getNotes() {
 		if (notes == null) return "";
 		return notes;

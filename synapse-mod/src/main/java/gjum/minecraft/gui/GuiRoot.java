@@ -1,9 +1,9 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
@@ -172,7 +172,7 @@ public class GuiRoot extends GuiScreen implements GuiParent {
 		Keyboard.enableRepeatEvents(false);
 	}
 
-	@Nonnull
+	@NotNull
 	public Vec2 getMousePos() {
 		int mouseX = Mouse.getEventX() * width / mc.displayWidth;
 		int mouseY = height - Mouse.getEventY() * height / mc.displayHeight - 1;

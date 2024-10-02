@@ -1,12 +1,12 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
 import gjum.minecraft.civ.synapse.common.Pos;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface PosObservation extends Observation {
-	@Nonnull
+	@NotNull
 	Pos getPos();
 
-	@Nonnull
+	@NotNull
 	String getWorld();
 }

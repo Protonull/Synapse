@@ -6,23 +6,23 @@ import gjum.minecraft.civ.synapse.common.observations.Action;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
 import java.util.UUID;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Skynet extends ObservationImpl implements AccountObservation {
 	@Expose
 	public static final String msgType = "Skynet";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final UUID uuid;
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String account;
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Action action;
 
 	@Expose
@@ -30,10 +30,10 @@ public class Skynet extends ObservationImpl implements AccountObservation {
 	public final Integer gamemode;
 
 	public Skynet(
-			@Nonnull String witness,
-			@Nonnull UUID uuid,
-			@Nonnull String account,
-			@Nonnull Action action,
+			@NotNull String witness,
+			@NotNull UUID uuid,
+			@NotNull String account,
+			@NotNull Action action,
 			@Nullable Integer gamemode
 	) {
 		super(witness);
@@ -64,7 +64,7 @@ public class Skynet extends ObservationImpl implements AccountObservation {
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return account;

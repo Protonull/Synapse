@@ -1,12 +1,12 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
 import com.google.gson.annotations.Expose;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class ObservationImpl implements Observation {
 	@Expose
-	@Nonnull
+	@NotNull
 	public String witness;
 
 	@Expose
@@ -16,7 +16,7 @@ public abstract class ObservationImpl implements Observation {
 	@Nullable
 	public String messagePlain;
 
-	public ObservationImpl(@Nonnull String witness) {
+	public ObservationImpl(@NotNull String witness) {
 		this.witness = witness;
 	}
 
@@ -25,7 +25,7 @@ public abstract class ObservationImpl implements Observation {
 		return time;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getWitness() {
 		return witness;

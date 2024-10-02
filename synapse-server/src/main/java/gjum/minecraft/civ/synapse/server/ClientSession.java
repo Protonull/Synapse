@@ -4,12 +4,12 @@ import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.channel.Channel;
 import java.util.UUID;
 import java.util.logging.Level;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ClientSession {
 	public final long connectTime = System.currentTimeMillis();
-	@Nonnull
+	@NotNull
 	public final Channel channel;
 	@Nullable
 	public String synapseVersion = null;
@@ -31,7 +31,7 @@ public class ClientSession {
 	@Nullable
 	public String disconnectReason = null;
 
-	public ClientSession(@Nonnull Channel channel) {
+	public ClientSession(@NotNull Channel channel) {
 		this.channel = channel;
 	}
 

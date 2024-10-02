@@ -8,8 +8,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerTracker {
 	public static final int closeObservationDistance = 33; // ground distance between diagonally adjacent snitches, rounded up
@@ -25,7 +25,7 @@ public class PlayerTracker {
 		this.gameAddress = gameAddress;
 	}
 
-	public boolean recordObservation(@Nonnull Observation observation) {
+	public boolean recordObservation(@NotNull Observation observation) {
 		boolean isNew = isNew(observation);
 		if (!isNew) return isNew;
 
@@ -51,7 +51,7 @@ public class PlayerTracker {
 		return isNew;
 	}
 
-	private boolean isNew(@Nonnull Observation observation) {
+	private boolean isNew(@NotNull Observation observation) {
 		final long now = System.currentTimeMillis();
 		final Iterator<Observation> iterator = recentObservations.stream()
 				.sorted(Comparator.comparing(o -> -o.getTime()))
@@ -77,7 +77,7 @@ public class PlayerTracker {
 	 * if latestObs is a radar observation and so is the one before that, they can be very close.
 	 */
 	@Nullable
-	public AccountPosObservation getLastObservationBeforeWithSignificantMove(@Nonnull AccountPosObservation latestObs) {
+	public AccountPosObservation getLastObservationBeforeWithSignificantMove(@NotNull AccountPosObservation latestObs) {
 		final List<AccountObservation> prevObs = observationsByAccount.get(latestObs.getAccount().toLowerCase());
 		if (prevObs == null) return null;
 		final int closeDistSq = closeObservationDistance * closeObservationDistance;
@@ -96,7 +96,7 @@ public class PlayerTracker {
 	}
 
 	@Nullable
-	public AccountPosObservation getMostRecentPosObservationForAccounts(@Nonnull Collection<String> accounts) {
+	public AccountPosObservation getMostRecentPosObservationForAccounts(@NotNull Collection<String> accounts) {
 		AccountPosObservation result = null;
 		for (String account : accounts) {
 			final AccountPosObservation last = getMostRecentPosObservationForAccount(account);
@@ -109,7 +109,7 @@ public class PlayerTracker {
 	}
 
 	@Nullable
-	public AccountPosObservation getMostRecentPosObservationForAccount(@Nonnull String account) {
+	public AccountPosObservation getMostRecentPosObservationForAccount(@NotNull String account) {
 		final List<AccountObservation> recentAccObs = observationsByAccount.get(account);
 		if (recentAccObs != null) {
 			// start with latest observation, then go back in time
@@ -124,7 +124,7 @@ public class PlayerTracker {
 	}
 
 	@Nullable
-	public Long getLastLoginout(@Nonnull String account, @Nullable Action action) {
+	public Long getLastLoginout(@NotNull String account, @Nullable Action action) {
 		final List<AccountObservation> observations = observationsByAccount.get(account.toLowerCase());
 		if (observations == null) return null;
 		// start with latest observation, then go back in time

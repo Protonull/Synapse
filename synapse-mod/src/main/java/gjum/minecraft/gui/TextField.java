@@ -2,12 +2,12 @@ package gjum.minecraft.gui;
 
 import java.awt.Color;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.SoundEvents;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
 public class TextField extends Clickable {
@@ -33,7 +33,7 @@ public class TextField extends Clickable {
 		}
 
 		@Override
-		public void setEntryValue(int i, @Nonnull String s) {
+		public void setEntryValue(int i, @NotNull String s) {
 			onChanged();
 		}
 	};

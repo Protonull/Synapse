@@ -1,7 +1,7 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiButton;
+import org.jetbrains.annotations.Nullable;
 
 public class Button extends Clickable {
 	private GuiButton button;

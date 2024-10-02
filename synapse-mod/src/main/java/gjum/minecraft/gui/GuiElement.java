@@ -1,8 +1,8 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class GuiElement implements GuiParent {
 	public static Minecraft mc = Minecraft.getMinecraft();
@@ -10,14 +10,14 @@ public abstract class GuiElement implements GuiParent {
 	@Nullable
 	protected GuiParent parent = null;
 
-	@Nonnull
+	@NotNull
 	private Vec2 pos = new Vec2(0, 0);
-	@Nonnull
+	@NotNull
 	private Vec2 size = new Vec2(0, 0);
 	/**
 	 * Share of available flex space the parent should distribute to this element.
 	 */
-	@Nonnull
+	@NotNull
 	private Vec2 weight = new Vec2(0, 0);
 	@Nullable
 	private Vec2 minSize;
@@ -45,7 +45,7 @@ public abstract class GuiElement implements GuiParent {
 		return pos;
 	}
 
-	public void setPos(@Nonnull Vec2 pos) {
+	public void setPos(@NotNull Vec2 pos) {
 		this.pos = pos;
 	}
 

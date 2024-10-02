@@ -42,12 +42,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class MainGui extends GuiRoot {
 	static final Vec2 spacer = new Vec2(7, 7);
@@ -63,7 +63,7 @@ public class MainGui extends GuiRoot {
 	@Nullable
 	private ScrollBox resultsScroller = null;
 
-	@Nonnull
+	@NotNull
 	private String query = "";
 	@Nullable
 	private List<PersonOrAccount> results;
@@ -162,7 +162,7 @@ public class MainGui extends GuiRoot {
 				.add(new Spacer(spacer));
 	}
 
-	@Nonnull
+	@NotNull
 	private GuiElement makeResultsTable() {
 		if (LiteModSynapse.instance.serverConfig == null) {
 			return new Label("Connect to a server to manage player associations.", ALIGN_CENTER);
@@ -190,9 +190,9 @@ public class MainGui extends GuiRoot {
 	}
 
 	private void populatePersonOrAccountRow(
-			@Nonnull PersonOrAccount poa,
-			@Nonnull ArrayList<GuiElement> row,
-			@Nonnull TableLayout resultsTable
+			@NotNull PersonOrAccount poa,
+			@NotNull ArrayList<GuiElement> row,
+			@NotNull TableLayout resultsTable
 	) {
 		final LiteModSynapse mod = LiteModSynapse.instance;
 		final Standing standing = poa.getStanding();
@@ -308,8 +308,8 @@ public class MainGui extends GuiRoot {
 		}, 300, TimeUnit.MILLISECONDS);
 	}
 
-	@Nonnull
-	private static List<PersonOrAccount> search(@Nonnull String query) {
+	@NotNull
+	private static List<PersonOrAccount> search(@NotNull String query) {
 		final LiteModSynapse mod = LiteModSynapse.instance;
 		if (mod.personsConfig == null) return Collections.emptyList();
 
@@ -355,8 +355,8 @@ public class MainGui extends GuiRoot {
 				.collect(Collectors.toList());
 	}
 
-	@Nonnull
-	public static FlexListLayout makeTitleRow(@Nonnull GuiRoot gui, @Nonnull String title) {
+	@NotNull
+	public static FlexListLayout makeTitleRow(@NotNull GuiRoot gui, @NotNull String title) {
 		final LiteModSynapse mod = LiteModSynapse.instance;
 		final FlexListLayout titleRow = new FlexListLayout(ROW);
 		if (!(gui instanceof MainGui)) {

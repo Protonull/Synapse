@@ -10,19 +10,19 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class Packet {
 	public abstract void write(ByteBuf buf);
 
-	@Nonnull
-	protected static String readString(@Nonnull ByteBuf in) {
+	@NotNull
+	protected static String readString(@NotNull ByteBuf in) {
 		return nonNullOr(readOptionalString(in), "");
 	}
 
 	@Nullable
-	protected static String readOptionalString(@Nonnull ByteBuf in) {
+	protected static String readOptionalString(@NotNull ByteBuf in) {
 		final int length = in.readInt();
 		if (length <= 0) return null;
 		final byte[] bytes = new byte[length];
@@ -30,7 +30,7 @@ public abstract class Packet {
 		return new String(bytes);
 	}
 
-	protected static void writeOptionalString(@Nonnull ByteBuf out, @Nullable String string) {
+	protected static void writeOptionalString(@NotNull ByteBuf out, @Nullable String string) {
 		if (string == null || string.isEmpty()) {
 			out.writeInt(0);
 			return;
@@ -41,7 +41,7 @@ public abstract class Packet {
 	}
 
 	@Nullable
-	protected static Pos readOptionalPos(@Nonnull ByteBuf in) {
+	protected static Pos readOptionalPos(@NotNull ByteBuf in) {
 		Pos pos = null;
 		if (in.readBoolean()) {
 			pos = new Pos(
@@ -52,7 +52,7 @@ public abstract class Packet {
 		return pos;
 	}
 
-	protected static void writeOptionalPos(@Nonnull ByteBuf out, @Nullable Pos pos) {
+	protected static void writeOptionalPos(@NotNull ByteBuf out, @Nullable Pos pos) {
 		out.writeBoolean(pos != null);
 		if (pos != null) {
 			out.writeInt(pos.x);
@@ -73,7 +73,7 @@ public abstract class Packet {
 		out.writeBytes(array);
 	}
 
-	@Nonnull
+	@NotNull
 	protected static PublicKey readKey(ByteBuf in) {
 		try {
 			final X509EncodedKeySpec keySpec = new X509EncodedKeySpec(readByteArray(in));

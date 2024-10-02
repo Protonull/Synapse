@@ -7,17 +7,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CWhitelist extends Packet {
-	@Nonnull
+	@NotNull
 	public Collection<String> accounts;
-	@Nonnull
+	@NotNull
 	public Collection<UUID> uuids;
 
 	public CWhitelist(
-			@Nonnull Collection<String> accounts,
-			@Nonnull Collection<UUID> uuids
+			@NotNull Collection<String> accounts,
+			@NotNull Collection<UUID> uuids
 	) {
 		this.accounts = accounts;
 		this.uuids = uuids;

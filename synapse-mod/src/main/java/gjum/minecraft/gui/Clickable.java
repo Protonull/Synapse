@@ -1,8 +1,8 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nullable;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.init.SoundEvents;
+import org.jetbrains.annotations.Nullable;
 
 public class Clickable extends GuiElement {
 	private static int nextId = 1;

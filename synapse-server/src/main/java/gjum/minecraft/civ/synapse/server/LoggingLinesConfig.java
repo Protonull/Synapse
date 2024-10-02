@@ -2,7 +2,7 @@ package gjum.minecraft.civ.synapse.server;
 
 import gjum.minecraft.civ.synapse.common.LinesConfig;
 import java.io.File;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

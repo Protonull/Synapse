@@ -29,12 +29,12 @@ import java.text.DecimalFormat;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SettingsGui extends GuiRoot {
 	private static final String[] toggleOptions = new String[]{"§aON", "§1off"};
@@ -196,7 +196,7 @@ public class SettingsGui extends GuiRoot {
 				.add(new Spacer(spacer));
 	}
 
-	@Nonnull
+	@NotNull
 	private GuiElement buildStandingColorsConfig() {
 		final FlexListLayout standingColorsRow = new FlexListLayout(ROW);
 		standingColorsRow.add(new Label("Standing colors: ", ALIGN_LEFT));
@@ -212,7 +212,7 @@ public class SettingsGui extends GuiRoot {
 		return standingColorsRow;
 	}
 
-	@Nonnull
+	@NotNull
 	private GuiElement buildRadarSoundConfig() {
 		final FlexListLayout standingSoundsRow = new FlexListLayout(ROW);
 		standingSoundsRow.add(configToggle("Radar sound",
@@ -234,7 +234,7 @@ public class SettingsGui extends GuiRoot {
 
 	private static final DecimalFormat wpAgeFloatFmt = new DecimalFormat("0.#");
 
-	@Nonnull
+	@NotNull
 	private GuiElement buildWaypointsConfig() {
 		return new Tooltip("Track players by radar, snitch alerts, pearl broadcasts, and other chat messages", new FlexListLayout(ROW)
 				.add(new Label("Waypoints:", ALIGN_LEFT))
@@ -261,7 +261,7 @@ public class SettingsGui extends GuiRoot {
 		);
 	}
 
-	@Nonnull
+	@NotNull
 	private GuiElement buildPlayerDecorationsConfig() {
 		final FlexListLayout row = new FlexListLayout(ROW);
 		row.add(new Label("Player decorations:", ALIGN_LEFT));
@@ -346,14 +346,14 @@ public class SettingsGui extends GuiRoot {
 	}
 
 	private GuiElement configFormatRow(
-			@Nonnull String name,
+			@NotNull String name,
 			@Nullable String tooltip,
-			@Nonnull Supplier<GlobalConfig.VisibilityFormat> visibilityFormatGetter,
-			@Nonnull Consumer<GlobalConfig.VisibilityFormat> visibilityFormatSetter,
+			@NotNull Supplier<GlobalConfig.VisibilityFormat> visibilityFormatGetter,
+			@NotNull Consumer<GlobalConfig.VisibilityFormat> visibilityFormatSetter,
 			@Nullable Supplier<GlobalConfig.StandingFilter> standingFilterGetter,
 			@Nullable Consumer<GlobalConfig.StandingFilter> standingFilterSetter,
-			@Nonnull Supplier<String> formatGetter,
-			@Nonnull Consumer<String> formatSetter
+			@NotNull Supplier<String> formatGetter,
+			@NotNull Consumer<String> formatSetter
 	) {
 		final FlexListLayout row = new FlexListLayout(ROW);
 

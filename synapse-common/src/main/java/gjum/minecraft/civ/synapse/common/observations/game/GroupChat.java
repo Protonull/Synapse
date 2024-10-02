@@ -5,8 +5,8 @@ import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.GroupObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GroupChat extends ObservationImpl implements AccountObservation, GroupObservation {
 	@Expose
@@ -16,17 +16,17 @@ public class GroupChat extends ObservationImpl implements AccountObservation, Gr
 	@Nullable
 	public final String group;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String account;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String message;
 
 	public GroupChat(
-			@Nonnull String witness,
+			@NotNull String witness,
 			@Nullable String group,
-			@Nonnull String account,
-			@Nonnull String message
+			@NotNull String account,
+			@NotNull String message
 	) {
 		super(witness);
 		this.group = group;
@@ -55,7 +55,7 @@ public class GroupChat extends ObservationImpl implements AccountObservation, Gr
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return account;

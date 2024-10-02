@@ -8,14 +8,14 @@ import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class PersonOrAccount {
 	// each Nonnull is enforced with check in constructor
-	@Nonnull
+	@NotNull
 	private final PersonsRegistry personsRegistry = LiteModSynapse.instance.getPersonsRegistry();
-	@Nonnull
+	@NotNull
 	private final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
 
 	// if person is null, account is non-null
@@ -25,12 +25,12 @@ class PersonOrAccount {
 	@Nullable
 	Person person;
 
-	public PersonOrAccount(@Nonnull Person person) {
+	public PersonOrAccount(@NotNull Person person) {
 		if (personsRegistry == null) throw new IllegalStateException("not on server at the moment");
 		this.person = person;
 	}
 
-	public PersonOrAccount(@Nonnull String account) {
+	public PersonOrAccount(@NotNull String account) {
 		if (personsRegistry == null) throw new IllegalStateException("not on server at the moment");
 		this.account = account;
 		this.person = personsRegistry.personByAccountName(account);
@@ -52,7 +52,7 @@ class PersonOrAccount {
 		return (account.hashCode() << 1) + 1;
 	}
 
-	@Nonnull
+	@NotNull
 	public Person personOrCreate() {
 		if (person == null) {
 			person = personsRegistry.personByAccountNameOrCreate(account);
@@ -60,25 +60,25 @@ class PersonOrAccount {
 		return person;
 	}
 
-	@Nonnull
+	@NotNull
 	public Standing getStanding() {
 		if (person == null) return serverConfig.getAccountStanding(account);
 		return serverConfig.getStanding(person);
 	}
 
-	@Nonnull
+	@NotNull
 	public String getName() {
 		if (person == null) return account;
 		return person.getName();
 	}
 
-	@Nonnull
+	@NotNull
 	public Collection<String> getAccounts() {
 		if (person == null) return Collections.singletonList(account);
 		return person.getAccounts();
 	}
 
-	@Nonnull
+	@NotNull
 	public Collection<String> getFactions() {
 		if (person == null) return Collections.emptyList();
 		return person.getFactions();

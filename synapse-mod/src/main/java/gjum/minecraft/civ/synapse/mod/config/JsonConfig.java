@@ -15,8 +15,8 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class JsonConfig {
 	private static final TypeAdapter<TextFormatting> typeAdapterTextFormatting = new TypeAdapter<TextFormatting>() {

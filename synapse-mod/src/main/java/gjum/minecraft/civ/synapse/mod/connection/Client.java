@@ -21,17 +21,17 @@ import io.netty.handler.proxy.Socks5ProxyHandler;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Client {
 	final Logger logger = LogManager.getLogger(this);
-	@Nonnull
+	@NotNull
 	public String address;
-	@Nonnull
+	@NotNull
 	public String proxy_address;
 	private int retrySec = 5;
 	private boolean autoReconnect = true;
@@ -42,7 +42,7 @@ public class Client {
 	private EventLoopGroup workerGroup;
 	private final ArrayList<Packet> queue = new ArrayList<>();
 
-	public Client(@Nonnull String address, @Nonnull String proxy_address) {
+	public Client(@NotNull String address, @NotNull String proxy_address) {
 		this.address = address;
 		this.proxy_address = proxy_address;
 	}

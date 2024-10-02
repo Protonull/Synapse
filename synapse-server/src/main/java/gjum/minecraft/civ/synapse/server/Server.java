@@ -40,12 +40,12 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -171,8 +171,8 @@ public class Server {
 		f.channel().closeFuture().sync();
 	}
 
-	@Nonnull
-	synchronized public ClientSession getOrCreateClient(@Nonnull Channel channel) {
+	@NotNull
+	synchronized public ClientSession getOrCreateClient(@NotNull Channel channel) {
 		final Attribute<ClientSession> attribute = channel.attr(AttributeKey.valueOf("client"));
 		ClientSession client = attribute.get();
 		if (client == null) {
@@ -211,23 +211,23 @@ public class Server {
 		return cipher.doFinal(data);
 	}
 
-	public static void log(@Nonnull ClientSession client, @Nonnull Level level, @Nonnull String msg) {
+	public static void log(@NotNull ClientSession client, @NotNull Level level, @NotNull String msg) {
 		log(getSessionDescriptor(client), level, msg, null);
 	}
 
-	public static void log(@Nonnull ClientSession client, @Nonnull Level level, @Nonnull String msg, @Nullable Throwable e) {
+	public static void log(@NotNull ClientSession client, @NotNull Level level, @NotNull String msg, @Nullable Throwable e) {
 		log(getSessionDescriptor(client), level, msg, e);
 	}
 
-	public static void log(@Nonnull String sessionDescriptor, @Nonnull Level level, @Nonnull String msg) {
+	public static void log(@NotNull String sessionDescriptor, @NotNull Level level, @NotNull String msg) {
 		logToLogger(sessionDescriptor, level, msg, null);
 	}
 
-	public static void log(@Nonnull String sessionDescriptor, @Nonnull Level level, @Nonnull String msg, @Nullable Throwable e) {
+	public static void log(@NotNull String sessionDescriptor, @NotNull Level level, @NotNull String msg, @Nullable Throwable e) {
 		logToLogger(sessionDescriptor, level, msg, e);
 	}
 
-	public static void logToLogger(@Nonnull String sessionDescriptor, @Nonnull Level level, @Nonnull String msg, @Nullable Throwable e) {
+	public static void logToLogger(@NotNull String sessionDescriptor, @NotNull Level level, @NotNull String msg, @Nullable Throwable e) {
 		// TODO use slf4j directly
 		final String msgFull = "[" + sessionDescriptor + "] " + msg;
 		if (Level.FINE.equals(level)) {
@@ -243,7 +243,7 @@ public class Server {
 		}
 	}
 
-	private static String getSessionDescriptor(@Nonnull ClientSession client) {
+	private static String getSessionDescriptor(@NotNull ClientSession client) {
 		String sessionDescriptor = client.channel.id().toString();
 		if (client.getCivRealmsAccount() != null) {
 			sessionDescriptor += " " + client.getCivRealmsAccount();
@@ -253,13 +253,13 @@ public class Server {
 		return sessionDescriptor;
 	}
 
-	public void kick(@Nonnull ClientSession client, @Nonnull String reason) {
+	public void kick(@NotNull ClientSession client, @NotNull String reason) {
 		client.addDisconnectReason("Kicked: " + reason);
 		log(client, Level.WARNING, client.disconnectReason);
 		client.channel.disconnect();
 	}
 
-	private boolean isAllowedGameServer(@Nonnull ClientSession client) {
+	private boolean isAllowedGameServer(@NotNull ClientSession client) {
 		if (client.gameAddress == null) return false;
 		return client.gameAddress.toLowerCase()
 				.split(":")[0] // allow any port

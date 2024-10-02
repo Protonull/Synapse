@@ -36,27 +36,27 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PersonGui extends GuiRoot {
 	private static final int maxAccountSuggestions = 5;
 
-	@Nonnull
+	@NotNull
 	private final Person person;
-	@Nonnull
+	@NotNull
 	private String newName;
-	@Nonnull
+	@NotNull
 	private String newAccounts;
-	@Nonnull
+	@NotNull
 	private String newFactions = "";
 	@Nullable
 	private FlexListLayout suggestAccountsRow = null;
 
-	public PersonGui(GuiScreen parent, @Nonnull Person person) {
+	public PersonGui(GuiScreen parent, @NotNull Person person) {
 		super(parent);
 		this.person = person;
 		newName = person.getName();

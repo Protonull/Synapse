@@ -3,18 +3,18 @@ package gjum.minecraft.civ.synapse.common.packet.server;
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.buffer.ByteBuf;
 import java.security.PublicKey;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SEncryptionRequest extends Packet {
-	@Nonnull
+	@NotNull
 	public final PublicKey key;
-	@Nonnull
+	@NotNull
 	public final byte[] verifyToken;
 	@Nullable
 	public final String message;
 
-	public SEncryptionRequest(@Nonnull PublicKey key, @Nonnull byte[] verifyToken, @Nullable String message) {
+	public SEncryptionRequest(@NotNull PublicKey key, @NotNull byte[] verifyToken, @Nullable String message) {
 		this.key = key;
 		this.verifyToken = verifyToken;
 		this.message = message;

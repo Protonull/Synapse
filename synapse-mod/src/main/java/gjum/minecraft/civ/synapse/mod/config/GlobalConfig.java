@@ -16,11 +16,11 @@ import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.Visibility;
 import java.util.HashMap;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class GlobalConfig extends JsonConfig {
 	@Expose
@@ -221,8 +221,8 @@ public class GlobalConfig extends JsonConfig {
 		newConf.fillDefaults();
 	}
 
-	@Nonnull
-	public GlobalConfig.VisibilityFormat getVisibilityFormat(@Nonnull Observation observation) {
+	@NotNull
+	public GlobalConfig.VisibilityFormat getVisibilityFormat(@NotNull Observation observation) {
 		if (observation instanceof Skynet) return getSkynetVisibilityFormat();
 		if (observation instanceof RadarChange) return getRadarVisibilityFormat();
 		if (observation instanceof SnitchHit) return getSnitchHitVisibilityFormat();
@@ -233,15 +233,15 @@ public class GlobalConfig extends JsonConfig {
 		return VisibilityFormat.ORIGINAL;
 	}
 
-	@Nonnull
-	public GlobalConfig.StandingFilter getStandingFilter(@Nonnull Observation observation) {
+	@NotNull
+	public GlobalConfig.StandingFilter getStandingFilter(@NotNull Observation observation) {
 		if (observation instanceof Skynet) return getSkynetStandingFilter();
 		if (observation instanceof RadarChange) return getRadarStandingFilter();
 		if (observation instanceof SnitchHit) return getSnitchHitStandingFilter();
 		return StandingFilter.EVERYONE;
 	}
 
-	public boolean matchesStandingFilter(@Nonnull Standing standing, @Nonnull StandingFilter standingFilter) {
+	public boolean matchesStandingFilter(@NotNull Standing standing, @NotNull StandingFilter standingFilter) {
 		switch (standingFilter) {
 			case FOCUSED:
 				return standing == Standing.FOCUS;
@@ -504,7 +504,7 @@ public class GlobalConfig extends JsonConfig {
 		return standingColors.get(standing);
 	}
 
-	public void setStandingColor(Standing standing, @Nonnull TextFormatting color) {
+	public void setStandingColor(Standing standing, @NotNull TextFormatting color) {
 		standingColors.put(standing, color);
 		saveLater(null);
 		final ScorePlayerTeam team = standingTeams.computeIfAbsent(standing, s -> new ScorePlayerTeam(scoreboard, standing.name()));

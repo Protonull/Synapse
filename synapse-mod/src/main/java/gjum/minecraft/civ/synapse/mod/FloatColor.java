@@ -3,9 +3,9 @@ package gjum.minecraft.civ.synapse.mod;
 import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
 
 import java.awt.Color;
-import javax.annotation.Nonnull;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
+import org.jetbrains.annotations.NotNull;
 
 public class FloatColor {
 	public float r;
@@ -36,7 +36,7 @@ public class FloatColor {
 				(hex & 0xff) / 255.f);
 	}
 
-	public static FloatColor fromTextFormatting(@Nonnull TextFormatting color) {
+	public static FloatColor fromTextFormatting(@NotNull TextFormatting color) {
 		final FontRenderer fontRenderer = getMc().fontRenderer;
 		return fromHex(fontRenderer.getColorCode(color.toString().charAt(1)));
 	}

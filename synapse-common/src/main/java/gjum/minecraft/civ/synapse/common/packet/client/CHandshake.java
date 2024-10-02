@@ -2,13 +2,13 @@ package gjum.minecraft.civ.synapse.common.packet.client;
 
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.buffer.ByteBuf;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CHandshake extends Packet {
 	@Nullable
 	public final String synapseVersion;
-	@Nonnull
+	@NotNull
 	public final String username;
 	@Nullable
 	public final String gameAddress;

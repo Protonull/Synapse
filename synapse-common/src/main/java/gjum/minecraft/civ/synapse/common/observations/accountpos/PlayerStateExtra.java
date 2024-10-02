@@ -3,8 +3,8 @@ package gjum.minecraft.civ.synapse.common.observations.accountpos;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.Pos;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Info about self, and about friendlies received via relay.
@@ -30,10 +30,10 @@ public class PlayerStateExtra extends PlayerState implements AccountPosObservati
 	public Long combatTagEnd = -1L;
 
 	public PlayerStateExtra(
-			@Nonnull String witness,
-			@Nonnull String account,
-			@Nonnull Pos pos,
-			@Nonnull String world
+			@NotNull String witness,
+			@NotNull String account,
+			@NotNull Pos pos,
+			@NotNull String world
 	) {
 		super(witness, account, pos, world);
 	}
@@ -64,8 +64,8 @@ public class PlayerStateExtra extends PlayerState implements AccountPosObservati
 	/**
 	 * Returns a copy of this with null fields filled with info from the other state, where present.
 	 */
-	@Nonnull
-	public PlayerStateExtra fillMissing(@Nonnull PlayerStateExtra other) {
+	@NotNull
+	public PlayerStateExtra fillMissing(@NotNull PlayerStateExtra other) {
 		final PlayerStateExtra combined = new PlayerStateExtra(witness, account, pos, world);
 		combined.heading = heading != null ? heading : other.heading;
 		combined.combatTagEnd = combatTagEnd != null ? combatTagEnd : other.combatTagEnd;

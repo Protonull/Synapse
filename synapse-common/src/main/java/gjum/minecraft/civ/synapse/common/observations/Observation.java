@@ -1,11 +1,11 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public interface Observation {
 	long getTime();
 
-	@Nonnull
+	@NotNull
 	String getWitness();
 
 	String getMsgType();

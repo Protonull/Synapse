@@ -4,19 +4,19 @@ import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BrandNew extends ObservationImpl implements AccountObservation {
 	@Expose
 	public static final String msgType = "BrandNew";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String account;
 
 	public BrandNew(
-			@Nonnull String witness,
-			@Nonnull String account
+			@NotNull String witness,
+			@NotNull String account
 	) {
 		super(witness);
 		this.account = account;
@@ -41,7 +41,7 @@ public class BrandNew extends ObservationImpl implements AccountObservation {
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return account;

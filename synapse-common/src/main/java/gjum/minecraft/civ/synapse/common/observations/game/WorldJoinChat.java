@@ -3,19 +3,19 @@ package gjum.minecraft.civ.synapse.common.observations.game;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class WorldJoinChat extends ObservationImpl {
 	@Expose
 	public static final String msgType = "WorldJoinChat";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String world;
 
 	public WorldJoinChat(
-			@Nonnull String witness,
-			@Nonnull String world
+			@NotNull String witness,
+			@NotNull String world
 	) {
 		super(witness);
 		this.world = world;

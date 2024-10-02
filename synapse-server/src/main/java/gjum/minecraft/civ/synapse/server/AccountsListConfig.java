@@ -7,8 +7,8 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * file format: ACCOUNT\tUUID\n... or ACCOUNT\n...
@@ -45,7 +45,7 @@ public class AccountsListConfig extends LoggingLinesConfig {
 				" Loaded list of " + uuids.size() + " accounts by uuid");
 	}
 
-	public void setList(@Nonnull Collection<String> accounts) {
+	public void setList(@NotNull Collection<String> accounts) {
 		uuids = accounts.stream()
 				.map(uuidMapper::getUuidForAccount)
 				.filter(Objects::nonNull)

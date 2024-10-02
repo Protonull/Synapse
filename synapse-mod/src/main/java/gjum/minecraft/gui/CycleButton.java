@@ -1,20 +1,20 @@
 package gjum.minecraft.gui;
 
 import java.util.function.Consumer;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.client.gui.GuiButton;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
 public final class CycleButton<T> extends Clickable {
 	private GuiButton button;
-	@Nonnull
+	@NotNull
 	private final Consumer<T> onChange;
 	private T[] options;
 	private int selectionIndex;
 
 	@SafeVarargs
-	public CycleButton(@Nonnull Consumer<T> onChange, @Nullable T selection, T... options) {
+	public CycleButton(@NotNull Consumer<T> onChange, @Nullable T selection, T... options) {
 		this.onChange = onChange;
 		button = new GuiButton(getId(), 0, 0, ""); // text is set below in setOptions()
 		setClickHandler(this::onClicked);

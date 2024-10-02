@@ -5,38 +5,38 @@ import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.PosObservation;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class BastionChat extends ObservationImpl implements PosObservation {
 	@Expose
 	public static final String msgType = "BastionChat";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Pos pos;
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String world;
 
 	public enum State {NONE, FRIENDLY, HOSTILE}
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final State bastionState;
 
 	public enum Source {INFO, BLOCK, BOAT, PEARL}
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Source bastionSource;
 
 	public BastionChat(
-			@Nonnull String witness,
-			@Nonnull Pos pos,
-			@Nonnull String world,
-			@Nonnull State bastionState,
-			@Nonnull Source bastionSource
+			@NotNull String witness,
+			@NotNull Pos pos,
+			@NotNull String world,
+			@NotNull State bastionState,
+			@NotNull Source bastionSource
 	) {
 		super(witness);
 		this.pos = pos;
@@ -67,13 +67,13 @@ public class BastionChat extends ObservationImpl implements PosObservation {
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public Pos getPos() {
 		return pos;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getWorld() {
 		return world;

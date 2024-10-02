@@ -7,9 +7,9 @@ import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
 import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.PlayerState;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.entity.player.EntityPlayer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class PlayerTrackerIngame extends PlayerTracker {
 	public PlayerTrackerIngame(@Nullable String gameAddress) {
@@ -18,7 +18,7 @@ public class PlayerTrackerIngame extends PlayerTracker {
 
 	@Override
 	@Nullable
-	public AccountPosObservation getMostRecentPosObservationForAccount(@Nonnull String account) {
+	public AccountPosObservation getMostRecentPosObservationForAccount(@NotNull String account) {
 		if (getMc().world != null) {
 			final EntityPlayer player = getMc().world.getPlayerEntityByName(account);
 			if (player != null) {

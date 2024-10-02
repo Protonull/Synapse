@@ -23,8 +23,8 @@ import gjum.minecraft.civ.synapse.common.observations.game.WorldJoinChat;
 import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import io.netty.buffer.ByteBuf;
 import java.lang.reflect.Type;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class JsonPacket extends Packet {
 	private static final JsonDeserializer<Object> deserializer = new JsonDeserializer<Object>() {
@@ -68,7 +68,7 @@ public class JsonPacket extends Packet {
 		writeOptionalString(buf, getJsonText());
 	}
 
-	@Nonnull
+	@NotNull
 	public String getJsonText() {
 		if (jsonText == null) jsonText = serializerGson.toJson(payload);
 		return jsonText;

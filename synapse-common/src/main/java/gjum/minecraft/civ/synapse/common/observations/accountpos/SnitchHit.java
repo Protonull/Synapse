@@ -6,27 +6,27 @@ import gjum.minecraft.civ.synapse.common.observations.Action;
 import gjum.minecraft.civ.synapse.common.observations.GroupObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class SnitchHit extends ObservationImpl implements AccountPosObservation, GroupObservation {
 	@Expose
 	public static final String msgType = "SnitchHit";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String account;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Pos pos;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String world;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Action action;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String snitchName;
 	@Expose
 	@Nullable
@@ -36,12 +36,12 @@ public class SnitchHit extends ObservationImpl implements AccountPosObservation,
 	public final String snitchType;
 
 	public SnitchHit(
-			@Nonnull String witness,
-			@Nonnull String account,
-			@Nonnull Pos pos,
-			@Nonnull String world,
-			@Nonnull Action action,
-			@Nonnull String snitchName,
+			@NotNull String witness,
+			@NotNull String account,
+			@NotNull Pos pos,
+			@NotNull String world,
+			@NotNull Action action,
+			@NotNull String snitchName,
 			@Nullable String group,
 			@Nullable String snitchType
 	) {
@@ -80,19 +80,19 @@ public class SnitchHit extends ObservationImpl implements AccountPosObservation,
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return account;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public Pos getPos() {
 		return pos;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getWorld() {
 		return world;

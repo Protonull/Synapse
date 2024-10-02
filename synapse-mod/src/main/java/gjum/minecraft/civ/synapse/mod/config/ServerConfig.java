@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import net.minecraft.util.Tuple;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ServerConfig extends JsonConfig {
 	/**
@@ -32,7 +32,7 @@ public class ServerConfig extends JsonConfig {
 	@Expose
 	private String commsAddress = defaultCommsAddress;
 	@Expose
-	@Nonnull
+	@NotNull
 	private String proxyAddress = defaultProxyAddress;
 
 	/**
@@ -43,13 +43,13 @@ public class ServerConfig extends JsonConfig {
 	private HashMap<String, Standing> factionStandings = new HashMap<>();
 
 	@Expose
-	@Nonnull
+	@NotNull
 	private String defaultFriendlyFaction = "(friendly)";
 	@Expose
-	@Nonnull
+	@NotNull
 	private String defaultHostileFaction = "(hostile)";
 	@Expose
-	@Nonnull
+	@NotNull
 	private String defaultNeutralFaction = "(neutral)";
 
 	private Collection<PersonChangeHandler> changeHandlers = new HashSet<>();
@@ -103,12 +103,12 @@ public class ServerConfig extends JsonConfig {
 		LiteModSynapse.instance.checkModActive();
 	}
 
-	@Nonnull
+	@NotNull
 	public String getProxyAddress() {
 		return !proxyAddress.isEmpty() ? proxyAddress : defaultProxyAddress;
 	}
 
-	public void setProxyAddress(@Nonnull String proxyAddress) {
+	public void setProxyAddress(@NotNull String proxyAddress) {
 		this.proxyAddress = proxyAddress;
 		LiteModSynapse.instance.checkCommsAddress();
 		saveLater(null);
@@ -124,22 +124,22 @@ public class ServerConfig extends JsonConfig {
 		saveLater(null);
 	}
 
-	@Nonnull
+	@NotNull
 	public String getDefaultFriendlyFaction() {
 		return defaultFriendlyFaction;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getDefaultHostileFaction() {
 		return defaultHostileFaction;
 	}
 
-	@Nonnull
+	@NotNull
 	public String getDefaultNeutralFaction() {
 		return defaultNeutralFaction;
 	}
 
-	public void setFactionStanding(@Nonnull String factionName, @Nullable Standing standing) {
+	public void setFactionStanding(@NotNull String factionName, @Nullable Standing standing) {
 		final String factionLower = factionName.toLowerCase();
 
 		if (standing == null || standing == Standing.UNSET) {
@@ -159,7 +159,7 @@ public class ServerConfig extends JsonConfig {
 	 * Returns the faction with the most confident {@link Standing}.
 	 */
 	@Nullable
-	public String getMostRelevantFaction(@Nonnull Collection<String> factions) {
+	public String getMostRelevantFaction(@NotNull Collection<String> factions) {
 		Standing mostConfidentStanding = null;
 		String mostConfidentFaction = null;
 		for (String faction : factions) {
@@ -172,12 +172,12 @@ public class ServerConfig extends JsonConfig {
 		return mostConfidentFaction;
 	}
 
-	@Nonnull
-	public Standing getFactionStanding(@Nonnull String faction) {
+	@NotNull
+	public Standing getFactionStanding(@NotNull String faction) {
 		return nonNullOr(factionStandings.get(faction.toLowerCase()), Standing.UNSET);
 	}
 
-	@Nonnull
+	@NotNull
 	public Standing getStanding(@Nullable Person person) {
 		if (person == null) return Standing.UNSET;
 		final boolean isPersonFocused = person.getAccounts().stream()
@@ -188,8 +188,8 @@ public class ServerConfig extends JsonConfig {
 		return nonNullOr(standing, Standing.UNSET);
 	}
 
-	@Nonnull
-	public Standing getAccountStanding(@Nonnull String account) {
+	@NotNull
+	public Standing getAccountStanding(@NotNull String account) {
 		if (LiteModSynapse.instance.isFocusedAccount(account)) return Standing.FOCUS;
 		final PersonsRegistry personsRegistry = LiteModSynapse.instance.getPersonsRegistry();
 		if (personsRegistry == null) return Standing.UNSET;
@@ -205,7 +205,7 @@ public class ServerConfig extends JsonConfig {
 	 * If NEUTRAL, any FRIENDLY and HOSTILE factions are removed.
 	 * If UNSET, all factions with a configured Standing are removed.
 	 */
-	public void setPersonStanding(@Nonnull Person person, @Nonnull Standing standing) {
+	public void setPersonStanding(@NotNull Person person, @NotNull Standing standing) {
 		if (standing == Standing.FOCUS) {
 			LiteModSynapse.instance.announceFocusedAccounts(person.getAccounts());
 			return;
@@ -224,7 +224,7 @@ public class ServerConfig extends JsonConfig {
 		if (addedFaction != null) person.addFaction(addedFaction);
 	}
 
-	public Tuple<Collection<String>, String> simulateSetPersonStanding(@Nonnull Person person, @Nonnull Standing standing) {
+	public Tuple<Collection<String>, String> simulateSetPersonStanding(@NotNull Person person, @NotNull Standing standing) {
 		Collection<String> removedFactions = new ArrayList<>();
 		String addedFaction = null;
 		if (standing == getStanding(person)) {
@@ -264,7 +264,7 @@ public class ServerConfig extends JsonConfig {
 		return new Tuple<>(removedFactions, addedFaction);
 	}
 
-	public void registerChangeHandler(@Nonnull PersonChangeHandler changeHandler) {
+	public void registerChangeHandler(@NotNull PersonChangeHandler changeHandler) {
 		changeHandlers.add(changeHandler);
 	}
 

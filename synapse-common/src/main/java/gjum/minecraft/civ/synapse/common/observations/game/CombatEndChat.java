@@ -3,14 +3,14 @@ package gjum.minecraft.civ.synapse.common.observations.game;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CombatEndChat extends ObservationImpl {
 	@Expose
 	public static final String msgType = "CombatEndChat";
 
 	public CombatEndChat(
-			@Nonnull String witness
+			@NotNull String witness
 	) {
 		super(witness);
 	}

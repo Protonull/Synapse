@@ -1,7 +1,8 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Something a player can do.
@@ -17,7 +18,7 @@ public enum Action {
 	}
 
 	@Nullable
-	public static Action fromString(@Nonnull String actionStr) {
+	public static Action fromString(@NotNull String actionStr) {
 		switch (actionStr) {
 			case "entered":
 				return ENTERED;

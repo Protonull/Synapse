@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Util {
 	public static final String separators = ",;/";
@@ -37,19 +37,19 @@ public class Util {
 		return 1 - ((float) distAbs) / Math.max(s1.length(), s2.length());
 	}
 
-	@Nonnull
-	public static String getLastWord(@Nonnull String words) {
+	@NotNull
+	public static String getLastWord(@NotNull String words) {
 		int lastWordIdx = getLastWordIndex(words);
 		return words.substring(lastWordIdx);
 	}
 
-	@Nonnull
-	public static String replaceLastWord(@Nonnull String words, @Nonnull String word) {
+	@NotNull
+	public static String replaceLastWord(@NotNull String words, @NotNull String word) {
 		int lastWordIdx = getLastWordIndex(words);
 		return words.substring(0, lastWordIdx) + word;
 	}
 
-	private static int getLastWordIndex(@Nonnull String words) {
+	private static int getLastWordIndex(@NotNull String words) {
 		return 1 + Math.max(Math.max(
 				words.lastIndexOf(' '),
 				words.lastIndexOf(',')), Math.max(
@@ -57,7 +57,7 @@ public class Util {
 				words.lastIndexOf('/')));
 	}
 
-	@Nonnull
+	@NotNull
 	public static List<String> sortedUniqListIgnoreCase(@Nullable Collection<String> strings) {
 		if (strings == null) return Collections.emptyList();
 		return strings.stream()
@@ -66,14 +66,14 @@ public class Util {
 				.collect(Collectors.toList());
 	}
 
-	@Nonnull
+	@NotNull
 	public static Set<String> lowerCaseSet(@Nullable Collection<String> strings) {
 		if (strings == null) return Collections.emptySet();
 		return strings.stream().map(String::toLowerCase).collect(Collectors.toSet());
 	}
 
 	@Nullable
-	public static String containsIgnoreCase(@Nullable String query, @Nonnull Collection<String> candidates) {
+	public static String containsIgnoreCase(@Nullable String query, @NotNull Collection<String> candidates) {
 		if (query == null) return null;
 		query = query.toLowerCase();
 		for (String candidate : candidates) {
@@ -85,7 +85,7 @@ public class Util {
 	}
 
 	@Nullable
-	public static <T extends Enum<T>> T enumOrNull(@Nonnull Class<T> enumType, @Nonnull String name) {
+	public static <T extends Enum<T>> T enumOrNull(@NotNull Class<T> enumType, @NotNull String name) {
 		try {
 			return Enum.valueOf(enumType, name);
 		} catch (IllegalArgumentException e) {
@@ -104,7 +104,7 @@ public class Util {
 
 	private static HashMap<String, Long> lastTimeSeenError = new HashMap<>();
 
-	public static void printErrorRateLimited(@Nonnull Throwable e) {
+	public static void printErrorRateLimited(@NotNull Throwable e) {
 		try {
 			final long now = System.currentTimeMillis();
 			final String key = e.getMessage();
@@ -118,7 +118,7 @@ public class Util {
 
 	public static final String[] headings8 = {"N", "NE", "E", "SE", "S", "SW", "W", "NW"};
 
-	@Nonnull
+	@NotNull
 	public static String headingFromDelta(final int dx, final int dy, final int dz) {
 		final double length = Math.sqrt(dx * dx + dy * dy + dz * dz);
 		if (length < 10) return "near";
@@ -140,7 +140,7 @@ public class Util {
 		return headingFromYawRadians(yawRadians);
 	}
 
-	@Nonnull
+	@NotNull
 	public static String headingFromYawRadians(double yawRadians) {
 		final double yawEights = yawRadians * 8 / (2 * Math.PI);
 		int alignedIndex = 2 - (int) Math.round(yawEights);
@@ -148,7 +148,7 @@ public class Util {
 		return headings8[(alignedIndex + 8) % 8];
 	}
 
-	@Nonnull
+	@NotNull
 	public static String headingFromYawDegrees(double yawDegrees) {
 		final double yawEights = yawDegrees * 8 / 360;
 		int alignedIndex = 4 + (int) Math.round(yawEights);
@@ -156,8 +156,8 @@ public class Util {
 		return headings8[(alignedIndex + 8) % 8];
 	}
 
-	@Nonnull
-	public static String addDashesToUuid(@Nonnull String s) {
+	@NotNull
+	public static String addDashesToUuid(@NotNull String s) {
 		return s.replaceFirst(
 				"(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
 				"$1-$2-$3-$4-$5");
@@ -165,7 +165,7 @@ public class Util {
 
 	private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
-	@Nonnull
+	@NotNull
 	public static String bytesToHex(@Nullable byte[] bytes) {
 		if (bytes == null) return "null";
 		char[] hexChars = new char[bytes.length * 2];
@@ -177,8 +177,8 @@ public class Util {
 		return new String(hexChars);
 	}
 
-	@Nonnull
-	public static String repeatString(@Nonnull String s, @Nonnull String sep, int count) {
+	@NotNull
+	public static String repeatString(@NotNull String s, @NotNull String sep, int count) {
 		if (count == 0) return "";
 		if (count == 1) return s;
 		StringBuilder out = new StringBuilder(s);
@@ -189,7 +189,7 @@ public class Util {
 		return out.toString();
 	}
 
-	@Nonnull
+	@NotNull
 	public static String formatAge(long timestamp) {
 		final long age = System.currentTimeMillis() - timestamp;
 		if (age < 0) {
@@ -208,13 +208,13 @@ public class Util {
 	}
 
 	@Nullable
-	public static <T, U> U mapNonNull(@Nullable T input, @Nonnull Function<T, U> transform) {
+	public static <T, U> U mapNonNull(@Nullable T input, @NotNull Function<T, U> transform) {
 		if (input == null) return null;
 		return transform.apply(input);
 	}
 
-	@Nonnull
-	public static <T> T nonNullOr(@Nullable T input, @Nonnull T defaultVal) {
+	@NotNull
+	public static <T> T nonNullOr(@Nullable T input, @NotNull T defaultVal) {
 		if (input == null) return defaultVal;
 		return input;
 	}

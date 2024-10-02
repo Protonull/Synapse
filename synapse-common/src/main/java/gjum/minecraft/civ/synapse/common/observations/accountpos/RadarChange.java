@@ -5,31 +5,31 @@ import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.Action;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class RadarChange extends ObservationImpl implements AccountPosObservation {
 	@Expose
 	public static final String msgType = "RadarChange";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String account;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Pos pos;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String world;
 	@Expose
-	@Nonnull
+	@NotNull
 	public final Action action;
 
 	public RadarChange(
-			@Nonnull String witness,
-			@Nonnull String account,
-			@Nonnull Pos pos,
-			@Nonnull String world,
-			@Nonnull Action action
+			@NotNull String witness,
+			@NotNull String account,
+			@NotNull Pos pos,
+			@NotNull String world,
+			@NotNull Action action
 	) {
 		super(witness);
 		this.account = account;
@@ -60,19 +60,19 @@ public class RadarChange extends ObservationImpl implements AccountPosObservatio
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return account;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public Pos getPos() {
 		return pos;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getWorld() {
 		return world;

@@ -4,19 +4,19 @@ import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 public class CombatTagChat extends ObservationImpl implements AccountObservation {
 	@Expose
 	public static final String msgType = "CombatTagChat";
 
 	@Expose
-	@Nonnull
+	@NotNull
 	public final String other;
 
 	public CombatTagChat(
-			@Nonnull String witness,
-			@Nonnull String other
+			@NotNull String witness,
+			@NotNull String other
 	) {
 		super(witness);
 		this.other = other;
@@ -41,7 +41,7 @@ public class CombatTagChat extends ObservationImpl implements AccountObservation
 		return msgType;
 	}
 
-	@Nonnull
+	@NotNull
 	@Override
 	public String getAccount() {
 		return other;

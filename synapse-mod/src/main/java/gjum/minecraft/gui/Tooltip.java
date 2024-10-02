@@ -3,7 +3,7 @@ package gjum.minecraft.gui;
 import static net.minecraft.client.gui.Gui.drawRect;
 
 import java.awt.Color;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Renders a tooltip if the mouse is over the child.
@@ -11,17 +11,17 @@ import javax.annotation.Nonnull;
  * Uses child's layout constraints.
  */
 public class Tooltip extends GuiElement {
-	@Nonnull
+	@NotNull
 	private String text;
-	@Nonnull
+	@NotNull
 	private GuiElement child;
 
-	public Tooltip(@Nonnull String text, @Nonnull GuiElement child) {
+	public Tooltip(@NotNull String text, @NotNull GuiElement child) {
 		this.text = text;
 		this.child = child;
 	}
 
-	public Tooltip setText(@Nonnull String text) {
+	public Tooltip setText(@NotNull String text) {
 		this.text = text;
 		return this;
 	}

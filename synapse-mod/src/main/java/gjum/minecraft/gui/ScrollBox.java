@@ -5,7 +5,7 @@ import static com.mumfrey.liteloader.gl.GLClippingPlanes.glEnableClipping;
 import static net.minecraft.client.gui.Gui.drawRect;
 
 import java.awt.Color;
-import javax.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Scrolls the contained child {@link GuiElement}.
@@ -14,11 +14,11 @@ public class ScrollBox extends GuiElement {
 	private static final int scrollBarSize = 7;
 	private static final int scrollBarAreaSize = scrollBarSize + 1;
 
-	@Nonnull
+	@NotNull
 	private GuiElement child;
 	private Vec2 scrollOffset = new Vec2(0, 0);
 
-	public ScrollBox(@Nonnull GuiElement child) {
+	public ScrollBox(@NotNull GuiElement child) {
 		this.child = child;
 		setMinSize(new Vec2(scrollBarAreaSize, 2 + scrollBarSize));
 		setChild(child);
@@ -38,7 +38,7 @@ public class ScrollBox extends GuiElement {
 	}
 
 	@Override
-	public void setPos(@Nonnull Vec2 pos) {
+	public void setPos(@NotNull Vec2 pos) {
 		super.setPos(pos);
 		child.setPos(new Vec2(
 				pos.x + scrollOffset.x,

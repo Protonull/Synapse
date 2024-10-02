@@ -11,8 +11,8 @@ import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import java.lang.reflect.Field;
 import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CombatRadarHelper implements PersonChangeHandler {
 	@Override
@@ -42,7 +42,7 @@ public class CombatRadarHelper implements PersonChangeHandler {
 	}
 
 	@Override
-	public void handleLargeChange(@Nonnull Collection<Person> persons) {
+	public void handleLargeChange(@NotNull Collection<Person> persons) {
 		final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
 		final RadarConfig radarConfig = getRadarConfig();
 		if (radarConfig == null || serverConfig == null) return;
@@ -56,7 +56,7 @@ public class CombatRadarHelper implements PersonChangeHandler {
 		}
 	}
 
-	@Nonnull
+	@NotNull
 	private static PlayerType getPlayerTypeFromStanding(Standing standing) {
 		switch (standing) {
 			case FRIENDLY:
