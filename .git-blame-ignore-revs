@@ -3,3 +3,6 @@
 
 # Renamed common to synapse-common
 e43c333b6e84e63bbb3945e407731f33b406094e
+
+# Rename litemod to synapse-mod
+c5ae34e17a0de6fcad26fd4a248e641f80b24ed6
