@@ -18,10 +18,10 @@ repositories {
 	jcenter()
 }
 
-project.evaluationDependsOn(':common')
+project.evaluationDependsOn(':synapse-common')
 
 dependencies {
-	implementation project(':common')
+	implementation project(':synapse-common')
 	implementation 'com.google.code.findbugs:jsr305:3.0.2' // for @Nonnull and @Nullable
 	implementation 'com.google.code.gson:gson:2.8.6'
 	implementation "com.squareup.okhttp3:okhttp:4.2.1"
@@ -30,7 +30,7 @@ dependencies {
 }
 
 jar {
-	from(project(':common').sourceSets.main.output) {
+	from(project(':synapse-common').sourceSets.main.output) {
 		include '**'
 	}
 	manifest {

@@ -47,10 +47,10 @@ archivesBaseName = 'Synapse'
 
 project.version = project.version
 
-project.evaluationDependsOn(':common')
+project.evaluationDependsOn(':synapse-common')
 
 dependencies {
-	implementation project(':common')
+	implementation project(':synapse-common')
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.5.2'
 }
 
@@ -95,7 +95,7 @@ litemod {
 }
 
 jar {
-	from(project(':common').sourceSets.main.output) {
+	from(project(':synapse-common').sourceSets.main.output) {
 		include '**'
 	}
 	// litemod task generates litemod.json dynamically
