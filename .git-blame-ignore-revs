@@ -6,3 +6,6 @@ e43c333b6e84e63bbb3945e407731f33b406094e
 
 # Rename litemod to synapse-mod
 c5ae34e17a0de6fcad26fd4a248e641f80b24ed6
+
+# Relocate mod code to mod subpackage
+a83d27e09bf2b93b6c9177e639236500a6a1fa21
