@@ -1,0 +1,7 @@
+{
+    "key.synapse.print-position": "Pre-fill position into chat",
+    "key.synapse.settings": "Open settings GUI",
+    "key.synapse.enabled": "Toggle enabled/disabled",
+    "key.synapse.crosshair-focus": "Set focus on player under crosshair",
+    "category.synapse": "${mod_name}"
+}

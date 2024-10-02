@@ -81,6 +81,9 @@ tasks {
                 "fabric_api_version" to project.extra["fabric_api_version"]
             )
         }
+        filesMatching("assets/synapse/lang/en_us.json") {
+            expand("mod_name" to project.extra["mod_name"])
+        }
     }
     register<Delete>("cleanJar") {
         delete(fileTree("./dist") {

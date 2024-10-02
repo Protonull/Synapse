@@ -86,11 +86,6 @@ import org.lwjgl.opengl.GL11;
 public class LiteModSynapse implements Tickable, Configurable, PostRenderListener, HUDRenderListener, JoinGameListener, PacketHandler {
 	public static final String MOD_NAME = "Synapse";
 
-	public static KeyBinding chatPosKeybind = new KeyBinding("Pre-fill position into chat", Keyboard.KEY_NONE, MOD_NAME);
-	public static KeyBinding openGuiKeybind = new KeyBinding("Open settings GUI", Keyboard.KEY_NONE, MOD_NAME);
-	public static KeyBinding toggleEnabledKeybind = new KeyBinding("Toggle enabled/disabled", Keyboard.KEY_NONE, MOD_NAME);
-	public static KeyBinding setFocusEntityKeybind = new KeyBinding("Set focus on player under crosshair", Keyboard.KEY_NONE, MOD_NAME);
-
 	public static final String waypointCommandJourneyMap = "/jm wpedit [name:%s, x:%s, y:%s, z:%s]";
 	public static final String waypointCommandVoxelMap = "/newWaypoint name:%s, x:%s, y:%s, z:%s";
 
@@ -151,11 +146,6 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 
 	@Override
 	public void init(File configPath) {
-		LiteLoader.getInput().registerKeyBinding(chatPosKeybind);
-		LiteLoader.getInput().registerKeyBinding(openGuiKeybind);
-		LiteLoader.getInput().registerKeyBinding(setFocusEntityKeybind);
-		LiteLoader.getInput().registerKeyBinding(toggleEnabledKeybind);
-
 		LiteLoader.getInstance().writeConfig(this);
 
 		// move old config if it exists
@@ -361,20 +351,20 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 			final boolean noGuiOpen = minecraft.currentScreen == null;
 			final boolean handleKeyPresses = inGame && noGuiOpen;
 			if (handleKeyPresses) {
-				if (toggleEnabledKeybind.isPressed()) {
+				if (SynapseMod.TOGGLE_ENABLED_KEYBIND.isDown()) {
 					config.setModEnabled(!config.isModEnabled());
 				}
-				if (setFocusEntityKeybind.isPressed()) {
+				if (SynapseMod.SET_FOCUS_ENTITY_KEYBIND.isDown()) {
 					focusEntityUnderCrosshair();
 				}
-				if (chatPosKeybind.isPressed()) {
+				if (SynapseMod.CHAT_POS_KEYBIND.isDown()) {
 					final Pos pos = getEntityPosition(getMc().player);
 					getMc().displayGuiScreen(new GuiChat(String.format(
 							"[x:%s y:%s z:%s name:%s]",
 							pos.x, pos.y, pos.z,
 							getSelfAccount())));
 				}
-				if (openGuiKeybind.isPressed()) {
+				if (SynapseMod.OPEN_GUI_KEYBIND.isDown()) {
 					openLastGui();
 				}
 			}

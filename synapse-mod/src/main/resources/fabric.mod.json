@@ -17,7 +17,9 @@
     "icon": "assets/synapse/icon.png",
     "environment": "client",
     "entrypoints": {
-
+        "client": [
+            "gjum.minecraft.civ.synapse.mod.SynapseMod::bootstrap"
+        ]
     },
     "depends": {
         "java": ">=21",
