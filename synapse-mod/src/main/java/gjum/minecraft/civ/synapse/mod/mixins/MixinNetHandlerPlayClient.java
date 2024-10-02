@@ -1,4 +1,4 @@
-package gjum.minecraft.civ.synapse.mod.mixin;
+package gjum.minecraft.civ.synapse.mod.mixins;
 
 import com.mumfrey.liteloader.common.ducks.IChatPacket;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;

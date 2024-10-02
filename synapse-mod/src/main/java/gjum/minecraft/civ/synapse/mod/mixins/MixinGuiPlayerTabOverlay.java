@@ -1,4 +1,4 @@
-package gjum.minecraft.civ.synapse.mod.mixin;
+package gjum.minecraft.civ.synapse.mod.mixins;
 
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import net.minecraft.client.gui.GuiPlayerTabOverlay;
