@@ -1,20 +1,30 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import gjum.minecraft.civ.synapse.common.Pos;
-import gjum.minecraft.civ.synapse.common.observations.*;
-import gjum.minecraft.civ.synapse.common.observations.accountpos.*;
-import gjum.minecraft.civ.synapse.common.observations.game.*;
-import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
-import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
+import static gjum.minecraft.civ.synapse.common.Util.headingFromDelta;
+import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
+import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
 import static gjum.minecraft.civ.synapse.mod.McUtil.getEntityPosition;
 import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
-import static gjum.minecraft.civ.synapse.common.Util.*;
+
+import gjum.minecraft.civ.synapse.common.Pos;
+import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
+import gjum.minecraft.civ.synapse.common.observations.Observation;
+import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
+import gjum.minecraft.civ.synapse.common.observations.PosObservation;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.PearlTransport;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.RadarChange;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.SnitchHit;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
+import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
+import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
+import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
+import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
+import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.text.*;
+import net.minecraft.util.text.event.ClickEvent;
 
 public class ObservationFormatter {
 	public static ITextComponent formatObservationStatic(String fmtStr, Observation observation) {

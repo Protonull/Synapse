@@ -5,12 +5,14 @@ import com.mamiyaotaru.voxelmap.interfaces.IWaypointManager;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import com.mumfrey.liteloader.core.LiteLoader;
 import gjum.minecraft.civ.synapse.mod.FloatColor;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class VoxelMapHelper {
 	@Nullable

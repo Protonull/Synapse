@@ -1,9 +1,9 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
+import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+
 import journeymap.client.api.*;
 import journeymap.client.api.event.ClientEvent;
-
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 
 @ClientPlugin
 public class JourneyMapPlugin implements IClientPlugin {

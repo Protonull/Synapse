@@ -2,11 +2,10 @@ package gjum.minecraft.civ.synapse.server;
 
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.channel.Channel;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.UUID;
 import java.util.logging.Level;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class ClientSession {
 	public final long connectTime = System.currentTimeMillis();

@@ -1,5 +1,8 @@
 package gjum.minecraft.civ.synapse.server;
 
+import static gjum.minecraft.civ.synapse.common.Util.intOrNull;
+import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
@@ -8,29 +11,43 @@ import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
 import gjum.minecraft.civ.synapse.common.packet.client.CWhitelist;
-import gjum.minecraft.civ.synapse.server.connection.*;
+import gjum.minecraft.civ.synapse.server.connection.ClientPacketDecoder;
+import gjum.minecraft.civ.synapse.server.connection.ServerHandler;
+import gjum.minecraft.civ.synapse.server.connection.ServerPacketEncoder;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.crypto.*;
 import java.io.File;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
-
-import static gjum.minecraft.civ.synapse.common.Util.intOrNull;
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Server {
 	private final long connectRateLimitWindow = nonNullOr(intOrNull(System.getenv("CONNECT_RATE_LIMIT_WINDOW")), 60 * 1000); // 1min

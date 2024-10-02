@@ -3,9 +3,8 @@ package gjum.minecraft.civ.synapse.common.observations.game;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
-
-import javax.annotation.Nonnull;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public class BrandNew extends ObservationImpl implements AccountObservation {
 	@Expose

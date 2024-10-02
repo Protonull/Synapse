@@ -1,21 +1,24 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
+import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
+import static gjum.minecraft.civ.synapse.mod.integrations.MultiWaypoint.namePattern;
+
 import com.mamiyaotaru.voxelmap.util.Waypoint;
-import gjum.minecraft.civ.synapse.mod.*;
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
+import gjum.minecraft.civ.synapse.mod.FloatColor;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonChangeHandler;
+import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
-
-import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
-import static gjum.minecraft.civ.synapse.mod.integrations.MultiWaypoint.namePattern;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.text.TextFormatting;
 
 public class WaypointManager implements PersonChangeHandler {
 	private static VmImage accountImageVm = VmImage.person;

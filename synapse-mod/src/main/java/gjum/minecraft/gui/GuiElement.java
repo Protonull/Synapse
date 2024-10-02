@@ -1,9 +1,8 @@
 package gjum.minecraft.gui;
 
-import net.minecraft.client.Minecraft;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
 
 public abstract class GuiElement implements GuiParent {
 	public static Minecraft mc = Minecraft.getMinecraft();

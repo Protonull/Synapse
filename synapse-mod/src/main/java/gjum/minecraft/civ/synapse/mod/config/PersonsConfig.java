@@ -1,13 +1,19 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
-import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
-import gjum.minecraft.civ.synapse.mod.*;
-
-import javax.annotation.Nullable;
-import java.util.*;
-
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
+import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+
+import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonChangeHandler;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import javax.annotation.Nullable;
 
 public class PersonsConfig extends JsonConfig implements PersonChangeHandler {
 	private PersonsRegistry personsRegistry = new PersonsRegistry();

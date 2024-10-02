@@ -1,16 +1,17 @@
 package gjum.minecraft.civ.synapse.common.packet;
 
+import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+
 import gjum.minecraft.civ.synapse.common.Pos;
 import io.netty.buffer.ByteBuf;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
-import java.security.*;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public abstract class Packet {
 	public abstract void write(ByteBuf buf);

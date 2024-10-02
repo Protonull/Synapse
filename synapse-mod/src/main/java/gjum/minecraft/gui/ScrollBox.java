@@ -1,11 +1,11 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nonnull;
-import java.awt.Color;
-
 import static com.mumfrey.liteloader.gl.GLClippingPlanes.glDisableClipping;
 import static com.mumfrey.liteloader.gl.GLClippingPlanes.glEnableClipping;
 import static net.minecraft.client.gui.Gui.drawRect;
+
+import java.awt.Color;
+import javax.annotation.Nonnull;
 
 /**
  * Scrolls the contained child {@link GuiElement}.

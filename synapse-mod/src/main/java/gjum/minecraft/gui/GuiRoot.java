@@ -1,12 +1,11 @@
 package gjum.minecraft.gui;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class GuiRoot extends GuiScreen implements GuiParent {
 	public final GuiScreen parentScreen;

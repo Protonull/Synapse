@@ -1,12 +1,11 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
+
+import java.awt.Color;
+import javax.annotation.Nonnull;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import java.awt.Color;
-
-import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
 
 public class FloatColor {
 	public float r;

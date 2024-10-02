@@ -1,8 +1,7 @@
 package gjum.minecraft.gui;
 
-import net.minecraft.util.text.TextFormatting;
-
 import java.awt.Color;
+import net.minecraft.util.text.TextFormatting;
 
 public class Label extends Clickable {
 	public enum Alignment {ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT}

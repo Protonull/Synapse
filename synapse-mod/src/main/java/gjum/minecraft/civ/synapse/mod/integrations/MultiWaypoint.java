@@ -1,21 +1,20 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
+import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
+import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
+import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxelMapActive;
+
+import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.mod.FloatColor;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
-import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
-import net.minecraft.entity.player.EntityPlayer;
-
-import javax.annotation.Nonnull;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
-
-import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
-import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
-import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
-import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxelMapActive;
+import javax.annotation.Nonnull;
+import net.minecraft.entity.player.EntityPlayer;
 
 class MultiWaypoint {
 	static final Pattern namePattern = Pattern.compile("^(?:Pearl of )?(?<account>[_A-Za-z0-9]{2,16})(?: ?[*+(]\\S+\\)?)? (?<age>now|[0-9]+s|(?:[0-9]+h ?)?[0-9]+min|[0-9]+/[0-9]+ [0-9]+:[0-9]+|old)$");

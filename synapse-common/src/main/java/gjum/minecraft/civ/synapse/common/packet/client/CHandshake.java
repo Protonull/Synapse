@@ -2,7 +2,6 @@ package gjum.minecraft.civ.synapse.common.packet.client;
 
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.buffer.ByteBuf;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

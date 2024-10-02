@@ -1,9 +1,9 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nonnull;
-import java.awt.Color;
-
 import static net.minecraft.client.gui.Gui.drawRect;
+
+import java.awt.Color;
+import javax.annotation.Nonnull;
 
 /**
  * Renders a tooltip if the mouse is over the child.

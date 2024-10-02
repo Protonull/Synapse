@@ -1,9 +1,9 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-
 import static gjum.minecraft.gui.Layoutable1D.computeLayout;
+
+import java.util.ArrayList;
+import javax.annotation.Nullable;
 
 public class FlexListLayout extends GuiElement {
 	private final Vec2.Direction direction;

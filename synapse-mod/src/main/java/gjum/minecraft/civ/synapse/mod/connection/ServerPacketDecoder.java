@@ -7,7 +7,6 @@ import gjum.minecraft.civ.synapse.common.packet.server.SEncryptionRequest;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
-
 import java.util.List;
 
 public class ServerPacketDecoder extends ReplayingDecoder<Void> {

@@ -1,21 +1,24 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
+import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
+import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+
 import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
-import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.common.LinesConfig;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import java.io.File;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.util.Tuple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.io.File;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
-import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
 
 /**
  * Stores the exact spelling of all account names that were seen on the tab list.

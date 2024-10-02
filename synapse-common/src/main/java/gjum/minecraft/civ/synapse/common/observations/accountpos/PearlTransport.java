@@ -3,7 +3,6 @@ package gjum.minecraft.civ.synapse.common.observations.accountpos;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
-
 import javax.annotation.Nonnull;
 
 public class PearlTransport extends PearlLocation implements AccountPosObservation {

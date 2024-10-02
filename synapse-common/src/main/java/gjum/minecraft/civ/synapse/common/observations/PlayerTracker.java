@@ -2,10 +2,14 @@ package gjum.minecraft.civ.synapse.common.observations;
 
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
-
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
 
 public class PlayerTracker {
 	public static final int closeObservationDistance = 33; // ground distance between diagonally adjacent snitches, rounded up

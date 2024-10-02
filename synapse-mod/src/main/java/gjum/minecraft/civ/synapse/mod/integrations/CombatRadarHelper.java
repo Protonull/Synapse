@@ -4,13 +4,15 @@ import com.aleksey.combatradar.LiteModCombatRadar;
 import com.aleksey.combatradar.config.PlayerType;
 import com.aleksey.combatradar.config.RadarConfig;
 import com.mumfrey.liteloader.core.LiteLoader;
-import gjum.minecraft.civ.synapse.mod.*;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonChangeHandler;
+import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class CombatRadarHelper implements PersonChangeHandler {
 	@Override

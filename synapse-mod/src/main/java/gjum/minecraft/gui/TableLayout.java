@@ -1,10 +1,10 @@
 package gjum.minecraft.gui;
 
-import javax.annotation.Nullable;
+import static gjum.minecraft.gui.Layoutable1D.computeLayout;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static gjum.minecraft.gui.Layoutable1D.computeLayout;
+import javax.annotation.Nullable;
 
 public class TableLayout extends GuiElement {
 	private final List<List<GuiElement>> rows = new ArrayList<>();

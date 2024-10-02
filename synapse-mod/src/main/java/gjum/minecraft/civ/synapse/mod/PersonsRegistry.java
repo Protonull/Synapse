@@ -1,15 +1,20 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import net.minecraft.util.Tuple;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 import static gjum.minecraft.civ.synapse.common.Util.identityFloatFunction;
 import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.Tuple;
 
 public class PersonsRegistry {
 	/**

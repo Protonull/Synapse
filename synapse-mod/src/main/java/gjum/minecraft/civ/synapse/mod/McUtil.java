@@ -1,6 +1,13 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import static gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin.jmApi;
+import static net.minecraft.potion.PotionUtils.getPotionFromItem;
+
 import gjum.minecraft.civ.synapse.common.Pos;
+import java.util.ArrayList;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -12,14 +19,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.*;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-
-import static gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin.jmApi;
-import static net.minecraft.potion.PotionUtils.getPotionFromItem;
 
 public class McUtil {
 	public static Minecraft getMc() {

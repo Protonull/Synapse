@@ -1,9 +1,12 @@
 package gjum.minecraft.civ.synapse.server;
 
-import javax.annotation.Nullable;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 
 /**
  * file format: ACCOUNT\tUUID\n... or ACCOUNT\n...

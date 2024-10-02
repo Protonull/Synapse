@@ -2,10 +2,9 @@ package gjum.minecraft.civ.synapse.common.observations.accountpos;
 
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.Pos;
-
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 /**
  * Info about self, and about friendlies received via relay.

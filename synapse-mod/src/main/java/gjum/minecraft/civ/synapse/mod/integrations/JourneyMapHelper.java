@@ -1,13 +1,12 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
-import journeymap.client.api.display.Waypoint;
-
-import javax.annotation.Nonnull;
-
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 import static gjum.minecraft.civ.synapse.mod.McUtil.blockPos;
 import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
 import static gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin.jmApi;
+
+import javax.annotation.Nonnull;
+import journeymap.client.api.display.Waypoint;
 
 public class JourneyMapHelper {
 	public static void createWaypoint(@Nonnull MultiWaypoint waypoint) {

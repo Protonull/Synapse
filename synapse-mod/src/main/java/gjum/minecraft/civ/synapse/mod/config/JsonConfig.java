@@ -1,14 +1,22 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
-import com.google.gson.*;
-import com.google.gson.stream.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapter;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
+import com.google.gson.stream.JsonWriter;
 import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
-import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nullable;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ConcurrentModificationException;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
+import net.minecraft.util.text.TextFormatting;
 
 public abstract class JsonConfig {
 	private static final TypeAdapter<TextFormatting> typeAdapterTextFormatting = new TypeAdapter<TextFormatting>() {

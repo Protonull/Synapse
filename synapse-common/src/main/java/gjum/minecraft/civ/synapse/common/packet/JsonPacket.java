@@ -1,14 +1,30 @@
 package gjum.minecraft.civ.synapse.common.packet;
 
-import com.google.gson.*;
-import gjum.minecraft.civ.synapse.common.observations.accountpos.*;
-import gjum.minecraft.civ.synapse.common.observations.game.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.PearlTransport;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.PlayerState;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.PlayerStateExtra;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.RadarChange;
+import gjum.minecraft.civ.synapse.common.observations.accountpos.SnitchHit;
+import gjum.minecraft.civ.synapse.common.observations.game.BastionChat;
+import gjum.minecraft.civ.synapse.common.observations.game.BrandNew;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatEndChat;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
+import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
+import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
+import gjum.minecraft.civ.synapse.common.observations.game.PearledChat;
+import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
+import gjum.minecraft.civ.synapse.common.observations.game.WorldJoinChat;
 import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import io.netty.buffer.ByteBuf;
-
+import java.lang.reflect.Type;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.lang.reflect.Type;
 
 public class JsonPacket extends Packet {
 	private static final JsonDeserializer<Object> deserializer = new JsonDeserializer<Object>() {

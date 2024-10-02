@@ -1,15 +1,14 @@
 package gjum.minecraft.gui;
 
+import java.awt.Color;
+import java.util.function.Predicate;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.init.SoundEvents;
 import org.lwjgl.input.Keyboard;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.Color;
-import java.util.function.Predicate;
 
 public class TextField extends Clickable {
 	private static final int mutedColor = 0x555566;

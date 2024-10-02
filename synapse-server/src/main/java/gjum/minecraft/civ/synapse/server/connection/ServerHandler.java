@@ -1,11 +1,16 @@
 package gjum.minecraft.civ.synapse.server.connection;
 
+import static gjum.minecraft.civ.synapse.common.Util.addDashesToUuid;
+import static gjum.minecraft.civ.synapse.common.Util.bytesToHex;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import gjum.minecraft.civ.synapse.common.encryption.DecryptStage;
 import gjum.minecraft.civ.synapse.common.encryption.EncryptStage;
 import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
-import gjum.minecraft.civ.synapse.common.packet.client.*;
+import gjum.minecraft.civ.synapse.common.packet.client.CEncryptionResponse;
+import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
+import gjum.minecraft.civ.synapse.common.packet.client.CWhitelist;
 import gjum.minecraft.civ.synapse.common.packet.server.SEncryptionRequest;
 import gjum.minecraft.civ.synapse.server.ClientSession;
 import gjum.minecraft.civ.synapse.server.Server;
@@ -13,20 +18,23 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.DecoderException;
 import io.netty.util.internal.ThreadLocalRandom;
-import okhttp3.*;
-
-import javax.annotation.Nullable;
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.logging.Level;
-
-import static gjum.minecraft.civ.synapse.common.Util.addDashesToUuid;
-import static gjum.minecraft.civ.synapse.common.Util.bytesToHex;
+import javax.annotation.Nullable;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ServerHandler extends ChannelInboundHandlerAdapter {
 	private static final Gson gson = new Gson();

@@ -1,26 +1,31 @@
 package gjum.minecraft.civ.synapse.mod.connection;
 
-import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+
 import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.proxy.Socks5ProxyHandler;
-import net.minecraft.client.Minecraft;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
-
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Client {
 	final Logger logger = LogManager.getLogger(this);

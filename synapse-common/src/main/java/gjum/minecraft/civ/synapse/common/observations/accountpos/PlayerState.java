@@ -3,9 +3,8 @@ package gjum.minecraft.civ.synapse.common.observations.accountpos;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
-
-import javax.annotation.Nonnull;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 /**
  * Info about players on radar.

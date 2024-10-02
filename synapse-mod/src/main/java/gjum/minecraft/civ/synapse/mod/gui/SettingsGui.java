@@ -1,25 +1,40 @@
 package gjum.minecraft.civ.synapse.mod.gui;
 
-import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
-import gjum.minecraft.civ.synapse.mod.Standing;
-import gjum.minecraft.civ.synapse.mod.config.*;
-import gjum.minecraft.gui.*;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.Color;
-import java.text.DecimalFormat;
-import java.util.function.*;
-
-import static gjum.minecraft.civ.synapse.mod.gui.MainGui.*;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.makeTitleRow;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.spacer;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.stretchX;
 import static gjum.minecraft.gui.Label.Alignment.ALIGN_LEFT;
 import static gjum.minecraft.gui.Vec2.Direction.COLUMN;
 import static gjum.minecraft.gui.Vec2.Direction.ROW;
 import static java.lang.Float.parseFloat;
+
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Standing;
+import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
+import gjum.minecraft.civ.synapse.mod.config.PersonsConfig;
+import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
+import gjum.minecraft.gui.Button;
+import gjum.minecraft.gui.CycleButton;
+import gjum.minecraft.gui.FlexListLayout;
+import gjum.minecraft.gui.GuiElement;
+import gjum.minecraft.gui.GuiRoot;
+import gjum.minecraft.gui.Label;
+import gjum.minecraft.gui.ScrollBox;
+import gjum.minecraft.gui.Spacer;
+import gjum.minecraft.gui.TextField;
+import gjum.minecraft.gui.Tooltip;
+import gjum.minecraft.gui.Vec2;
+import java.awt.Color;
+import java.text.DecimalFormat;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.text.TextFormatting;
 
 public class SettingsGui extends GuiRoot {
 	private static final String[] toggleOptions = new String[]{"§aON", "§1off"};

@@ -1,11 +1,10 @@
 package gjum.minecraft.gui;
 
-import net.minecraft.client.gui.GuiButton;
-import org.lwjgl.input.Keyboard;
-
+import java.util.function.Consumer;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.function.Consumer;
+import net.minecraft.client.gui.GuiButton;
+import org.lwjgl.input.Keyboard;
 
 public final class CycleButton<T> extends Clickable {
 	private GuiButton button;

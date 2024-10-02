@@ -1,11 +1,10 @@
 package gjum.minecraft.civ.synapse.server;
 
 import gjum.minecraft.civ.synapse.common.LinesConfig;
+import java.io.File;
+import javax.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Nullable;
-import java.io.File;
 
 public abstract class LoggingLinesConfig extends LinesConfig {
 	protected static final Logger logger = LoggerFactory.getLogger("Config");

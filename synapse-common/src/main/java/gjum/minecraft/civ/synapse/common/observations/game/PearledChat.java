@@ -3,10 +3,9 @@ package gjum.minecraft.civ.synapse.common.observations.game;
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
-
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class PearledChat extends ObservationImpl implements AccountObservation {
 	@Expose

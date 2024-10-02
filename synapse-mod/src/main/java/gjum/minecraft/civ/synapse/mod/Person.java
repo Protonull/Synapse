@@ -1,12 +1,12 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import static gjum.minecraft.civ.synapse.common.Util.containsIgnoreCase;
 import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class Person implements Cloneable {
 	@Nonnull

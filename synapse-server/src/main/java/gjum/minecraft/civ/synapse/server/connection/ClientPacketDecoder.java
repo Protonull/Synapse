@@ -7,7 +7,6 @@ import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
-
 import java.io.IOException;
 import java.util.List;
 

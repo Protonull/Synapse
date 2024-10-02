@@ -2,9 +2,12 @@ package gjum.minecraft.civ.synapse.common.packet.client;
 
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.buffer.ByteBuf;
-
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 import javax.annotation.Nonnull;
-import java.util.*;
 
 public class CWhitelist extends Packet {
 	@Nonnull

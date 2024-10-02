@@ -1,5 +1,7 @@
 package gjum.minecraft.civ.synapse.mod.connection;
 
+import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+
 import com.mojang.authlib.exceptions.AuthenticationException;
 import gjum.minecraft.civ.synapse.common.encryption.DecryptStage;
 import gjum.minecraft.civ.synapse.common.encryption.EncryptStage;
@@ -8,18 +10,22 @@ import gjum.minecraft.civ.synapse.common.packet.client.CEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.packet.server.SEncryptionRequest;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.Session;
-
-import javax.crypto.*;
-import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.ConnectException;
-import java.security.*;
+import java.security.InvalidKeyException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Session;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
 	private Client client;

@@ -1,7 +1,6 @@
 package gjum.minecraft.civ.synapse.common.observations;
 
 import com.google.gson.annotations.Expose;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 

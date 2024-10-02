@@ -1,16 +1,24 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
-import com.google.gson.annotations.Expose;
-import gjum.minecraft.civ.synapse.mod.*;
-import net.minecraft.util.Tuple;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
 import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
+
+import com.google.gson.annotations.Expose;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonChangeHandler;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
+import gjum.minecraft.civ.synapse.mod.Standing;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.Tuple;
 
 public class ServerConfig extends JsonConfig {
 	/**

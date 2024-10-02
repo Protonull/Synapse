@@ -1,22 +1,26 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
+import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
+import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxelMapActive;
+
 import com.google.gson.annotations.Expose;
-import gjum.minecraft.civ.synapse.mod.*;
 import gjum.minecraft.civ.synapse.common.observations.Observation;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.RadarChange;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.SnitchHit;
-import gjum.minecraft.civ.synapse.common.observations.game.*;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
+import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
+import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
+import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
 import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Standing;
+import gjum.minecraft.civ.synapse.mod.Visibility;
+import java.util.HashMap;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.HashMap;
-
-import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
-import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxelMapActive;
 
 public class GlobalConfig extends JsonConfig {
 	@Expose

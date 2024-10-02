@@ -1,8 +1,8 @@
 package gjum.minecraft.civ.synapse.server.connection;
 
+import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import gjum.minecraft.civ.synapse.common.packet.server.SEncryptionRequest;
-import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;

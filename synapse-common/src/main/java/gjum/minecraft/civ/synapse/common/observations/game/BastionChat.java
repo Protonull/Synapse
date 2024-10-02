@@ -4,9 +4,8 @@ import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.PosObservation;
-
-import javax.annotation.Nonnull;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 
 public class BastionChat extends ObservationImpl implements PosObservation {
 	@Expose

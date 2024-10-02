@@ -1,28 +1,34 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import static gjum.minecraft.civ.synapse.common.Util.getMatchGroupOrNull;
+import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
+import static gjum.minecraft.civ.synapse.common.observations.game.PearlLocation.isPlayerHolder;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getLookedAtBlockPos;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
+import static java.util.regex.Pattern.CASE_INSENSITIVE;
+import static java.util.regex.Pattern.MULTILINE;
+
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.Action;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.PearlTransport;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.SnitchHit;
-import gjum.minecraft.civ.synapse.common.observations.game.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import gjum.minecraft.civ.synapse.common.observations.game.BastionChat;
+import gjum.minecraft.civ.synapse.common.observations.game.BrandNew;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatEndChat;
+import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
+import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
+import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
+import gjum.minecraft.civ.synapse.common.observations.game.PearledChat;
+import gjum.minecraft.civ.synapse.common.observations.game.WorldJoinChat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static gjum.minecraft.civ.synapse.mod.McUtil.getLookedAtBlockPos;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
-import static gjum.minecraft.civ.synapse.common.Util.getMatchGroupOrNull;
-import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
-import static gjum.minecraft.civ.synapse.common.observations.game.PearlLocation.isPlayerHolder;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.MULTILINE;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.event.HoverEvent;
 
 public class ChatHandler {
 	public static final Pattern pearlLocationPattern = Pattern.compile(

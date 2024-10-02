@@ -1,13 +1,19 @@
 package gjum.minecraft.civ.synapse.common;
 
-import javax.annotation.Nullable;
-import java.io.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
+import javax.annotation.Nullable;
 
 public abstract class LinesConfig {
 	public static long saveLaterTimeout = 300;

@@ -1,16 +1,15 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import static gjum.minecraft.civ.synapse.common.Util.dateFmtHms;
+
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.Observation;
+import java.util.ArrayList;
+import java.util.Date;
+import javax.annotation.Nonnull;
 import net.minecraft.util.text.*;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Date;
-
-import static gjum.minecraft.civ.synapse.common.Util.dateFmtHms;
 
 /**
  * syntax:

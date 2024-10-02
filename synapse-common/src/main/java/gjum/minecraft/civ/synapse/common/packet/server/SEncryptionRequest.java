@@ -2,10 +2,9 @@ package gjum.minecraft.civ.synapse.common.packet.server;
 
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import io.netty.buffer.ByteBuf;
-
+import java.security.PublicKey;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.security.PublicKey;
 
 public class SEncryptionRequest extends Packet {
 	@Nonnull

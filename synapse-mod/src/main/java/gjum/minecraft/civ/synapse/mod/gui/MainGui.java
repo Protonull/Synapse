@@ -1,28 +1,53 @@
 package gjum.minecraft.civ.synapse.mod.gui;
 
-import gjum.minecraft.civ.synapse.mod.*;
-import gjum.minecraft.civ.synapse.common.Pos;
-import gjum.minecraft.gui.*;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.awt.Color;
-import java.util.*;
-import java.util.concurrent.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
+import static gjum.minecraft.civ.synapse.common.Util.accountNameRegex;
+import static gjum.minecraft.civ.synapse.common.Util.accountsSepRegex;
+import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.getStandingColor;
-import static gjum.minecraft.civ.synapse.mod.McUtil.*;
-import static gjum.minecraft.civ.synapse.common.Util.*;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getDisplayNameFromTablist;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getEntityPosition;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
 import static gjum.minecraft.gui.Label.Alignment.ALIGN_CENTER;
 import static gjum.minecraft.gui.Label.Alignment.ALIGN_LEFT;
 import static gjum.minecraft.gui.Vec2.Direction.COLUMN;
 import static gjum.minecraft.gui.Vec2.Direction.ROW;
+
+import gjum.minecraft.civ.synapse.common.Pos;
+import gjum.minecraft.civ.synapse.mod.FloatColor;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
+import gjum.minecraft.civ.synapse.mod.Standing;
+import gjum.minecraft.gui.Button;
+import gjum.minecraft.gui.CycleButton;
+import gjum.minecraft.gui.FlexListLayout;
+import gjum.minecraft.gui.GuiElement;
+import gjum.minecraft.gui.GuiRoot;
+import gjum.minecraft.gui.Label;
+import gjum.minecraft.gui.ScrollBox;
+import gjum.minecraft.gui.Spacer;
+import gjum.minecraft.gui.TableLayout;
+import gjum.minecraft.gui.TextField;
+import gjum.minecraft.gui.Tooltip;
+import gjum.minecraft.gui.Vec2;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.text.TextFormatting;
 
 public class MainGui extends GuiRoot {
 	static final Vec2 spacer = new Vec2(7, 7);

@@ -1,23 +1,46 @@
 package gjum.minecraft.civ.synapse.mod.gui;
 
-import gjum.minecraft.civ.synapse.mod.*;
-import gjum.minecraft.gui.*;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.text.TextFormatting;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.stream.Stream;
-
+import static gjum.minecraft.civ.synapse.common.Util.accountsSepRegex;
+import static gjum.minecraft.civ.synapse.common.Util.factionsSepRegex;
+import static gjum.minecraft.civ.synapse.common.Util.getLastWord;
+import static gjum.minecraft.civ.synapse.common.Util.lowerCaseSet;
+import static gjum.minecraft.civ.synapse.common.Util.replaceLastWord;
+import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.getStandingColor;
-import static gjum.minecraft.civ.synapse.common.Util.*;
-import static gjum.minecraft.civ.synapse.mod.gui.MainGui.*;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.makeTitleRow;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.spacer;
+import static gjum.minecraft.civ.synapse.mod.gui.MainGui.stretchX;
 import static gjum.minecraft.gui.Label.Alignment.ALIGN_LEFT;
 import static gjum.minecraft.gui.Label.Alignment.ALIGN_RIGHT;
 import static gjum.minecraft.gui.Vec2.Direction.COLUMN;
 import static gjum.minecraft.gui.Vec2.Direction.ROW;
+
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
+import gjum.minecraft.civ.synapse.mod.Standing;
+import gjum.minecraft.gui.Button;
+import gjum.minecraft.gui.CycleButton;
+import gjum.minecraft.gui.FlexListLayout;
+import gjum.minecraft.gui.GuiElement;
+import gjum.minecraft.gui.GuiRoot;
+import gjum.minecraft.gui.Label;
+import gjum.minecraft.gui.ScrollBox;
+import gjum.minecraft.gui.Spacer;
+import gjum.minecraft.gui.TextField;
+import gjum.minecraft.gui.Tooltip;
+import gjum.minecraft.gui.Vec2;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.Tuple;
+import net.minecraft.util.text.TextFormatting;
 
 public class PersonGui extends GuiRoot {
 	private static final int maxAccountSuggestions = 5;

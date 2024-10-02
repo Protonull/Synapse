@@ -1,14 +1,15 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import static gjum.minecraft.civ.synapse.mod.McUtil.getEntityPosition;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
+import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
+
 import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.PlayerState;
-import net.minecraft.entity.player.EntityPlayer;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import static gjum.minecraft.civ.synapse.mod.McUtil.*;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class PlayerTrackerIngame extends PlayerTracker {
 	public PlayerTrackerIngame(@Nullable String gameAddress) {

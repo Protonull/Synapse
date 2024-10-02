@@ -1,11 +1,15 @@
 package gjum.minecraft.civ.synapse.mod.gui;
 
-import gjum.minecraft.civ.synapse.mod.*;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.Person;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
+import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.*;
 
 class PersonOrAccount {
 	// each Nonnull is enforced with check in constructor
