@@ -9,3 +9,6 @@ c5ae34e17a0de6fcad26fd4a248e641f80b24ed6
 
 # Relocate mod code to mod subpackage
 a83d27e09bf2b93b6c9177e639236500a6a1fa21
+
+# Rename mixin package to mixins
+9c323f163b3891bed0f93f720da86faa37d2fb9a
