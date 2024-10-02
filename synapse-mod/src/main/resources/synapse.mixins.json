@@ -1,9 +1,9 @@
 {
     "required": true,
-    "minVersion": "0.5.3",
+    "minVersion": "0.8",
     "package": "gjum.minecraft.civ.synapse.mixin",
-    "refmap": "mixins.refmap.json",
-    "mixins": [
+    "compatibilityLevel": "JAVA_21",
+    "client": [
         "MixinEntityPlayer",
         "MixinNetHandlerPlayClient",
         "MixinGuiPlayerTabOverlay"

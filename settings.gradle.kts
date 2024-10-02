@@ -5,6 +5,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        maven(url = "https://maven.fabricmc.net/")
         gradlePluginPortal()
         mavenCentral()
     }
@@ -14,3 +15,4 @@ rootProject.name = "Synapse"
 
 include(":synapse-common")
 include(":synapse-server")
+include(":synapse-mod")
