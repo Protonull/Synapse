@@ -46,6 +46,10 @@ dependencies {
 
     //modLocalRuntime("maven.modrinth:journeymap:${project.extra["journeymap_version"]}") // Uncomment if you want to test
     modCompileOnly("info.journeymap:journeymap-api-fabric:${project.extra["journeymap_api_version"]}")
+
+    // This is literally only here to make Minecraft SHUT UP about non-signed messages while testing.
+    // https://modrinth.com/mod/no-chat-reports/version/Fabric-1.21-v2.8.0
+    modLocalRuntime("maven.modrinth:no-chat-reports:riMhCAII")
 }
 
 repositories {
