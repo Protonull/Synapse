@@ -6,7 +6,6 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -15,34 +14,38 @@ import java.util.ConcurrentModificationException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class JsonConfig {
-    private static final TypeAdapter<TextFormatting> typeAdapterTextFormatting = new TypeAdapter<TextFormatting>() {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final TypeAdapter<ChatFormatting> typeAdapterTextFormatting = new TypeAdapter<>() {
         @Override
-        public void write(JsonWriter out, TextFormatting value) throws IOException {
+        public void write(JsonWriter out, ChatFormatting value) throws IOException {
             if (value == null) {
                 out.nullValue();
                 return;
             }
-            out.value(value.getFriendlyName());
+            out.value(value.getName());
         }
 
         @Override
-        public TextFormatting read(JsonReader in) throws IOException {
+        public ChatFormatting read(JsonReader in) throws IOException {
             if (in.peek() == JsonToken.NULL) {
                 in.nextNull();
                 return null;
             }
-            return TextFormatting.getValueByName(in.nextString());
+            return ChatFormatting.getByName(in.nextString());
         }
     };
 
     private static final Gson gson = new GsonBuilder()
             .excludeFieldsWithoutExposeAnnotation()
             .setPrettyPrinting()
-            .registerTypeAdapter(TextFormatting.class, typeAdapterTextFormatting)
+            .registerTypeAdapter(ChatFormatting.class, typeAdapterTextFormatting)
             .create();
 
     public static long saveLaterTimeout = 300;
@@ -59,7 +62,7 @@ public abstract class JsonConfig {
 
     public void load(@Nullable File file) {
         saveLocation = file != null ? file : saveLocation;
-        System.out.println("Loading " + this.getClass().getSimpleName() + " from " + saveLocation);
+        logger.info("Loading {} from {}", getClass().getSimpleName(), saveLocation);
         try {
             try (FileReader reader = new FileReader(saveLocation)) {
                 isLoading = true;
@@ -85,7 +88,7 @@ public abstract class JsonConfig {
         saveLocation = file != null ? file : saveLocation;
         if (isLoading) throw new ConcurrentModificationException("Cannot save while loading");
         try {
-            LiteLoaderLogger.info("Saving " + this.getClass().getSimpleName() + " to " + saveLocation);
+            logger.info("Saving {} to {}", getClass().getSimpleName(), saveLocation);
             lastSaveTime = System.currentTimeMillis();
             String json = gson.toJson(getData());
             FileOutputStream fos = new FileOutputStream(saveLocation);

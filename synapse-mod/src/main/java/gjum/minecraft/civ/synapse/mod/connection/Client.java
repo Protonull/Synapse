@@ -17,8 +17,6 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.proxy.Socks5ProxyHandler;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
@@ -94,7 +92,8 @@ public class Client {
                             }
                             final String proxy_host = proxy_split[0];
                             final int proxy_port = Integer.parseInt(proxy_split[1]);
-                            p.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy_host, proxy_port)));
+                            // TODO: Uncomment
+                            //p.addFirst(new Socks5ProxyHandler(new InetSocketAddress(proxy_host, proxy_port)));
                             logger.info("[" + MOD_NAME + "] Using Socks5 proxy: " + proxy_address);
                         }
                     }
@@ -114,9 +113,10 @@ public class Client {
                 logger.info("[" + MOD_NAME + "] Connected to " + address);
 
                 channel.writeAndFlush(new CHandshake(
-                        LiteModSynapse.instance.getVersion(),
-                        Minecraft.getMinecraft().getSession().getUsername(),
-                        LiteModSynapse.instance.gameAddress));
+                    LiteModSynapse.instance.getVersion(),
+                    Minecraft.getInstance().getUser().getName(),
+                    LiteModSynapse.instance.gameAddress
+                ));
 
                 LiteModSynapse.instance.handleCommsConnected();
             }

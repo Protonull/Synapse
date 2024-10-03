@@ -1,44 +1,32 @@
 package gjum.minecraft.civ.synapse.mod.mixins;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import net.minecraft.client.multiplayer.ClientPacketListener;
+import net.minecraft.client.multiplayer.chat.ChatListener;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
-    @Inject(
+    @Redirect(
         method = "handleSystemChat",
         at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/util/thread/BlockableEventLoop;)V",
-            shift = At.Shift.AFTER
-        ),
-        cancellable = true
+            target = "Lnet/minecraft/client/multiplayer/chat/ChatListener;handleSystemMessage(Lnet/minecraft/network/chat/Component;Z)V"
+        )
     )
     protected void onHandleChat(
-        final @NotNull ClientboundSystemChatPacket packet,
-        final @NotNull CallbackInfo ci,
-        final @Local(argsOnly = true) LocalRef<ClientboundSystemChatPacket> packetRef
+        final @NotNull ChatListener instance,
+        final @NotNull Component message,
+        final boolean isOverlay
     ) {
-        final Component replacement = LiteModSynapse.instance.handleChat(packet.content());
+        final Component replacement = LiteModSynapse.instance.handleChat(message);
         if (replacement == null) {
-            ci.cancel(); // drop packet
-            return;
+            return; // drop packet
         }
-        if (replacement.equals(packet.content())) {
-            return; // no change
-        }
-        packetRef.set(new ClientboundSystemChatPacket(
-            replacement,
-            packet.overlay()
-        ));
+        instance.handleSystemMessage(replacement, isOverlay);
     }
 }

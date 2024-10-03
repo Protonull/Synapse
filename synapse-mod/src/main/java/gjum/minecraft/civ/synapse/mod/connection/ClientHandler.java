@@ -25,7 +25,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Session;
+import net.minecraft.client.User;
 
 public class ClientHandler extends ChannelInboundHandlerAdapter {
     private Client client;
@@ -63,8 +63,8 @@ public class ClientHandler extends ChannelInboundHandlerAdapter {
             throw new RuntimeException(e);
         }
 
-        Session session = Minecraft.getMinecraft().getSession();
-        Minecraft.getMinecraft().getSessionService().joinServer(session.getProfile(), session.getToken(), sha);
+        User session = Minecraft.getInstance().getUser();
+        Minecraft.getInstance().getMinecraftSessionService().joinServer(session.getProfileId(), session.getAccessToken(), sha);
 
         try {
             ctx.channel().writeAndFlush(new CEncryptionResponse(

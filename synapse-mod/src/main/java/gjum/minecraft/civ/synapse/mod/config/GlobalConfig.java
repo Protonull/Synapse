@@ -16,9 +16,9 @@ import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.Visibility;
 import java.util.HashMap;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.scores.PlayerTeam;
+import net.minecraft.world.scores.Scoreboard;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,9 +155,9 @@ public class GlobalConfig extends JsonConfig {
     private HashMap<Standing, String> standingSounds = new HashMap<>();
 
     @Expose
-    private HashMap<Standing, TextFormatting> standingColors = new HashMap<>();
+    private HashMap<Standing, ChatFormatting> standingColors = new HashMap<>();
 
-    private HashMap<Standing, ScorePlayerTeam> standingTeams = new HashMap<>();
+    private HashMap<Standing, PlayerTeam> standingTeams = new HashMap<>();
 
     private static final Scoreboard scoreboard = new Scoreboard();
 
@@ -186,15 +186,15 @@ public class GlobalConfig extends JsonConfig {
     protected void fillDefaults() {
         //
         if (getStandingColor(Standing.FOCUS) == null)
-            setStandingColor(Standing.FOCUS, TextFormatting.YELLOW);
+            setStandingColor(Standing.FOCUS, ChatFormatting.YELLOW);
         if (getStandingColor(Standing.FRIENDLY) == null)
-            setStandingColor(Standing.FRIENDLY, TextFormatting.GREEN);
+            setStandingColor(Standing.FRIENDLY, ChatFormatting.GREEN);
         if (getStandingColor(Standing.HOSTILE) == null)
-            setStandingColor(Standing.HOSTILE, TextFormatting.RED);
+            setStandingColor(Standing.HOSTILE, ChatFormatting.RED);
         if (getStandingColor(Standing.NEUTRAL) == null)
-            setStandingColor(Standing.NEUTRAL, TextFormatting.DARK_PURPLE);
+            setStandingColor(Standing.NEUTRAL, ChatFormatting.DARK_PURPLE);
         if (getStandingColor(Standing.UNSET) == null)
-            setStandingColor(Standing.UNSET, TextFormatting.WHITE);
+            setStandingColor(Standing.UNSET, ChatFormatting.WHITE);
 
         if (getStandingSound(Standing.FRIENDLY) == null)
             setStandingSound(Standing.FRIENDLY, "block.note.chime");
@@ -499,16 +499,17 @@ public class GlobalConfig extends JsonConfig {
         saveLater(null);
     }
 
-    public TextFormatting getStandingColor(@Nullable Standing standing) {
+    public ChatFormatting getStandingColor(@Nullable Standing standing) {
         if (standing == null) standing = Standing.UNSET;
         return standingColors.get(standing);
     }
 
-    public void setStandingColor(Standing standing, @NotNull TextFormatting color) {
+    public void setStandingColor(Standing standing, @NotNull ChatFormatting color) {
         standingColors.put(standing, color);
         saveLater(null);
-        final ScorePlayerTeam team = standingTeams.computeIfAbsent(standing, s -> new ScorePlayerTeam(scoreboard, standing.name()));
-        team.setPrefix(color.toString());
+        final PlayerTeam team = standingTeams.computeIfAbsent(standing, s -> new PlayerTeam(scoreboard, standing.name()));
+        // TODO: Uncomment
+        //team.setPrefix(color.toString());
         team.setColor(color);
     }
 
@@ -556,7 +557,7 @@ public class GlobalConfig extends JsonConfig {
         return visibilityFarUnsetStanding;
     }
 
-    public ScorePlayerTeam getStandingTeam(Standing standing) {
+    public PlayerTeam getStandingTeam(Standing standing) {
         return standingTeams.get(standing);
     }
 

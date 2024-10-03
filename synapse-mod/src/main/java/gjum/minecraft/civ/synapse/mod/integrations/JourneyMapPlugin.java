@@ -1,11 +1,10 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
+import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import journeymap.api.v2.client.IClientAPI;
+import journeymap.api.v2.client.IClientPlugin;
 
-import journeymap.client.api.*;
-import journeymap.client.api.event.ClientEvent;
-
-@ClientPlugin
+@journeymap.api.v2.client.JourneyMapPlugin(apiVersion = "2.0.0-SNAPSHOT")
 public class JourneyMapPlugin implements IClientPlugin {
     public static IClientAPI jmApi;
 
@@ -16,10 +15,6 @@ public class JourneyMapPlugin implements IClientPlugin {
 
     @Override
     public String getModId() {
-        return MOD_NAME;
-    }
-
-    @Override
-    public void onEvent(ClientEvent clientEvent) {
+        return LiteModSynapse.MOD_NAME;
     }
 }

@@ -3,7 +3,6 @@ package gjum.minecraft.civ.synapse.mod.config;
 import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 
-import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import gjum.minecraft.civ.synapse.mod.Person;
 import gjum.minecraft.civ.synapse.mod.PersonChangeHandler;
 import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
@@ -57,7 +56,7 @@ public class PersonsConfig extends JsonConfig implements PersonChangeHandler {
             persons.add(new Person(getPersonsRegistry(), personName, factions, accounts, null));
         }
         personsRegistry.loadPersons(persons);
-        LiteLoaderLogger.info("[" + MOD_NAME + "] Loaded " + persons.size() + " persons");
+        logger.info("[" + MOD_NAME + "] Loaded {} persons", persons.size());
     }
 
     @Override

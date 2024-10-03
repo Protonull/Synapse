@@ -19,18 +19,18 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${project.extra["fabric_api_version"]}")
 
     project(":synapse-common").also {
-        compileOnly(it)
+        implementation(it)
         include(it)
     }
 
     // This is quite literally just for LegacyComponentSerializer. If some other way is found to convert chat components
     // into fully legacy-formatted strings, please do let me know.
     "net.kyori:adventure-platform-fabric:5.14.1".also {
-        modCompileOnly(it)
+        modImplementation(it)
         include(it)
     }
     "net.kyori:adventure-text-serializer-legacy:4.17.0".also {
-        compileOnly(it)
+        implementation(it)
         include(it)
     }
 

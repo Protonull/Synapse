@@ -3,6 +3,7 @@ package gjum.minecraft.civ.synapse.mod.integrations;
 import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
 import static gjum.minecraft.civ.synapse.mod.integrations.MultiWaypoint.namePattern;
 
+import com.mamiyaotaru.voxelmap.VoxelConstants;
 import com.mamiyaotaru.voxelmap.util.Waypoint;
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
@@ -16,7 +17,7 @@ import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.regex.Matcher;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +62,7 @@ public class WaypointManager implements PersonChangeHandler {
         if (serverConfig != null) {
             standing = serverConfig.getAccountStanding(accountName);
         }
-        final TextFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
+        final ChatFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
         return FloatColor.fromChatFormatting(standingColor);
     }
 
@@ -72,7 +73,7 @@ public class WaypointManager implements PersonChangeHandler {
         if (serverConfig != null) {
             standing = serverConfig.getStanding(person);
         }
-        final TextFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
+        final ChatFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
         return FloatColor.fromChatFormatting(standingColor);
     }
 
@@ -93,9 +94,7 @@ public class WaypointManager implements PersonChangeHandler {
                 needSynchronizeVoxelmapWaypoints = false;
                 return;
             }
-            if (VoxelMapHelper.getWaypointManager() != null
-                    && VoxelMapHelper.getWaypointManager().getWaypoints().isEmpty()
-            ) {
+            if (VoxelConstants.getVoxelMapInstance().getWaypointManager().getWaypoints().isEmpty()) {
                 if (System.currentTimeMillis() > 10000 + LiteModSynapse.instance.getLoginTime()) {
                     // no waypoints loaded after 10s, there probably are no waypoints for the server
                     needSynchronizeVoxelmapWaypoints = false;

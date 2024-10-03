@@ -137,7 +137,7 @@ public class McUtil {
         if (potion == null) {
             return false;
         }
-        return potion.is(Potions.HEALING);
+        return potion.is(Potions.HEALING) || potion.is(Potions.STRONG_HEALING);
     }
 
     public static @Nullable BlockPos getLookedAtBlockPos(

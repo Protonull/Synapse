@@ -6,4 +6,8 @@ public final class IntegrationHelpers {
     public static boolean isCombatRadarPresent() {
         return FabricLoader.getInstance().isModLoaded("combatradar");
     }
+
+    public static boolean isVoxelMapPresent() {
+        return FabricLoader.getInstance().isModLoaded("voxelmap");
+    }
 }

@@ -6,9 +6,11 @@ import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.Observation;
 import java.util.ArrayList;
 import java.util.Date;
-import net.minecraft.util.text.*;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -130,12 +132,12 @@ public class FormatPattern {
     }
 
     @NotNull
-    public ITextComponent format(Observation observation) {
+    public MutableComponent format(Observation observation) {
         return root.format(observation);
     }
 
     private interface PatternNode {
-        ITextComponent format(Observation observation);
+        MutableComponent format(Observation observation);
     }
 
     private static class RawNode implements PatternNode {
@@ -148,8 +150,8 @@ public class FormatPattern {
         }
 
         @Override
-        public ITextComponent format(Observation observation) {
-            return new TextComponentString(s);
+        public MutableComponent format(Observation observation) {
+            return Component.literal(s);
         }
     }
 
@@ -172,10 +174,10 @@ public class FormatPattern {
         }
 
         @Override
-        public ITextComponent format(Observation observation) {
-            final ITextComponent result = new TextComponentString("");
+        public MutableComponent format(Observation observation) {
+            final MutableComponent result = Component.empty();
             for (PatternNode node : nodes) {
-                result.appendSibling(node.format(observation));
+                result.append(node.format(observation));
             }
             return result;
         }
@@ -197,58 +199,57 @@ public class FormatPattern {
         }
 
         @Override
-        public ITextComponent format(Observation observation) {
+        public MutableComponent format(Observation observation) {
             switch (mid) {
                 case "hover": {
-                    final ITextComponent preFmtd = pre.format(observation);
-                    preFmtd.getStyle().setHoverEvent(new HoverEvent(
+                    final MutableComponent preFmtd = pre.format(observation);
+                    preFmtd.getStyle().withHoverEvent(new HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
                             post.format(observation)
                     ));
                     return preFmtd;
                 }
                 case "suggest": {
-                    final ITextComponent preFmtd = pre.format(observation);
-                    preFmtd.getStyle().setClickEvent(new ClickEvent(
+                    final MutableComponent preFmtd = pre.format(observation);
+                    preFmtd.getStyle().withClickEvent(new ClickEvent(
                             ClickEvent.Action.SUGGEST_COMMAND,
-                            post.format(observation).getUnformattedText()
+                            post.format(observation).getString()
                     ));
                     return preFmtd;
                 }
                 case "time": {
                     final String timeStr = dateFmtHms.format(new Date(observation.getTime()));
                     return pre.format(observation)
-                            .appendSibling(new TextComponentString(timeStr))
-                            .appendSibling(post.format(observation));
+                            .append(Component.literal(timeStr))
+                            .append(post.format(observation));
                 }
                 case "account":
                 case "player":
                 case "name": {
                     // XXX prisoner, holder -> show main account optionally
-                    if (observation instanceof AccountObservation) {
+                    if (observation instanceof final AccountObservation accountObservation) {
                         // XXX color
                         return pre.format(observation)
-                                .appendSibling(new TextComponentString(
-                                        ((AccountObservation) observation).getAccount()))
-                                .appendSibling(post.format(observation));
+                                .append(Component.literal(accountObservation.getAccount()))
+                                .append(post.format(observation));
                     }
                 }
 
                 // XXX other cases
             }
 
-            final TextFormatting color = TextFormatting.getValueByName(mid);
+            final ChatFormatting color = ChatFormatting.getByName(mid);
             if (color != null) {
-                final ITextComponent postFmtd = post.format(observation);
-                postFmtd.getStyle().setColor(color);
+                final MutableComponent postFmtd = post.format(observation);
+                postFmtd.withStyle(color);
                 return postFmtd;
             }
 
-            return new TextComponentString("{")
-                    .appendSibling(pre.format(observation))
-                    .appendSibling(new TextComponentString("$" + mid + "$"))
-                    .appendSibling(post.format(observation))
-                    .appendSibling(new TextComponentString("}"));
+            return Component.literal("{")
+                    .append(pre.format(observation))
+                    .append(Component.literal("$" + mid + "$"))
+                    .append(post.format(observation))
+                    .append(Component.literal("}"));
         }
     }
 }

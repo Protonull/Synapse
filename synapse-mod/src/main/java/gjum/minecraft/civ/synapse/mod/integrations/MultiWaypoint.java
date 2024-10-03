@@ -9,11 +9,12 @@ import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxel
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.mod.FloatColor;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.McUtil;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.Pattern;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.client.player.AbstractClientPlayer;
 import org.jetbrains.annotations.NotNull;
 
 class MultiWaypoint {
@@ -43,7 +44,7 @@ class MultiWaypoint {
     String suffix = "";
 
     com.mamiyaotaru.voxelmap.util.Waypoint vmWaypoint;
-    journeymap.client.api.display.Waypoint jmWaypoint;
+	journeymap.api.v2.common.waypoint.Waypoint jmWaypoint;
 
     // periodically update age in waypoint names (fresh ones every 10s, older ones every minute)
     long nextUpdate = 0;
@@ -62,7 +63,7 @@ class MultiWaypoint {
     }
 
     public String getName() {
-        final String accountAndPersonNames = LiteModSynapse.instance.getDisplayNameForAccount(account).getUnformattedText();
+        final String accountAndPersonNames = LiteModSynapse.instance.getDisplayNameForAccount(account).getString();
         return prefix + accountAndPersonNames + " y:" + pos.y + suffix;
     }
 
@@ -135,7 +136,7 @@ class MultiWaypoint {
         hiddenForAge = lastPosUpdate < System.currentTimeMillis() - LiteModSynapse.instance.config.getMaxWaypointAge();
 
         // hide redundant waypoints whose account entity is in radar distance
-        final EntityPlayer player = getMc().world.getPlayerEntityByName(account);
+        final AbstractClientPlayer player = McUtil.findFirstPlayerByName(getMc().level, account);
         hiddenForNearby = player != null;
 
         final boolean modActive = LiteModSynapse.instance.isModActive();

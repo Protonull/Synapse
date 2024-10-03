@@ -213,8 +213,8 @@ public class ServerConfig extends JsonConfig {
         if (standing == getStanding(person)) return;
 
         final Tuple<Collection<String>, String> changes = simulateSetPersonStanding(person, standing);
-        final Collection<String> removedFactions = changes.getFirst();
-        final String addedFaction = changes.getSecond();
+        final Collection<String> removedFactions = changes.getA();
+        final String addedFaction = changes.getB();
 
         for (String faction : removedFactions) {
             person.removeFaction(faction);

@@ -189,7 +189,7 @@ public class ObservationFormatter {
                 final int dx = myPos.x - observation.getPos().x;
                 final int dz = myPos.z - observation.getPos().z;
                 final int distance = (int) Math.sqrt(dx * dx + dz * dz);
-                return Component
+                yield Component
                     .literal(distance < 1000 ? distance + "m" : (distance / 1000) + "." + ((distance % 1000) / 100) + "km")
                     .withStyle(LiteModSynapse.instance.getDistanceColor(distance));
             }
@@ -242,11 +242,12 @@ public class ObservationFormatter {
     ) {
         final ServerConfig serverConfig = LiteModSynapse.instance.serverConfig;
         if (serverConfig != null) {
-            return component.withStyle(
-                LiteModSynapse.instance.config.getStandingColor(
-                    serverConfig.getAccountStanding(account)
-                )
-            );
+            // TODO: Uncomment
+//            return component.withStyle(
+//                LiteModSynapse.instance.config.getStandingColor(
+//                    serverConfig.getAccountStanding(account)
+//                )
+//            );
         }
         return component;
     }

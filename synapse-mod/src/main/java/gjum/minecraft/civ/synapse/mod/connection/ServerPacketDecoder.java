@@ -1,6 +1,5 @@
 package gjum.minecraft.civ.synapse.mod.connection;
 
-import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import gjum.minecraft.civ.synapse.common.packet.Packet;
 import gjum.minecraft.civ.synapse.common.packet.server.SEncryptionRequest;
@@ -8,8 +7,12 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ReplayingDecoder;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerPacketDecoder extends ReplayingDecoder<Void> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerPacketDecoder.class);
+
     public static Packet constructServerPacket(int id, ByteBuf buf) {
         switch (id) {
             case 0:
@@ -26,8 +29,7 @@ public class ServerPacketDecoder extends ReplayingDecoder<Void> {
         byte id = buf.readByte();
         final Packet packet = constructServerPacket(id, buf);
         if (packet == null) {
-            LiteLoaderLogger.severe("[ServerPacketDecoder] " +
-                    "Unknown server packet id " + id + " 0x" + Integer.toHexString(id));
+            LOGGER.error("[ServerPacketDecoder] Unknown server packet id {} 0x{}", id, Integer.toHexString(id));
             return;
         }
         out.add(packet);

@@ -3,7 +3,6 @@ package gjum.minecraft.civ.synapse.mod.config;
 import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 
-import com.mumfrey.liteloader.util.log.LiteLoaderLogger;
 import gjum.minecraft.civ.synapse.common.LinesConfig;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import java.io.File;
@@ -37,7 +36,7 @@ public class AccountsConfig extends LinesConfig {
     protected void setLines(Stream<String> newAccounts) {
         accounts = newAccounts.distinct().collect(Collectors.toMap(
                 String::toLowerCase, a -> a, (a1, a2) -> a1));
-        LiteLoaderLogger.info("[" + MOD_NAME + "] Loaded " + accounts.size() + " accounts");
+        logger.info("[" + MOD_NAME + "] Loaded " + accounts.size() + " accounts");
     }
 
     @Override
@@ -60,7 +59,7 @@ public class AccountsConfig extends LinesConfig {
     public List<String> findSimilar(String query, int limit) {
         return findSimilarScoredStream(query)
                 .limit(limit)
-                .map(Tuple::getFirst)
+                .map(Tuple::getA)
                 .collect(Collectors.toList());
     }
 
@@ -78,7 +77,7 @@ public class AccountsConfig extends LinesConfig {
                 .map(a -> new Tuple<>(a, scoreSimilarity(
                         queryLower, a.toLowerCase())))
                 .sorted(Comparator.comparing(
-                        Tuple<String, Float>::getSecond
+                        Tuple<String, Float>::getB
                 ).reversed()); // highest scores first
     }
 
