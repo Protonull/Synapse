@@ -5,7 +5,3 @@ plugins {
 dependencies {
 	compileOnly(libs.bundles.common)
 }
-
-repositories {
-	mavenCentral()
-}

@@ -1,14 +1,7 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import static gjum.minecraft.civ.synapse.common.Util.getMatchGroupOrNull;
-import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
-import static gjum.minecraft.civ.synapse.common.observations.game.PearlLocation.isPlayerHolder;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getLookedAtBlockPos;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
-import static java.util.regex.Pattern.CASE_INSENSITIVE;
-import static java.util.regex.Pattern.MULTILINE;
-
 import gjum.minecraft.civ.synapse.common.Pos;
+import gjum.minecraft.civ.synapse.common.Util;
 import gjum.minecraft.civ.synapse.common.observations.Action;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.PearlTransport;
@@ -21,79 +14,115 @@ import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.PearledChat;
 import gjum.minecraft.civ.synapse.common.observations.game.WorldJoinChat;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ChatHandler {
-	public static final Pattern pearlLocationPattern = Pattern.compile(
-			"^(?:Your pearl is )?held by (?<holder>[ _a-zA-Z0-9]+) at (?:(?<world>\\S+) )?(?<x>-?\\d+)[, ]+(?<y>-?\\d+)[, ]+(?<z>-?\\d+).*", CASE_INSENSITIVE);
-	public static final Pattern pearlBroadcastPattern = Pattern.compile(
-			"^(?:\\[(?<group>[^\\]]+)\\] ?)?The pearl of (?<prisoner>\\S+) is held by (?<holder>[ _a-zA-Z0-9]+) \\[x?:?(?<x>-?\\d+)[, ]+y?:?(?<y>-?\\d+)[, ]+z?:?(?<z>-?\\d+) (?<world>[\\S]+)\\]", CASE_INSENSITIVE);
+	public static final Pattern PEARL_LOCATION_PATTERN = Pattern.compile(
+		"^(?:Your pearl is )?held by (?<holder>[ _a-zA-Z0-9]+) at (?:(?<world>\\S+) )?(?<x>-?\\d+)[, ]+(?<y>-?\\d+)[, ]+(?<z>-?\\d+).*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern PEARL_BROADCAST_PATTERN = Pattern.compile(
+        "^(?:\\[(?<group>[^]]+)] ?)?The pearl of (?<prisoner>\\S+) is held by (?<holder>[ _a-zA-Z0-9]+) \\[x?:?(?<x>-?\\d+)[, ]+y?:?(?<y>-?\\d+)[, ]+z?:?(?<z>-?\\d+) (?<world>[\\S]+)]",
+		Pattern.CASE_INSENSITIVE
+	);
 
-	public static final Pattern snitchHitPattern = Pattern.compile(
-			"^\\s*\\*\\s+([A-Za-z0-9_]{2,16})\\s+(entered|logged out|logged in) (?:in |to )?snitch at (\\S*) \\[(?:(\\S+)\\s)?\\s*(-?\\d+)\\s+(-?\\d+)\\s+(-?\\d+)\\].*", CASE_INSENSITIVE);
-	public static final Pattern snitchHoverPattern = Pattern.compile(
-			"^(?i)\\s*Location:\\s*\\[(.+?) (-?\\d+) (-?\\d+) (-?\\d+)\\]\\s*Group:\\s*(\\S+?)\\s*Type:\\s*(Entry|Logging)\\s*(?:(?:Hours to cull|Cull):\\s*(\\d+\\.\\d+)h?)?\\s*(?:Previous name:\\s*(\\S+?))?\\s*(?:Name:\\s*(\\S+?))?\\s*", CASE_INSENSITIVE + MULTILINE);
+	public static final Pattern SNITCH_HIT_PATTERN = Pattern.compile(
+        "^\\s*\\*\\s+([A-Za-z0-9_]{2,16})\\s+(entered|logged out|logged in) (?:in |to )?snitch at (\\S*) \\[(?:(\\S+)\\s)?\\s*(-?\\d+)\\s+(-?\\d+)\\s+(-?\\d+)].*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern SNITCH_HOVER_PATTERN = Pattern.compile(
+        "^(?i)\\s*Location:\\s*\\[(.+?) (-?\\d+) (-?\\d+) (-?\\d+)]\\s*Group:\\s*(\\S+?)\\s*Type:\\s*(Entry|Logging)\\s*(?:(?:Hours to cull|Cull):\\s*(\\d+\\.\\d+)h?)?\\s*(?:Previous name:\\s*(\\S+?))?\\s*(?:Name:\\s*(\\S+?))?\\s*",
+		Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
+	);
 
-	public static final Pattern bastionInfoNonePattern = Pattern.compile(
-			"^No Bastion Block.*", CASE_INSENSITIVE);
-	public static final Pattern bastionInfoFriendlyPattern = Pattern.compile(
-			"^A Bastion Block prevents others from building.*", CASE_INSENSITIVE);
-	public static final Pattern bastionInfoHostilePattern = Pattern.compile(
-			"^A Bastion Block prevents you building.*", CASE_INSENSITIVE);
-	public static final Pattern bastionRemovedBlockPattern = Pattern.compile(
-			"^Bastion removed block.*", CASE_INSENSITIVE);
-	public static final Pattern bastionRemovedBoatPattern = Pattern.compile(
-			"^Boat blocked by bastion.*", CASE_INSENSITIVE);
+	public static final Pattern BASTION_INFO_NONE_PATTERN = Pattern.compile(
+		"^No Bastion Block.*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern BASTION_INFO_FRIENDLY_PATTERN = Pattern.compile(
+		"^A Bastion Block prevents others from building.*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern BASTION_INFO_HOSTILE_PATTERN = Pattern.compile(
+		"^A Bastion Block prevents you building.*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern BASTION_REMOVED_BLOCK_PATTERN = Pattern.compile(
+		"^Bastion removed block.*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern BASTION_REMOVED_BOAT_PATTERN = Pattern.compile(
+		"^Boat blocked by bastion.*",
+		Pattern.CASE_INSENSITIVE
+	);
 
-	public static final Pattern combatTagPattern = Pattern.compile(
-			"^You have engaged in(?:to)? combat with (?<account>[A-Za-z0-9_]{2,16}).*", CASE_INSENSITIVE);
-	public static final Pattern combatEndPattern = Pattern.compile(
-			"^You are no longer (?:in )?combat(?: ?tagged)?.*", CASE_INSENSITIVE);
-	public static final Pattern pearledPattern = Pattern.compile(
-			"^You've been bound to an? (?<pearlType>exile|prison)? *pearl by (?<account>[A-Za-z0-9_]{2,16}).*", CASE_INSENSITIVE);
+	public static final Pattern COMBAT_TAG_PATTERN = Pattern.compile(
+		"^You have engaged in(?:to)? combat with (?<account>[A-Za-z0-9_]{2,16}).*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern COMBAT_END_PATTERN = Pattern.compile(
+		"^You are no longer (?:in )?combat(?: ?tagged)?.*",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern PEARLED_PATTERN = Pattern.compile(
+		"^You've been bound to an? (?<pearlType>exile|prison)? *pearl by (?<account>[A-Za-z0-9_]{2,16}).*",
+		Pattern.CASE_INSENSITIVE
+	);
 
-	public static final Pattern groupChatPattern = Pattern.compile(
-			"^\\[(?<group>\\S+)\\] (?<account>[A-Za-z0-9_]{2,16}): (?<message>.*)$", CASE_INSENSITIVE);
-	public static final Pattern localChatPattern = Pattern.compile(
-			"^<(?<account>[A-Za-z0-9_]{2,16})>:? +(?<message>.*)$", CASE_INSENSITIVE);
-	public static final Pattern privateChatPattern = Pattern.compile(
-			"^(?<direction>From|To) (?<account>[A-Za-z0-9_]{2,16}): (?<message>.*)$", CASE_INSENSITIVE);
-	public static final Pattern brandNewPattern = Pattern.compile(
-			"^(?<account>[A-Za-z0-9_]{2,16}) is brand new.*", CASE_INSENSITIVE);
+	public static final Pattern GROUP_CHAT_PATTERN = Pattern.compile(
+		"^\\[(?<group>\\S+)\\] (?<account>[A-Za-z0-9_]{2,16}): (?<message>.*)$",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern LOCAL_CHAT_PATTERN = Pattern.compile(
+		"^<(?<account>[A-Za-z0-9_]{2,16})>:? +(?<message>.*)$",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern PRIVATE_CHAT_PATTERN = Pattern.compile(
+		"^(?<direction>From|To) (?<account>[A-Za-z0-9_]{2,16}): (?<message>.*)$",
+		Pattern.CASE_INSENSITIVE
+	);
+	public static final Pattern BRAND_NEW_PATTERN = Pattern.compile(
+		"^(?<account>[A-Za-z0-9_]{2,16}) is brand new.*",
+		Pattern.CASE_INSENSITIVE
+	);
 
-	@Nullable
-	public static ObservationImpl observationFromChat(@NotNull ITextComponent originalMessage) {
-		final String msgColored = originalMessage.getFormattedText();
-		final ObservationImpl observation = observationFromChatInternal(originalMessage, msgColored);
-		if (observation != null) observation.setMessagePlain(msgColored);
+	public static @Nullable ObservationImpl observationFromChat(
+		final @NotNull Component originalMessage
+	) {
+		final String legacyFormattedMessage = McUtil.asLegacy(originalMessage);
+		final ObservationImpl observation = observationFromChatInternal(originalMessage, legacyFormattedMessage);
+		if (observation != null) {
+			observation.setMessagePlain(legacyFormattedMessage);
+		}
 		return observation;
 	}
 
-	@Nullable
-	private static ObservationImpl observationFromChatInternal(@NotNull ITextComponent originalMessage, String msgColored) {
-		final LiteModSynapse mod = LiteModSynapse.instance;
-
-		msgColored = msgColored.replaceAll("§r", "").trim();
-		if (msgColored.startsWith("§bJoined world: ")) {
+	private static @Nullable ObservationImpl observationFromChatInternal(
+		final @NotNull Component originalMessage,
+		@NotNull String legacyFormattedMessage
+	) {
+		legacyFormattedMessage = legacyFormattedMessage.replaceAll("§r", "").trim();
+		if (legacyFormattedMessage.startsWith("§bJoined world: ")) {
 			// CivRealms world announcement
-			final String world = msgColored
+			final String world = legacyFormattedMessage
 					.split(": ", 2)[1]
 					.replaceAll("§.", "")
 					.split(" ", 2)[0];
-			mod.onJoinedWorldFromChat(world);
-			return new WorldJoinChat(getSelfAccount(), world);
+			LiteModSynapse.instance.onJoinedWorldFromChat(world);
+			return new WorldJoinChat(
+				McUtil.getSelfAccount(),
+				world
+			);
 		}
 
-		final String msg = TextFormatting.getTextWithoutFormattingCodes(msgColored).trim();
+		final String msg = McUtil.fullySanitiseString(legacyFormattedMessage).trim();
 
-		final Matcher snitchHitMatcher = snitchHitPattern.matcher(msg);
+		final Matcher snitchHitMatcher = SNITCH_HIT_PATTERN.matcher(msg);
 		if (snitchHitMatcher.matches()) {
 			final String account = snitchHitMatcher.group(1);
 			final Action action = Action.fromString(snitchHitMatcher.group(2).toLowerCase());
@@ -106,132 +135,177 @@ public class ChatHandler {
 			String type = null;
 			final String hover = hoverTextFromMessage(originalMessage);
 			if (hover != null) {
-				final Matcher hoverMatcher = snitchHoverPattern.matcher(hover);
+				final Matcher hoverMatcher = SNITCH_HOVER_PATTERN.matcher(hover);
 				if (hoverMatcher.matches()) {
 					group = hoverMatcher.group(5);
 					type = hoverMatcher.group(6);
 				}
 			}
-			final Pos pos = new Pos(x, y, z);
 			return new SnitchHit(
-					getSelfAccount(),
-					account,
-					pos,
-					world,
-					action,
-					snitch,
-					group,
-					type);
+				McUtil.getSelfAccount(),
+				account,
+				new Pos(x, y, z),
+				world,
+				action,
+				snitch,
+				group,
+				type
+			);
 		}
 
-		final Matcher pearlLocationMatcher = pearlLocationPattern.matcher(msg);
+		final Matcher pearlLocationMatcher = PEARL_LOCATION_PATTERN.matcher(msg);
 		if (pearlLocationMatcher.matches()) {
-			final String prisoner = getSelfAccount();
+			final String prisoner = McUtil.getSelfAccount();
 			final String holder = pearlLocationMatcher.group("holder");
 			final int x = Integer.parseInt(pearlLocationMatcher.group("x"));
 			final int y = Integer.parseInt(pearlLocationMatcher.group("y"));
 			final int z = Integer.parseInt(pearlLocationMatcher.group("z"));
-			final String world = getMatchGroupOrNull("world", pearlLocationMatcher);
+			final String world = Util.getMatchGroupOrNull("world", pearlLocationMatcher);
 			return makePearlLocationOrTransport(
-					getSelfAccount(),
-					new Pos(x, y, z),
-					world,
-					prisoner,
-					holder);
+				McUtil.getSelfAccount(),
+				new Pos(x, y, z),
+				world,
+				prisoner,
+				holder
+			);
 		}
 
-		final Matcher pearlBroadcastMatcher = pearlBroadcastPattern.matcher(msg);
+		final Matcher pearlBroadcastMatcher = PEARL_BROADCAST_PATTERN.matcher(msg);
 		if (pearlBroadcastMatcher.matches()) {
 			final String prisoner = pearlBroadcastMatcher.group("prisoner");
 			final String holder = pearlBroadcastMatcher.group("holder");
 			final int x = Integer.parseInt(pearlBroadcastMatcher.group("x"));
 			final int y = Integer.parseInt(pearlBroadcastMatcher.group("y"));
 			final int z = Integer.parseInt(pearlBroadcastMatcher.group("z"));
-			final String world = getMatchGroupOrNull("world", pearlBroadcastMatcher);
+			final String world = Util.getMatchGroupOrNull("world", pearlBroadcastMatcher);
 			return makePearlLocationOrTransport(
-					getSelfAccount(),
-					new Pos(x, y, z),
-					world,
-					prisoner,
-					holder);
+				McUtil.getSelfAccount(),
+				new Pos(x, y, z),
+				world,
+				prisoner,
+				holder
+			);
 		}
 
-		final Matcher groupChatMatcher = groupChatPattern.matcher(msg);
+		final Matcher groupChatMatcher = GROUP_CHAT_PATTERN.matcher(msg);
 		if (groupChatMatcher.matches()) {
 			final String group = groupChatMatcher.group("group");
 			final String account = groupChatMatcher.group("account");
 			final String message = groupChatMatcher.group("message").trim();
 			return new GroupChat(
-					getSelfAccount(),
-					group,
-					account,
-					message);
+				McUtil.getSelfAccount(),
+				group,
+				account,
+				message
+			);
 		}
 
-		final Matcher localChatMatcher = localChatPattern.matcher(msg);
+		final Matcher localChatMatcher = LOCAL_CHAT_PATTERN.matcher(msg);
 		if (localChatMatcher.matches()) {
 			final String account = localChatMatcher.group("account");
 			final String message = localChatMatcher.group("message").trim();
 			return new GroupChat(
-					getSelfAccount(),
-					null,
-					account,
-					message);
+				McUtil.getSelfAccount(),
+				null,
+				account,
+				message
+			);
 		}
 
-		final Matcher combatTagMatcher = combatTagPattern.matcher(msg);
+		final Matcher combatTagMatcher = COMBAT_TAG_PATTERN.matcher(msg);
 		if (combatTagMatcher.matches()) {
 			final String account = combatTagMatcher.group("account");
-			return new CombatTagChat(getSelfAccount(), account);
+			return new CombatTagChat(
+				McUtil.getSelfAccount(),
+				account
+			);
 		}
 
-		final Matcher combatEndMatcher = combatEndPattern.matcher(msg);
+		final Matcher combatEndMatcher = COMBAT_END_PATTERN.matcher(msg);
 		if (combatEndMatcher.matches()) {
-			return new CombatEndChat(getSelfAccount());
+			return new CombatEndChat(
+				McUtil.getSelfAccount()
+			);
 		}
 
-		final Matcher pearledMatcher = pearledPattern.matcher(msg);
+		final Matcher pearledMatcher = PEARLED_PATTERN.matcher(msg);
 		if (pearledMatcher.matches()) {
 			final String account = pearledMatcher.group("account");
 			final String pearlType = pearledMatcher.group("pearlType");
-			return new PearledChat(getSelfAccount(), account, pearlType);
+			return new PearledChat(
+				McUtil.getSelfAccount(),
+				account,
+				pearlType
+			);
 		}
 
-		final Matcher bastionInfoNoneMatcher = bastionInfoNonePattern.matcher(msg);
+		final Matcher bastionInfoNoneMatcher = BASTION_INFO_NONE_PATTERN.matcher(msg);
 		if (bastionInfoNoneMatcher.matches()) {
-			Pos pos = mapNonNull(getLookedAtBlockPos(5), McUtil::pos);
-			return new BastionChat(getSelfAccount(), pos, mod.worldName,
-					BastionChat.State.NONE, BastionChat.Source.INFO);
-		}
-		final Matcher bastionInfoFriendlyMatcher = bastionInfoFriendlyPattern.matcher(msg);
-		if (bastionInfoFriendlyMatcher.matches()) {
-			Pos pos = mapNonNull(getLookedAtBlockPos(5), McUtil::pos);
-			return new BastionChat(getSelfAccount(), pos, mod.worldName,
-					BastionChat.State.FRIENDLY, BastionChat.Source.INFO);
-		}
-		final Matcher bastionInfoHostileMatcher = bastionInfoHostilePattern.matcher(msg);
-		if (bastionInfoHostileMatcher.matches()) {
-			Pos pos = mapNonNull(getLookedAtBlockPos(5), McUtil::pos);
-			return new BastionChat(getSelfAccount(), pos, mod.worldName,
-					BastionChat.State.HOSTILE, BastionChat.Source.INFO);
-		}
-		final Matcher bastionRemovedBlockMatcher = bastionRemovedBlockPattern.matcher(msg);
-		if (bastionRemovedBlockMatcher.matches()) {
-			Pos pos = mapNonNull(getLookedAtBlockPos(5), McUtil::pos);
-			return new BastionChat(getSelfAccount(), pos, mod.worldName,
-					BastionChat.State.HOSTILE, BastionChat.Source.BLOCK);
-		}
-		final Matcher bastionRemovedBoatMatcher = bastionRemovedBoatPattern.matcher(msg);
-		if (bastionRemovedBoatMatcher.matches()) {
-			Pos pos = mapNonNull(getLookedAtBlockPos(5), McUtil::pos);
-			return new BastionChat(getSelfAccount(), pos, mod.worldName,
-					BastionChat.State.HOSTILE, BastionChat.Source.BOAT);
+			final Pos pos = Util.mapNonNull(McUtil.getLookedAtBlockPos(5), McUtil::pos);
+			return new BastionChat(
+				McUtil.getSelfAccount(),
+				pos,
+				LiteModSynapse.instance.worldName,
+				BastionChat.State.NONE,
+				BastionChat.Source.INFO
+			);
 		}
 
-		final Matcher brandNewMatcher = brandNewPattern.matcher(msg);
+		final Matcher bastionInfoFriendlyMatcher = BASTION_INFO_FRIENDLY_PATTERN.matcher(msg);
+		if (bastionInfoFriendlyMatcher.matches()) {
+			final Pos pos = Util.mapNonNull(McUtil.getLookedAtBlockPos(5), McUtil::pos);
+			return new BastionChat(
+				McUtil.getSelfAccount(),
+				pos,
+				LiteModSynapse.instance.worldName,
+				BastionChat.State.FRIENDLY,
+				BastionChat.Source.INFO
+			);
+		}
+
+		final Matcher bastionInfoHostileMatcher = BASTION_INFO_HOSTILE_PATTERN.matcher(msg);
+		if (bastionInfoHostileMatcher.matches()) {
+			final Pos pos = Util.mapNonNull(McUtil.getLookedAtBlockPos(5), McUtil::pos);
+			return new BastionChat(
+				McUtil.getSelfAccount(),
+				pos,
+				LiteModSynapse.instance.worldName,
+				BastionChat.State.HOSTILE,
+				BastionChat.Source.INFO
+			);
+		}
+
+		final Matcher bastionRemovedBlockMatcher = BASTION_REMOVED_BLOCK_PATTERN.matcher(msg);
+		if (bastionRemovedBlockMatcher.matches()) {
+			final Pos pos = Util.mapNonNull(McUtil.getLookedAtBlockPos(5), McUtil::pos);
+			return new BastionChat(
+				McUtil.getSelfAccount(),
+				pos,
+				LiteModSynapse.instance.worldName,
+				BastionChat.State.HOSTILE,
+				BastionChat.Source.BLOCK
+			);
+		}
+
+		final Matcher bastionRemovedBoatMatcher = BASTION_REMOVED_BOAT_PATTERN.matcher(msg);
+		if (bastionRemovedBoatMatcher.matches()) {
+			final Pos pos = Util.mapNonNull(McUtil.getLookedAtBlockPos(5), McUtil::pos);
+			return new BastionChat(
+				McUtil.getSelfAccount(),
+				pos,
+				LiteModSynapse.instance.worldName,
+				BastionChat.State.HOSTILE,
+				BastionChat.Source.BOAT
+			);
+		}
+
+		final Matcher brandNewMatcher = BRAND_NEW_PATTERN.matcher(msg);
 		if (brandNewMatcher.matches()) {
 			final String account = brandNewMatcher.group("account");
-			return new BrandNew(getSelfAccount(), account);
+			return new BrandNew(
+				McUtil.getSelfAccount(),
+				account
+			);
 		}
 
 		// XXX match other chat messages - any that contain account or pos, so they can be formatted and sent to teammates
@@ -239,29 +313,36 @@ public class ChatHandler {
 		return null;
 	}
 
-	@NotNull
-	private static ObservationImpl makePearlLocationOrTransport(String witness, Pos pos, String world, String prisoner, String holder) {
-		if (isPlayerHolder(holder)) return new PearlTransport(witness, pos, world, prisoner, holder);
-		else return new PearlLocation(witness, pos, world, prisoner, holder);
+	private static @NotNull ObservationImpl makePearlLocationOrTransport(
+		final String witness,
+		final Pos pos,
+		final String world,
+		final String prisoner,
+		final String holder
+	) {
+		if (PearlLocation.isPlayerHolder(holder)) {
+			return new PearlTransport(witness, pos, world, prisoner, holder);
+		}
+		else {
+			return new PearlLocation(witness, pos, world, prisoner, holder);
+		}
 	}
 
-	@Nullable
-	private static String hoverTextFromMessage(ITextComponent message) {
-		HoverEvent hover;
-		List<ITextComponent> siblings = message.getSiblings();
-		if (siblings == null || siblings.isEmpty()) {
-			hover = message.getStyle().getHoverEvent();
-		} else {
-			ITextComponent hoverComponent = siblings.get(0);
-			hover = hoverComponent.getStyle().getHoverEvent();
-		}
-		if (hover == null) {
+	private static @Nullable String hoverTextFromMessage(
+		final @NotNull Component message
+	) {
+		final HoverEvent hoverEvent = McUtil.findFirstHoverEvent(message);
+		if (hoverEvent == null) {
 			return null;
 		}
-		String text = hover.getValue().getUnformattedComponentText();
-		if (text.trim().isEmpty()) {
+		final Component content = hoverEvent.getValue(HoverEvent.Action.SHOW_TEXT);
+		if (content == null) {
 			return null;
 		}
-		return text;
+		final String plainContent = McUtil.fullySanitiseComponent(content).trim();
+		if (plainContent.isEmpty()) {
+			return null;
+		}
+		return plainContent;
 	}
 }

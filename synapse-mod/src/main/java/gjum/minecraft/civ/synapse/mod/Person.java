@@ -1,36 +1,30 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import static gjum.minecraft.civ.synapse.common.Util.containsIgnoreCase;
-import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
-
+import gjum.minecraft.civ.synapse.common.Util;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class Person implements Cloneable {
-	@NotNull
 	private final PersonsRegistry registry;
-	@NotNull
 	private String name;
-	@NotNull
 	private Collection<String> factions;
-	@NotNull
 	private Collection<String> accounts;
-	@Nullable
 	private String notes;
 
 	public Person(
-			@NotNull PersonsRegistry registry,
-			@NotNull String name,
-			@NotNull Collection<String> factions,
-			@NotNull Collection<String> accounts,
-			@Nullable String notes
+		final @NotNull PersonsRegistry registry,
+		final @NotNull String name,
+		final @NotNull Collection<@NotNull String> factions,
+		final @NotNull Collection<@NotNull String> accounts,
+		final String notes
 	) {
-		this.registry = registry;
-		this.name = name;
-		this.factions = sortedUniqListIgnoreCase(factions);
-		this.accounts = sortedUniqListIgnoreCase(accounts);
+		this.registry = Objects.requireNonNull(registry);
+		this.name = Objects.requireNonNull(name);
+		this.factions = Util.sortedUniqListIgnoreCase(Objects.requireNonNull(factions));
+		this.accounts = Util.sortedUniqListIgnoreCase(Objects.requireNonNull(accounts));
 		this.notes = notes;
 	}
 
@@ -70,14 +64,14 @@ public class Person implements Cloneable {
 
 	@Nullable
 	public String hasAccount(@Nullable String account) {
-		return containsIgnoreCase(account, accounts);
+		return Util.containsIgnoreCase(account, accounts);
 	}
 
 	public void addAccount(String account) {
 		final Person oldPerson = cloneMe();
 		oldPerson.accounts = new ArrayList<>(accounts);
 		accounts.add(account);
-		accounts = sortedUniqListIgnoreCase(accounts);
+		accounts = Util.sortedUniqListIgnoreCase(accounts);
 		registry.propagatePersonChange(oldPerson, this);
 	}
 
@@ -93,7 +87,7 @@ public class Person implements Cloneable {
 	public void setAccounts(Collection<String> newAccounts) {
 		final Person oldPerson = cloneMe();
 		oldPerson.accounts = new ArrayList<>(this.accounts);
-		this.accounts = sortedUniqListIgnoreCase(newAccounts);
+		this.accounts = Util.sortedUniqListIgnoreCase(newAccounts);
 		registry.propagatePersonChange(oldPerson, this);
 	}
 
@@ -104,14 +98,14 @@ public class Person implements Cloneable {
 
 	@Nullable
 	public String hasFaction(@Nullable String faction) {
-		return containsIgnoreCase(faction, factions);
+		return Util.containsIgnoreCase(faction, factions);
 	}
 
 	public void addFaction(String faction) {
 		final Person oldPerson = cloneMe();
 		oldPerson.factions = new ArrayList<>(factions);
 		factions.add(faction);
-		factions = sortedUniqListIgnoreCase(factions);
+		factions = Util.sortedUniqListIgnoreCase(factions);
 		registry.propagatePersonChange(oldPerson, this);
 	}
 
@@ -127,7 +121,7 @@ public class Person implements Cloneable {
 	public void setFactions(Collection<String> newFactions) {
 		final Person oldPerson = cloneMe();
 		oldPerson.factions = new ArrayList<>(this.factions);
-		this.factions = sortedUniqListIgnoreCase(newFactions);
+		this.factions = Util.sortedUniqListIgnoreCase(newFactions);
 		registry.propagatePersonChange(oldPerson, this);
 	}
 

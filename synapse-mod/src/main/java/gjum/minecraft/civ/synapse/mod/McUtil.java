@@ -1,18 +1,22 @@
 package gjum.minecraft.civ.synapse.mod;
 
 import gjum.minecraft.civ.synapse.common.Pos;
+import gjum.minecraft.civ.synapse.common.Util;
 import gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin;
-import java.util.Collection;
-import java.util.function.Predicate;
 import net.fabricmc.loader.api.FabricLoader;
+import net.kyori.adventure.text.ComponentLike;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.User;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.PlayerInfo;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,7 +27,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Range;
 
 public class McUtil {
 	public static @NotNull Minecraft getMc() {
@@ -67,6 +70,19 @@ public class McUtil {
 		);
 	}
 
+	public static @Nullable AbstractClientPlayer findFirstPlayerByName(
+		final @NotNull ClientLevel level,
+		@NotNull String name
+	) {
+		name = fullySanitiseString(name); // Just in case
+		for (final AbstractClientPlayer player : level.players()) {
+			if (name.equals(fullySanitiseComponent(player.getName()))) {
+				return player;
+			}
+		}
+		return null;
+	}
+
 	public static @NotNull String getDisplayNameFromTablist(
 		final @NotNull PlayerInfo info
 	) {
@@ -107,21 +123,8 @@ public class McUtil {
 
 	public static int getNumHealthPots() {
 		final Inventory playerInventory = Minecraft.getInstance().player.getInventory();
-		return countMatches(playerInventory.items, McUtil::isHealthPot)
-			+ countMatches(playerInventory.offhand, McUtil::isHealthPot);
-	}
-
-	public static <T> @Range(from = 0, to = Integer.MAX_VALUE) int countMatches(
-		final @NotNull Collection<T> collection,
-		final @NotNull Predicate<T> predicate
-	) {
-		int count = 0;
-		for (final T element : collection) {
-			if (predicate.test(element)) {
-				count++;
-			}
-		}
-		return count;
+		return Util.countMatches(playerInventory.items, McUtil::isHealthPot)
+			+ Util.countMatches(playerInventory.offhand, McUtil::isHealthPot);
 	}
 
 	private static boolean isHealthPot(
@@ -141,5 +144,29 @@ public class McUtil {
 		final int reach
 	) {
 		throw new NotImplementedException("CivMC illegal");
+	}
+
+	public static @NotNull String asLegacy(
+		final @NotNull Component component
+	) {
+		return LegacyComponentSerializer.legacySection().serialize(
+			((ComponentLike) component).asComponent()
+		);
+	}
+
+	public static @Nullable HoverEvent findFirstHoverEvent(
+		final @NotNull Component component
+	) {
+		HoverEvent hoverEvent = component.getStyle().getHoverEvent();
+		if (hoverEvent != null) {
+			return hoverEvent;
+		}
+		for (final Component sibling : component.getSiblings()) {
+			hoverEvent = findFirstHoverEvent(sibling);
+			if (hoverEvent != null) {
+				return hoverEvent;
+			}
+		}
+		return null;
 	}
 }

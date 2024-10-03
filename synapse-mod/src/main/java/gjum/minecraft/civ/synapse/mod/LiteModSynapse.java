@@ -40,7 +40,7 @@ import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import gjum.minecraft.civ.synapse.mod.connection.Client;
 import gjum.minecraft.civ.synapse.mod.gui.MainGui;
 import gjum.minecraft.civ.synapse.mod.gui.PanelGui;
-import gjum.minecraft.civ.synapse.mod.integrations.CombatRadarHelper;
+import gjum.minecraft.civ.synapse.mod.integrations.combatradar.CombatRadarHelpers;
 import gjum.minecraft.civ.synapse.mod.integrations.WaypointManager;
 import gjum.minecraft.gui.GuiRoot;
 import java.awt.Color;
@@ -56,6 +56,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiChat;
@@ -71,6 +72,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetHandler;
 import net.minecraft.network.Packet;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.play.server.*;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
@@ -258,7 +260,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 			final File serverConfigDir = getServerConfigDir(gameAddress, create);
 			if (serverConfigDir == null) return;
 
-			final CombatRadarHelper combatRadarHelper = new CombatRadarHelper();
+			final CombatRadarHelpers combatRadarHelper = new CombatRadarHelpers();
 			waypointManager = new WaypointManager();
 
 			serverConfig = new ServerConfig();
@@ -425,7 +427,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 					if (config.isPlayerMiddleHoop()) {
 						if (!computedTeam) {
 							team = config.getStandingTeam(getStanding(entity.getName()));
-							if (team != null) color = FloatColor.fromTextFormatting(team.getColor());
+							if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
 							computedTeam = true;
 						}
 						if (team != null) {
@@ -435,7 +437,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 					if (config.isPlayerOuterHoops()) {
 						if (!computedTeam) {
 							team = config.getStandingTeam(getStanding(entity.getName()));
-							if (team != null) color = FloatColor.fromTextFormatting(team.getColor());
+							if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
 							computedTeam = true;
 						}
 						if (team != null) {
@@ -446,7 +448,7 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 					if (config.isPlayerBox()) {
 						if (!computedTeam) {
 							team = config.getStandingTeam(getStanding(entity.getName()));
-							if (team != null) color = FloatColor.fromTextFormatting(team.getColor());
+							if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
 							computedTeam = true;
 						}
 						if (team != null) {
@@ -669,11 +671,10 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	/**
 	 * @param fmtStr If null, it is guessed with getObservationFormat()
 	 */
-	@Nullable
-	public ITextComponent formatObservationWithVisibility(
-			@Nullable String fmtStr,
-			@NotNull Observation observation,
-			@Nullable ITextComponent originalMsg
+	public @Nullable MutableComponent formatObservationWithVisibility(
+		String fmtStr,
+		final @NotNull Observation observation,
+		final MutableComponent originalMsg
 	) {
 		try {
 			final GlobalConfig.VisibilityFormat visibilityFormat = config.getVisibilityFormat(observation);
@@ -688,28 +689,36 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 					throw new IllegalStateException("Invalid VisibilityFormat: " + visibilityFormat);
 			}
 
-			final TextFormatting color = getChatColor(observation);
-			if (color == null) return null; // invisible at this urgency level/config
+			final ChatFormatting color = getChatColor(observation);
+			if (color == null) {
+				return null; // invisible at this urgency level/config
+			}
 
-			if (fmtStr == null) fmtStr = getObservationFormat(observation);
+			if (fmtStr == null) {
+				fmtStr = getObservationFormat(observation);
+			}
 
 			// XXX use {format} stuff
-			final ITextComponent formatted;
+			final MutableComponent formatted;
 			if (fmtStr != null) {
 				formatted = formatObservationStatic(fmtStr, observation);
-				formatted.getStyle().setColor(color);
-			} else if (originalMsg != null) {
+				formatted.withStyle(color);
+			}
+			else if (originalMsg != null) {
 				formatted = originalMsg;
-			} else {
+			}
+			else {
 				return null; // drop remote message with unknown format
 			}
 
 			final String waypointCommandFormat = config.isUseVoxelMap() ? waypointCommandVoxelMap
-					: config.isUseJourneyMap() ? waypointCommandJourneyMap : null;
+				: config.isUseJourneyMap() ? waypointCommandJourneyMap
+				: null;
 			addCoordClickEvent(formatted, observation, waypointCommandFormat);
 
 			return formatted;
-		} catch (Throwable e) {
+		}
+		catch (final Throwable e) {
 			printErrorRateLimited(e);
 			return originalMsg;
 		}
@@ -719,20 +728,16 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 	 * null = invisible/hide = don't show message
 	 */
 	// XXX get rid of method: use {format} stuff
-	@Nullable
-	public TextFormatting getChatColor(@NotNull Observation observation) {
+	public @Nullable ChatFormatting getChatColor(
+		final @NotNull Observation observation
+	) {
 		final Visibility visibility = getObservationVisibility(observation);
-		switch (visibility) {
-			case ALERT:
-				return TextFormatting.RED;
-			default:
-			case SHOW:
-				return TextFormatting.WHITE;
-			case DULL:
-				return TextFormatting.GRAY;
-			case HIDE:
-				return null;
-		}
+        return switch (visibility) {
+            case ALERT -> ChatFormatting.RED;
+            case DULL -> ChatFormatting.GRAY;
+            case HIDE -> null;
+			default -> ChatFormatting.WHITE;
+        };
 	}
 
 	@NotNull
@@ -769,17 +774,16 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 
 	@NotNull
 	public static Color getStandingColor(@Nullable Standing standing) {
-		final TextFormatting standingFmt = LiteModSynapse.instance.config
-				.getStandingColor(standing);
-		return FloatColor.fromTextFormatting(standingFmt).toColor();
+		final ChatFormatting standingFmt = LiteModSynapse.instance.config.getStandingColor(standing);
+		return FloatColor.fromChatFormatting(standingFmt).toColor();
 	}
 
 	@NotNull
-	public TextFormatting getDistanceColor(int distance) {
-		if (distance < closeDistance) return TextFormatting.GOLD;
-		if (distance < 500) return TextFormatting.YELLOW;
-		if (distance < 1000) return TextFormatting.WHITE;
-		return TextFormatting.GRAY;
+	public ChatFormatting getDistanceColor(int distance) {
+		if (distance < closeDistance) return ChatFormatting.GOLD;
+		if (distance < 500) return ChatFormatting.YELLOW;
+		if (distance < 1000) return ChatFormatting.WHITE;
+		return ChatFormatting.GRAY;
 	}
 
 	public void handleObservation(@NotNull Observation obs) {
@@ -1082,6 +1086,8 @@ public class LiteModSynapse implements Tickable, Configurable, PostRenderListene
 			// XXX store msg for gui, update gui if open
 		});
 	}
+
+	// TODO: brb
 
 	public void handleCommsJson(Object payload) {
 		getMc().addScheduledTask(() -> {

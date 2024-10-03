@@ -1,19 +1,25 @@
 package gjum.minecraft.civ.synapse.common;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.HexFormat;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
 public class Util {
 	public static final String separators = ",;/";
@@ -57,18 +63,35 @@ public class Util {
 				words.lastIndexOf('/')));
 	}
 
-	@NotNull
-	public static List<String> sortedUniqListIgnoreCase(@Nullable Collection<String> strings) {
-		if (strings == null) return Collections.emptyList();
-		return strings.stream()
-				.sorted(Comparator.comparing(String::toLowerCase))
-				.distinct()
-				.collect(Collectors.toList());
+	public static @NotNull List<String> sortedUniqListIgnoreCase(
+		Collection<String> strings
+	) {
+		if (strings == null) {
+			return new ArrayList<>(0);
+		}
+		final List<String> result = new ArrayList<>(strings);
+		result.sort(Comparator.comparing(String::toLowerCase));
+		removeDuplicates(strings);
+		return result;
+	}
+
+	public static <T> void removeDuplicates(
+		final @NotNull Collection<T> strings
+	) {
+		final Set<T> contained = HashSet.newHashSet(strings.size());
+		for (final var iter = strings.iterator(); iter.hasNext();) {
+			final T element = iter.next();
+			if (!contained.add(element)) {
+				iter.remove();
+				continue;
+			}
+		}
 	}
 
 	@NotNull
 	public static Set<String> lowerCaseSet(@Nullable Collection<String> strings) {
 		if (strings == null) return Collections.emptySet();
+
 		return strings.stream().map(String::toLowerCase).collect(Collectors.toSet());
 	}
 
@@ -77,20 +100,11 @@ public class Util {
 		if (query == null) return null;
 		query = query.toLowerCase();
 		for (String candidate : candidates) {
-			if (candidate.toLowerCase().equals(query)) {
+			if (candidate.equalsIgnoreCase(query)) {
 				return candidate;
 			}
 		}
 		return null;
-	}
-
-	@Nullable
-	public static <T extends Enum<T>> T enumOrNull(@NotNull Class<T> enumType, @NotNull String name) {
-		try {
-			return Enum.valueOf(enumType, name);
-		} catch (IllegalArgumentException e) {
-			return null;
-		}
 	}
 
 	@Nullable
@@ -163,30 +177,10 @@ public class Util {
 				"$1-$2-$3-$4-$5");
 	}
 
-	private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
-	@NotNull
-	public static String bytesToHex(@Nullable byte[] bytes) {
-		if (bytes == null) return "null";
-		char[] hexChars = new char[bytes.length * 2];
-		for (int j = 0; j < bytes.length; j++) {
-			int v = bytes[j] & 0xFF;
-			hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-			hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-		}
-		return new String(hexChars);
-	}
-
-	@NotNull
-	public static String repeatString(@NotNull String s, @NotNull String sep, int count) {
-		if (count == 0) return "";
-		if (count == 1) return s;
-		StringBuilder out = new StringBuilder(s);
-		for (int i = 1; i < count; i++) {
-			out.append(sep);
-			out.append(s);
-		}
-		return out.toString();
+	public static @NotNull String bytesToHex(
+		final byte[] bytes
+	) {
+		return bytes == null ? "null" : HexFormat.of().formatHex(bytes);
 	}
 
 	@NotNull
@@ -213,20 +207,42 @@ public class Util {
 		return transform.apply(input);
 	}
 
-	@NotNull
-	public static <T> T nonNullOr(@Nullable T input, @NotNull T defaultVal) {
-		if (input == null) return defaultVal;
-		return input;
+	/**
+	 * @deprecated Please use {@link java.util.Objects#requireNonNullElse(Object, Object)} instead.
+	 */
+	@Deprecated
+	public static <T> @NotNull T nonNullOr(
+		final T input,
+		final @NotNull T defaultVal
+	) {
+		return Objects.requireNonNullElse(input, defaultVal);
 	}
 
-	@Nullable
-	public static Integer intOrNull(@Nullable String s) {
-		if (s == null) return null;
+	public static @Nullable Integer intOrNull(
+		final String string
+	) {
+		if (string == null) {
+			return null;
+		}
 		try {
-			return Integer.parseInt(s);
-		} catch (Throwable e) {
+			return Integer.parseInt(string);
+		}
+		catch (final NumberFormatException e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static <T> @Range(from = 0, to = Integer.MAX_VALUE) int countMatches(
+		final @NotNull Collection<T> collection,
+		final @NotNull Predicate<T> predicate
+	) {
+		int count = 0;
+		for (final T element : collection) {
+			if (predicate.test(element)) {
+				count++;
+			}
+		}
+		return count;
 	}
 }

@@ -62,7 +62,7 @@ public class WaypointManager implements PersonChangeHandler {
 			standing = serverConfig.getAccountStanding(accountName);
 		}
 		final TextFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
-		return FloatColor.fromTextFormatting(standingColor);
+		return FloatColor.fromChatFormatting(standingColor);
 	}
 
 	@NotNull
@@ -73,7 +73,7 @@ public class WaypointManager implements PersonChangeHandler {
 			standing = serverConfig.getStanding(person);
 		}
 		final TextFormatting standingColor = LiteModSynapse.instance.config.getStandingColor(standing);
-		return FloatColor.fromTextFormatting(standingColor);
+		return FloatColor.fromChatFormatting(standingColor);
 	}
 
 	public void onTick() {
@@ -179,7 +179,7 @@ public class WaypointManager implements PersonChangeHandler {
 	}
 
 	@Override
-	public void handleLargeChange(Collection<Person> persons) {
+	public void handleLargeChange(@NotNull Collection<@NotNull Person> persons) {
 		for (Person person : persons) {
 			handlePersonChange(null, person);
 		}

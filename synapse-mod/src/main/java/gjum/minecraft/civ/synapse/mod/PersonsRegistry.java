@@ -109,7 +109,7 @@ public class PersonsRegistry {
 							.max(Comparator.comparing(identityFloatFunction)).orElse(0f);
 					return new Tuple<>(p, Math.max(nameScore, Math.max(accountsScore, factionsScore)));
 				})
-				.sorted(Comparator.comparing(Tuple<Person, Float>::getSecond).reversed());
+				.sorted(Comparator.comparing(Tuple<Person, Float>::getB).reversed());
 	}
 
 	public void registerChangeHandler(@NotNull PersonChangeHandler changeHandler) {

@@ -4,10 +4,15 @@ package gjum.minecraft.civ.synapse.mod;
  * sorted by confidence
  */
 public enum Standing {
-	FOCUS, HOSTILE, FRIENDLY, NEUTRAL, UNSET;
+	FOCUS,
+	HOSTILE,
+	FRIENDLY,
+	NEUTRAL,
+	UNSET;
 
-	public boolean moreConfidentThan(Standing other) {
-		if (other == null) return true;
-		return this.compareTo(other) < 0;
+	public boolean moreConfidentThan(
+		final Standing other
+	) {
+		return other == null || compareTo(other) < 0;
 	}
 }

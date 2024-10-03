@@ -4,9 +4,9 @@
     "package": "gjum.minecraft.civ.synapse.mod.mixins",
     "compatibilityLevel": "JAVA_21",
     "client": [
-        "MixinEntityPlayer",
-        "MixinNetHandlerPlayClient",
-        "MixinGuiPlayerTabOverlay"
+        "ClientPacketListenerMixin",
+        "EntityMixin",
+        "PlayerTabOverlayMixin"
     ],
     "injectors": {
         "defaultRequire": 1

@@ -23,6 +23,17 @@ dependencies {
         include(it)
     }
 
+    // This is quite literally just for LegacyComponentSerializer. If some other way is found to convert chat components
+    // into fully legacy-formatted strings, please do let me know.
+    "net.kyori:adventure-platform-fabric:5.14.1".also {
+        modCompileOnly(it)
+        include(it)
+    }
+    "net.kyori:adventure-text-serializer-legacy:4.17.0".also {
+        compileOnly(it)
+        include(it)
+    }
+
     "maven.modrinth:combatradar:${project.extra["combatradar_version"]}".also {
         modCompileOnly(it)
         //modLocalRuntime(it) // Uncomment if you want to test

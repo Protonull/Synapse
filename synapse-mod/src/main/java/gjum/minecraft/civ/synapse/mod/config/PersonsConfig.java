@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PersonsConfig extends JsonConfig implements PersonChangeHandler {
@@ -65,7 +66,7 @@ public class PersonsConfig extends JsonConfig implements PersonChangeHandler {
 	}
 
 	@Override
-	public void handleLargeChange(Collection<Person> persons) {
+	public void handleLargeChange(@NotNull Collection<@NotNull Person> persons) {
 		saveLater(null);
 	}
 }

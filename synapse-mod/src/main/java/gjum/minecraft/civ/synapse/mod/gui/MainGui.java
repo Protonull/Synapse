@@ -197,7 +197,7 @@ public class MainGui extends GuiRoot {
 		final LiteModSynapse mod = LiteModSynapse.instance;
 		final Standing standing = poa.getStanding();
 		final TextFormatting standingFmt = mod.config.getStandingColor(standing);
-		final Color standingColor = FloatColor.fromTextFormatting(standingFmt).toColor();
+		final Color standingColor = FloatColor.fromChatFormatting(standingFmt).toColor();
 
 		row.clear();
 
