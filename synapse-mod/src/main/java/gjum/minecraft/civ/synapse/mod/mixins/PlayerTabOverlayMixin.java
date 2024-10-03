@@ -13,26 +13,26 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PlayerTabOverlay.class)
 public abstract class PlayerTabOverlayMixin {
-	@Inject(
-		method = "getNameForDisplay",
-		at = @At("HEAD"),
-		cancellable = true
-	)
-	protected void getPlayerNameHandler(
-		final @NotNull PlayerInfo playerInfo,
-		final @NotNull CallbackInfoReturnable<Component> cir
-	) {
-		if (!LiteModSynapse.instance.isModActive()) {
-			return;
-		}
-		if (!LiteModSynapse.instance.config.isReplaceTablistColors()) {
-			return;
-		}
-		final Component displayName = LiteModSynapse.instance.getDisplayNameForAccount(
-			McUtil.getDisplayNameFromTablist(playerInfo)
-		);
-		if (displayName != null) {
-			cir.setReturnValue(displayName);
-		}
-	}
+    @Inject(
+        method = "getNameForDisplay",
+        at = @At("HEAD"),
+        cancellable = true
+    )
+    protected void getPlayerNameHandler(
+        final @NotNull PlayerInfo playerInfo,
+        final @NotNull CallbackInfoReturnable<Component> cir
+    ) {
+        if (!LiteModSynapse.instance.isModActive()) {
+            return;
+        }
+        if (!LiteModSynapse.instance.config.isReplaceTablistColors()) {
+            return;
+        }
+        final Component displayName = LiteModSynapse.instance.getDisplayNameForAccount(
+            McUtil.getDisplayNameFromTablist(playerInfo)
+        );
+        if (displayName != null) {
+            cir.setReturnValue(displayName);
+        }
+    }
 }

@@ -6,26 +6,26 @@ import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import net.minecraft.client.gui.GuiButton;
 
 public class PanelGui extends AbstractConfigPanel {
-	@Override
-	public String getPanelTitle() {
-		return LiteModSynapse.MOD_NAME + " Settings";
-	}
+    @Override
+    public String getPanelTitle() {
+        return LiteModSynapse.MOD_NAME + " Settings";
+    }
 
-	public PanelGui() {
-	}
+    public PanelGui() {
+    }
 
-	@Override
-	protected void addOptions(ConfigPanelHost host) {
-		addControl(new GuiButton(0, 0, 0, 200, 20, "Open GUI"), button -> {
-			try {
-				LiteModSynapse.instance.openLastGui();
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		});
-	}
+    @Override
+    protected void addOptions(ConfigPanelHost host) {
+        addControl(new GuiButton(0, 0, 0, 200, 20, "Open GUI"), button -> {
+            try {
+                LiteModSynapse.instance.openLastGui();
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-	@Override
-	public void onPanelHidden() {
-	}
+    @Override
+    public void onPanelHidden() {
+    }
 }

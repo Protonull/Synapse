@@ -10,20 +10,20 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class EncryptStage extends MessageToByteEncoder<ByteBuf> {
-	private final CipherUtils encipherUtils;
+    private final CipherUtils encipherUtils;
 
-	public EncryptStage(Key key) {
-		try {
-			final Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
-			cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
-			encipherUtils = new CipherUtils(cipher);
-		} catch (GeneralSecurityException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public EncryptStage(Key key) {
+        try {
+            final Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
+            cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
+            encipherUtils = new CipherUtils(cipher);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	protected void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws ShortBufferException {
-		encipherUtils.encipher(in, out);
-	}
+    @Override
+    protected void encode(ChannelHandlerContext ctx, ByteBuf in, ByteBuf out) throws ShortBufferException {
+        encipherUtils.encipher(in, out);
+    }
 }

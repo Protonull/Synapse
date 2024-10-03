@@ -11,20 +11,20 @@ import javax.crypto.ShortBufferException;
 import javax.crypto.spec.IvParameterSpec;
 
 public class DecryptStage extends MessageToMessageDecoder<ByteBuf> {
-	private final CipherUtils decipherUtils;
+    private final CipherUtils decipherUtils;
 
-	public DecryptStage(Key key) {
-		try {
-			final Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
-			cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
-			decipherUtils = new CipherUtils(cipher);
-		} catch (GeneralSecurityException e) {
-			throw new RuntimeException(e);
-		}
-	}
+    public DecryptStage(Key key) {
+        try {
+            final Cipher cipher = Cipher.getInstance("AES/CFB8/NoPadding");
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(key.getEncoded()));
+            decipherUtils = new CipherUtils(cipher);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws ShortBufferException {
-		out.add(decipherUtils.decipher(ctx, in));
-	}
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws ShortBufferException {
+        out.add(decipherUtils.decipher(ctx, in));
+    }
 }

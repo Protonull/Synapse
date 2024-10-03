@@ -3,10 +3,10 @@ package gjum.minecraft.civ.synapse.common.observations;
 import org.jetbrains.annotations.NotNull;
 
 public interface Observation {
-	long getTime();
+    long getTime();
 
-	@NotNull
-	String getWitness();
+    @NotNull
+    String getWitness();
 
-	String getMsgType();
+    String getMsgType();
 }

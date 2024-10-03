@@ -29,144 +29,144 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class McUtil {
-	public static @NotNull Minecraft getMc() {
-		return Minecraft.getInstance();
-	}
+    public static @NotNull Minecraft getMc() {
+        return Minecraft.getInstance();
+    }
 
-	public static boolean isJourneyMapLoaded() {
-		return FabricLoader.getInstance().isModLoaded("journeymap") && JourneyMapPlugin.jmApi != null;
-	}
+    public static boolean isJourneyMapLoaded() {
+        return FabricLoader.getInstance().isModLoaded("journeymap") && JourneyMapPlugin.jmApi != null;
+    }
 
-	/**
-	 * does the rounding correctly for negative coordinates
-	 */
-	public static @NotNull Pos getEntityPosition(
-		final @NotNull Entity entity
-	) {
-		return new Pos(
-			Mth.floor(entity.getX()),
-			Mth.floor(entity.getY()),
-			Mth.floor(entity.getZ())
-		);
-	}
+    /**
+     * does the rounding correctly for negative coordinates
+     */
+    public static @NotNull Pos getEntityPosition(
+        final @NotNull Entity entity
+    ) {
+        return new Pos(
+            Mth.floor(entity.getX()),
+            Mth.floor(entity.getY()),
+            Mth.floor(entity.getZ())
+        );
+    }
 
-	public static @NotNull Pos pos(
-		final @NotNull BlockPos pos
-	) {
-		return new Pos(
-			pos.getX(),
-			pos.getY(),
-			pos.getZ()
-		);
-	}
+    public static @NotNull Pos pos(
+        final @NotNull BlockPos pos
+    ) {
+        return new Pos(
+            pos.getX(),
+            pos.getY(),
+            pos.getZ()
+        );
+    }
 
-	public static @NotNull BlockPos blockPos(
-		final @NotNull Pos pos
-	) {
-		return new BlockPos(
-			pos.x,
-			pos.y,
-			pos.z
-		);
-	}
+    public static @NotNull BlockPos blockPos(
+        final @NotNull Pos pos
+    ) {
+        return new BlockPos(
+            pos.x,
+            pos.y,
+            pos.z
+        );
+    }
 
-	public static @Nullable AbstractClientPlayer findFirstPlayerByName(
-		final @NotNull ClientLevel level,
-		@NotNull String name
-	) {
-		name = fullySanitiseString(name); // Just in case
-		for (final AbstractClientPlayer player : level.players()) {
-			if (name.equals(fullySanitiseComponent(player.getName()))) {
-				return player;
-			}
-		}
-		return null;
-	}
+    public static @Nullable AbstractClientPlayer findFirstPlayerByName(
+        final @NotNull ClientLevel level,
+        @NotNull String name
+    ) {
+        name = fullySanitiseString(name); // Just in case
+        for (final AbstractClientPlayer player : level.players()) {
+            if (name.equals(fullySanitiseComponent(player.getName()))) {
+                return player;
+            }
+        }
+        return null;
+    }
 
-	public static @NotNull String getDisplayNameFromTablist(
-		final @NotNull PlayerInfo info
-	) {
-		final Component tabListName = info.getTabListDisplayName();
-		if (tabListName != null) {
-			return fullySanitiseComponent(tabListName);
-		}
-		return fullySanitiseString(info.getProfile().getName());
-	}
+    public static @NotNull String getDisplayNameFromTablist(
+        final @NotNull PlayerInfo info
+    ) {
+        final Component tabListName = info.getTabListDisplayName();
+        if (tabListName != null) {
+            return fullySanitiseComponent(tabListName);
+        }
+        return fullySanitiseString(info.getProfile().getName());
+    }
 
-	public static @NotNull String fullySanitiseComponent(
-		final @NotNull Component component
-	) {
-		return fullySanitiseString(component.getString());
-	}
+    public static @NotNull String fullySanitiseComponent(
+        final @NotNull Component component
+    ) {
+        return fullySanitiseString(component.getString());
+    }
 
-	public static @NotNull String fullySanitiseString(
-		final @NotNull String string
-	) {
-		return string.replaceAll("§.", "");
-	}
+    public static @NotNull String fullySanitiseString(
+        final @NotNull String string
+    ) {
+        return string.replaceAll("§.", "");
+    }
 
-	public static @NotNull String getSelfAccount() {
-		final User account = Minecraft.getInstance().getUser();
-		final ClientPacketListener connection = Minecraft.getInstance().getConnection();
-		if (connection != null) {
-			final PlayerInfo info = connection.getPlayerInfo(account.getProfileId());
-			if (info != null) {
-				return fullySanitiseString(info.getProfile().getName());
-			}
-		}
-		final LocalPlayer player = Minecraft.getInstance().player;
-		if (player != null) {
-			return fullySanitiseComponent(player.getName());
-		}
-		return fullySanitiseString(account.getName());
-	}
+    public static @NotNull String getSelfAccount() {
+        final User account = Minecraft.getInstance().getUser();
+        final ClientPacketListener connection = Minecraft.getInstance().getConnection();
+        if (connection != null) {
+            final PlayerInfo info = connection.getPlayerInfo(account.getProfileId());
+            if (info != null) {
+                return fullySanitiseString(info.getProfile().getName());
+            }
+        }
+        final LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            return fullySanitiseComponent(player.getName());
+        }
+        return fullySanitiseString(account.getName());
+    }
 
-	public static int getNumHealthPots() {
-		final Inventory playerInventory = Minecraft.getInstance().player.getInventory();
-		return Util.countMatches(playerInventory.items, McUtil::isHealthPot)
-			+ Util.countMatches(playerInventory.offhand, McUtil::isHealthPot);
-	}
+    public static int getNumHealthPots() {
+        final Inventory playerInventory = Minecraft.getInstance().player.getInventory();
+        return Util.countMatches(playerInventory.items, McUtil::isHealthPot)
+            + Util.countMatches(playerInventory.offhand, McUtil::isHealthPot);
+    }
 
-	private static boolean isHealthPot(
-		final @NotNull ItemStack item
-	) {
-		if (item.getItem() != Items.SPLASH_POTION) {
-			return false;
-		}
-		final PotionContents potion = item.get(DataComponents.POTION_CONTENTS);
-		if (potion == null) {
-			return false;
-		}
-		return potion.is(Potions.HEALING);
-	}
+    private static boolean isHealthPot(
+        final @NotNull ItemStack item
+    ) {
+        if (item.getItem() != Items.SPLASH_POTION) {
+            return false;
+        }
+        final PotionContents potion = item.get(DataComponents.POTION_CONTENTS);
+        if (potion == null) {
+            return false;
+        }
+        return potion.is(Potions.HEALING);
+    }
 
-	public static @Nullable BlockPos getLookedAtBlockPos(
-		final int reach
-	) {
-		throw new NotImplementedException("CivMC illegal");
-	}
+    public static @Nullable BlockPos getLookedAtBlockPos(
+        final int reach
+    ) {
+        throw new NotImplementedException("CivMC illegal");
+    }
 
-	public static @NotNull String asLegacy(
-		final @NotNull Component component
-	) {
-		return LegacyComponentSerializer.legacySection().serialize(
-			((ComponentLike) component).asComponent()
-		);
-	}
+    public static @NotNull String asLegacy(
+        final @NotNull Component component
+    ) {
+        return LegacyComponentSerializer.legacySection().serialize(
+            ((ComponentLike) component).asComponent()
+        );
+    }
 
-	public static @Nullable HoverEvent findFirstHoverEvent(
-		final @NotNull Component component
-	) {
-		HoverEvent hoverEvent = component.getStyle().getHoverEvent();
-		if (hoverEvent != null) {
-			return hoverEvent;
-		}
-		for (final Component sibling : component.getSiblings()) {
-			hoverEvent = findFirstHoverEvent(sibling);
-			if (hoverEvent != null) {
-				return hoverEvent;
-			}
-		}
-		return null;
-	}
+    public static @Nullable HoverEvent findFirstHoverEvent(
+        final @NotNull Component component
+    ) {
+        HoverEvent hoverEvent = component.getStyle().getHoverEvent();
+        if (hoverEvent != null) {
+            return hoverEvent;
+        }
+        for (final Component sibling : component.getSiblings()) {
+            hoverEvent = findFirstHoverEvent(sibling);
+            if (hoverEvent != null) {
+                return hoverEvent;
+            }
+        }
+        return null;
+    }
 }

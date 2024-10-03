@@ -7,11 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class LoggingLinesConfig extends LinesConfig {
-	protected static final Logger logger = LoggerFactory.getLogger("Config");
+    protected static final Logger logger = LoggerFactory.getLogger("Config");
 
-	@Override
-	public void saveNow(@Nullable File file) {
-		logger.info("Saving " + this.getClass().getSimpleName() + " to " + file);
-		super.saveNow(file);
-	}
+    @Override
+    public void saveNow(@Nullable File file) {
+        logger.info("Saving " + this.getClass().getSimpleName() + " to " + file);
+        super.saveNow(file);
+    }
 }

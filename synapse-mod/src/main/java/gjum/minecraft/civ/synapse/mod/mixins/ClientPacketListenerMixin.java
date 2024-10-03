@@ -14,31 +14,31 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
-	@Inject(
-		method = "handleSystemChat",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/util/thread/BlockableEventLoop;)V",
-			shift = At.Shift.AFTER
-		),
-		cancellable = true
-	)
-	protected void onHandleChat(
-		final @NotNull ClientboundSystemChatPacket packet,
-		final @NotNull CallbackInfo ci,
-		final @Local(argsOnly = true) LocalRef<ClientboundSystemChatPacket> packetRef
-	) {
-		final Component replacement = LiteModSynapse.instance.handleChat(packet.content());
-		if (replacement == null) {
-			ci.cancel(); // drop packet
-			return;
-		}
-		if (replacement.equals(packet.content())) {
-			return; // no change
-		}
-		packetRef.set(new ClientboundSystemChatPacket(
-			replacement,
-			packet.overlay()
-		));
-	}
+    @Inject(
+        method = "handleSystemChat",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/network/protocol/PacketUtils;ensureRunningOnSameThread(Lnet/minecraft/network/protocol/Packet;Lnet/minecraft/network/PacketListener;Lnet/minecraft/util/thread/BlockableEventLoop;)V",
+            shift = At.Shift.AFTER
+        ),
+        cancellable = true
+    )
+    protected void onHandleChat(
+        final @NotNull ClientboundSystemChatPacket packet,
+        final @NotNull CallbackInfo ci,
+        final @Local(argsOnly = true) LocalRef<ClientboundSystemChatPacket> packetRef
+    ) {
+        final Component replacement = LiteModSynapse.instance.handleChat(packet.content());
+        if (replacement == null) {
+            ci.cancel(); // drop packet
+            return;
+        }
+        if (replacement.equals(packet.content())) {
+            return; // no change
+        }
+        packetRef.set(new ClientboundSystemChatPacket(
+            replacement,
+            packet.overlay()
+        ));
+    }
 }

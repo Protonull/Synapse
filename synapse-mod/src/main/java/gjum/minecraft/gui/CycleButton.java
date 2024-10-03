@@ -7,102 +7,102 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.input.Keyboard;
 
 public final class CycleButton<T> extends Clickable {
-	private GuiButton button;
-	@NotNull
-	private final Consumer<T> onChange;
-	private T[] options;
-	private int selectionIndex;
+    private GuiButton button;
+    @NotNull
+    private final Consumer<T> onChange;
+    private T[] options;
+    private int selectionIndex;
 
-	@SafeVarargs
-	public CycleButton(@NotNull Consumer<T> onChange, @Nullable T selection, T... options) {
-		this.onChange = onChange;
-		button = new GuiButton(getId(), 0, 0, ""); // text is set below in setOptions()
-		setClickHandler(this::onClicked);
+    @SafeVarargs
+    public CycleButton(@NotNull Consumer<T> onChange, @Nullable T selection, T... options) {
+        this.onChange = onChange;
+        button = new GuiButton(getId(), 0, 0, ""); // text is set below in setOptions()
+        setClickHandler(this::onClicked);
 
-		setOptions(selection, options);
+        setOptions(selection, options);
 
-		int maxTextWidth = 0;
-		for (T option : options) {
-			int optionWidth = mc.fontRenderer.getStringWidth(option.toString());
-			maxTextWidth = Math.max(maxTextWidth, optionWidth);
-		}
-	}
+        int maxTextWidth = 0;
+        for (T option : options) {
+            int optionWidth = mc.fontRenderer.getStringWidth(option.toString());
+            maxTextWidth = Math.max(maxTextWidth, optionWidth);
+        }
+    }
 
-	@SafeVarargs
-	public final CycleButton<T> setOptions(@Nullable T selection, T... options) {
-		this.options = options;
+    @SafeVarargs
+    public final CycleButton<T> setOptions(@Nullable T selection, T... options) {
+        this.options = options;
 
-		int longestOption = 0;
-		for (int i = options.length - 1; i >= 0; i--) {
-			T value = options[i];
+        int longestOption = 0;
+        for (int i = options.length - 1; i >= 0; i--) {
+            T value = options[i];
 
-			final int width = mc.fontRenderer.getStringWidth(value.toString());
-			if (longestOption < width) longestOption = width;
+            final int width = mc.fontRenderer.getStringWidth(value.toString());
+            if (longestOption < width) longestOption = width;
 
-			if (value.equals(selection)) {
-				selectionIndex = i;
-			}
-		}
+            if (value.equals(selection)) {
+                selectionIndex = i;
+            }
+        }
 
-		button.displayString = options[selectionIndex].toString();
+        button.displayString = options[selectionIndex].toString();
 
-		setMinSize(new Vec2(Math.max(20, longestOption + 6), 20));
-		setMaxSize(new Vec2(380, 20));
+        setMinSize(new Vec2(Math.max(20, longestOption + 6), 20));
+        setMaxSize(new Vec2(380, 20));
 
-		return this;
-	}
+        return this;
+    }
 
-	private void onClicked() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
-				|| Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)
-		) selectionIndex--;
-		else selectionIndex++;
-		setIndex(selectionIndex);
-	}
+    private void onClicked() {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)
+                || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)
+        ) selectionIndex--;
+        else selectionIndex++;
+        setIndex(selectionIndex);
+    }
 
-	public void setIndex(int index) {
-		selectionIndex = index;
-		selectionIndex %= options.length;
-		// don't need to invalidate size because the size fits all options
-		button.displayString = options[selectionIndex].toString();
-		onChange.accept(options[selectionIndex]);
-	}
+    public void setIndex(int index) {
+        selectionIndex = index;
+        selectionIndex %= options.length;
+        // don't need to invalidate size because the size fits all options
+        button.displayString = options[selectionIndex].toString();
+        onChange.accept(options[selectionIndex]);
+    }
 
-	@Override
-	public boolean isEnabled() {
-		return button.enabled;
-	}
+    @Override
+    public boolean isEnabled() {
+        return button.enabled;
+    }
 
-	public CycleButton setEnabled(boolean enabled) {
-		button.enabled = enabled;
-		return this;
-	}
+    public CycleButton setEnabled(boolean enabled) {
+        button.enabled = enabled;
+        return this;
+    }
 
-	public GuiButton getButton() {
-		return button;
-	}
+    public GuiButton getButton() {
+        return button;
+    }
 
-	@Override
-	public void draw(Vec2 mouse, Vec2 winSize, float partialTicks) {
-		button.drawButton(mc, mouse.x, mouse.y, partialTicks);
-	}
+    @Override
+    public void draw(Vec2 mouse, Vec2 winSize, float partialTicks) {
+        button.drawButton(mc, mouse.x, mouse.y, partialTicks);
+    }
 
-	@Override
-	public void setPos(Vec2 pos) {
-		super.setPos(pos);
-		button.x = pos.x;
-		button.y = pos.y;
-	}
+    @Override
+    public void setPos(Vec2 pos) {
+        super.setPos(pos);
+        button.x = pos.x;
+        button.y = pos.y;
+    }
 
-	@Override
-	public void updateSize(Vec2 size) {
-		super.updateSize(size);
+    @Override
+    public void updateSize(Vec2 size) {
+        super.updateSize(size);
 
-		final boolean wasEnabled = button.enabled;
-		button = new GuiButton(button.id,
-				button.x, button.y,
-				getSize().x, getSize().y,
-				button.displayString);
-		button.enabled = wasEnabled;
-	}
+        final boolean wasEnabled = button.enabled;
+        button = new GuiButton(button.id,
+                button.x, button.y,
+                getSize().x, getSize().y,
+                button.displayString);
+        button.enabled = wasEnabled;
+    }
 }

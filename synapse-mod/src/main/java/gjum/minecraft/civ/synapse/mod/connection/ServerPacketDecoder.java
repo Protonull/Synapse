@@ -10,26 +10,26 @@ import io.netty.handler.codec.ReplayingDecoder;
 import java.util.List;
 
 public class ServerPacketDecoder extends ReplayingDecoder<Void> {
-	public static Packet constructServerPacket(int id, ByteBuf buf) {
-		switch (id) {
-			case 0:
-				return SEncryptionRequest.read(buf);
-			case 1:
-				return JsonPacket.read(buf);
-			default:
-				return null;
-		}
-	}
+    public static Packet constructServerPacket(int id, ByteBuf buf) {
+        switch (id) {
+            case 0:
+                return SEncryptionRequest.read(buf);
+            case 1:
+                return JsonPacket.read(buf);
+            default:
+                return null;
+        }
+    }
 
-	@Override
-	protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
-		byte id = buf.readByte();
-		final Packet packet = constructServerPacket(id, buf);
-		if (packet == null) {
-			LiteLoaderLogger.severe("[ServerPacketDecoder] " +
-					"Unknown server packet id " + id + " 0x" + Integer.toHexString(id));
-			return;
-		}
-		out.add(packet);
-	}
+    @Override
+    protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) {
+        byte id = buf.readByte();
+        final Packet packet = constructServerPacket(id, buf);
+        if (packet == null) {
+            LiteLoaderLogger.severe("[ServerPacketDecoder] " +
+                    "Unknown server packet id " + id + " 0x" + Integer.toHexString(id));
+            return;
+        }
+        out.add(packet);
+    }
 }
