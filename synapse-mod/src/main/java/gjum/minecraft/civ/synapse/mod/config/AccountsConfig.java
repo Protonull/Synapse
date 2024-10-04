@@ -1,47 +1,63 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
 import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
-import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 
 import gjum.minecraft.civ.synapse.common.LinesConfig;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
+import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
 import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.util.Tuple;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Stores the exact spelling of all account names that were seen on the tab list.
  */
 public class AccountsConfig extends LinesConfig {
-    protected static final Logger logger = LogManager.getLogger(AccountsConfig.class.getSimpleName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccountsConfig.class);
 
-    private Map<String, String> accounts = new HashMap<>();
+    private final Map<String, String> accounts = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @Override
-    protected Collection<String> getLines() {
-        return accounts.values();
+    protected @NotNull Logger getLogger() {
+        return LOGGER;
     }
 
     @Override
-    protected void setLines(Stream<String> newAccounts) {
-        accounts = newAccounts.distinct().collect(Collectors.toMap(
-                String::toLowerCase, a -> a, (a1, a2) -> a1));
-        logger.info("[" + MOD_NAME + "] Loaded " + accounts.size() + " accounts");
+    protected @NotNull Collection<@NotNull String> getLines() {
+        return this.accounts.values();
     }
 
     @Override
-    public void saveNow(@Nullable File file) {
-        logger.info("Saving " + this.getClass().getSimpleName() + " to " + file);
+    protected void setLines(
+        final @NotNull Stream<@NotNull String> lines
+    ) {
+        this.accounts.clear();
+        this.accounts.putAll(
+            lines.distinct()
+                .collect(Collectors.toMap(
+                    String::toLowerCase,
+                    Function.identity(),
+                    (oldValue, newValue) -> oldValue
+                ))
+        );
+        LOGGER.info("Loaded {} accounts", this.accounts.size());
+    }
+
+    @Override
+    public void saveNow(
+        final File file
+    ) {
+        LOGGER.info("Saving {} to {}", getClass().getSimpleName(), file);
         super.saveNow(file);
     }
 
@@ -49,49 +65,52 @@ public class AccountsConfig extends LinesConfig {
      * @param account Account name, exact case (upper/lower)
      * @return true if this account was not yet known
      */
-    public boolean addAccount(String account) {
-        final boolean wasNew = null == accounts.put(account.toLowerCase(), account);
-        if (wasNew) saveLater(null);
+    public boolean addAccount(
+        final @NotNull String account
+    ) {
+        final boolean wasNew = null == this.accounts.put(account.toLowerCase(), account);
+        if (wasNew) {
+            saveLater(null);
+        }
         return wasNew;
     }
 
-    @NotNull
-    public List<String> findSimilar(String query, int limit) {
+    public @NotNull List<@NotNull String> findSimilar(
+        final @NotNull String query,
+        final int limit
+    ) {
         return findSimilarScoredStream(query)
-                .limit(limit)
-                .map(Tuple::getA)
-                .collect(Collectors.toList());
+            .limit(limit)
+            .map(Tuple::getA)
+            .toList();
     }
 
-    @NotNull
-    public List<Tuple<String, Float>> findSimilarScored(String query, int limit) {
+    public @NotNull List<@NotNull Tuple<@NotNull String, @NotNull Float>> findSimilarScored(
+        final @NotNull String query,
+        final int limit
+    ) {
         return findSimilarScoredStream(query)
-                .limit(limit)
-                .collect(Collectors.toList());
+            .limit(limit)
+            .toList();
     }
 
-    @NotNull
-    public Stream<Tuple<String, Float>> findSimilarScoredStream(String query) {
+    public @NotNull Stream<@NotNull Tuple<@NotNull String, @NotNull Float>> findSimilarScoredStream(
+        final @NotNull String query
+    ) {
         final String queryLower = query.toLowerCase();
         return streamAccounts()
-                .map(a -> new Tuple<>(a, scoreSimilarity(
-                        queryLower, a.toLowerCase())))
-                .sorted(Comparator.comparing(
-                        Tuple<String, Float>::getB
-                ).reversed()); // highest scores first
+            .map((username) -> new Tuple<>(username, scoreSimilarity(queryLower, username.toLowerCase())))
+            .sorted(Comparator.comparing(Tuple<String, Float>::getB).reversed()); // highest scores first
     }
 
-    @NotNull
-    public Stream<String> streamAccounts() {
-        if (LiteModSynapse.instance.getPersonsRegistry() == null) {
-            return accounts.values().stream();
-        } else {
-            return Stream.concat(
-                    accounts.values().stream(),
-                    LiteModSynapse.instance.getPersonsRegistry()
-                            .getPersons().stream()
-                            .flatMap(p -> p.getAccounts().stream())
-            ).distinct();
+    public @NotNull Stream<@NotNull String> streamAccounts() {
+        final PersonsRegistry registry = LiteModSynapse.instance.getPersonsRegistry();
+        if (registry == null) {
+            return this.accounts.values().stream();
         }
+        return Stream.concat(
+            this.accounts.values().stream(),
+            registry.getPersons().stream().flatMap((p) -> p.getAccounts().stream())
+        ).distinct();
     }
 }

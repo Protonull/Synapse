@@ -1,19 +1,18 @@
 package gjum.minecraft.civ.synapse.server;
 
-import static gjum.minecraft.civ.synapse.common.Util.intOrNull;
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
-
+import gjum.minecraft.civ.synapse.common.Util;
+import gjum.minecraft.civ.synapse.common.network.packets.JsonPacket;
+import gjum.minecraft.civ.synapse.common.network.packets.Packet;
+import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundProtocol;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundHandshake;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundProtocol;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
 import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
 import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
-import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
-import gjum.minecraft.civ.synapse.common.packet.Packet;
-import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
-import gjum.minecraft.civ.synapse.common.packet.client.CWhitelist;
-import gjum.minecraft.civ.synapse.server.connection.ClientPacketDecoder;
-import gjum.minecraft.civ.synapse.server.connection.ServerHandler;
-import gjum.minecraft.civ.synapse.server.connection.ServerPacketEncoder;
+import gjum.minecraft.civ.synapse.server.config.AccountsListConfig;
+import gjum.minecraft.civ.synapse.server.config.UuidsConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -37,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -50,10 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Server {
-    private final long connectRateLimitWindow = nonNullOr(intOrNull(System.getenv("CONNECT_RATE_LIMIT_WINDOW")), 60 * 1000); // 1min
-    private final int connectRateLimitCount = nonNullOr(intOrNull(System.getenv("CONNECT_RATE_LIMIT_COUNT")), 7); // 7 connections over the past rateLimitWindow
+    private final long connectRateLimitWindow = Objects.requireNonNullElse(Util.intOrNull(System.getenv("CONNECT_RATE_LIMIT_WINDOW")), 60 * 1000); // 1min
+    private final int connectRateLimitCount = Objects.requireNonNullElse(Util.intOrNull(System.getenv("CONNECT_RATE_LIMIT_COUNT")), 7); // 7 connections over the past rateLimitWindow
 
-    private static final Logger logger = LoggerFactory.getLogger("Server");
+    private static final Logger logger = LoggerFactory.getLogger(Server.class);
     private KeyPair keyPair;
     private final int port;
     private final String latestModVersion;
@@ -83,28 +83,28 @@ public class Server {
     }
 
     public Server() throws NoSuchAlgorithmException {
-        port = Integer.parseInt(nonNullOr(System.getenv("PORT"), "22001"));
-        latestModVersion = nonNullOr(System.getenv("LATEST_MOD_VERSION"), "2.0.0");
-        allowedModVersionPart = nonNullOr(System.getenv("ALLOWED_MOD_VERSION_PART"),
+        port = Integer.parseInt(Objects.requireNonNullElse(System.getenv("PORT"), "22001"));
+        latestModVersion = Objects.requireNonNullElse(System.getenv("LATEST_MOD_VERSION"), "2.0.0");
+        allowedModVersionPart = Objects.requireNonNullElse(System.getenv("ALLOWED_MOD_VERSION_PART"),
                 String.join(".", Arrays.copyOf(latestModVersion.split("\\.|-"), 2)));
-        modUpdateLink = nonNullOr(System.getenv("MOD_UPDATE_LINK"), "github.com/Gjum/Synapse");
-        gameAddressSuffix = nonNullOr(System.getenv("GAME_ADDRESS"), "civrealms.com").toLowerCase(); // empty string: allow all
-        statsInterval = 1000 * Integer.parseInt(nonNullOr(System.getenv("STATS_INTERVAL"), "300"));
+        modUpdateLink = Objects.requireNonNullElse(System.getenv("MOD_UPDATE_LINK"), "github.com/Gjum/Synapse");
+        gameAddressSuffix = Objects.requireNonNullElse(System.getenv("GAME_ADDRESS"), "civrealms.com").toLowerCase(); // empty string: allow all
+        statsInterval = 1000L * Integer.parseInt(Objects.requireNonNullElse(System.getenv("STATS_INTERVAL"), "300"));
 
-        String uuidMapperPath = nonNullOr(System.getenv("UUID_MAPPER_PATH"), "uuids.tsv");
+        String uuidMapperPath = Objects.requireNonNullElse(System.getenv("UUID_MAPPER_PATH"), "uuids.tsv");
         new File(uuidMapperPath).getAbsoluteFile().getParentFile().mkdirs();
-        uuidMapper.load(new File(uuidMapperPath)); // must be loaded first; others depend on it during loading
-        uuidMapper.saveLater(null);
+//        uuidMapper.load(new File(uuidMapperPath)); // must be loaded first; others depend on it during loading
+//        uuidMapper.saveLater(null);
 
-        String userListPath = nonNullOr(System.getenv("USER_LIST_PATH"), "users.tsv");
+        String userListPath = Objects.requireNonNullElse(System.getenv("USER_LIST_PATH"), "users.tsv");
         new File(userListPath).getAbsoluteFile().getParentFile().mkdirs();
-        userList.load(new File(userListPath));
-        userList.saveLater(null);
+//        userList.load(new File(userListPath));
+//        userList.saveLater(null);
 
-        String adminListPath = nonNullOr(System.getenv("ADMIN_LIST_PATH"), "admins.tsv");
+        String adminListPath = Objects.requireNonNullElse(System.getenv("ADMIN_LIST_PATH"), "admins.tsv");
         new File(adminListPath).getAbsoluteFile().getParentFile().mkdirs();
-        adminList.load(new File(adminListPath));
-        adminList.saveLater(null);
+//        adminList.load(new File(adminListPath));
+//        adminList.saveLater(null);
 
         logger.info("Starting server. git=@GIT_REF@" +
                 " PORT=" + port +
@@ -118,31 +118,34 @@ public class Server {
         EventLoopGroup childGroup = new NioEventLoopGroup();
         ServerBootstrap bootstrap = new ServerBootstrap();
         bootstrap.group(parentGroup, childGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    public void initChannel(SocketChannel ch) {
-                        getOrCreateClient(ch);
+            .channel(NioServerSocketChannel.class)
+            .childHandler(new ChannelInitializer<SocketChannel>() {
+                @Override
+                public void initChannel(
+                    final @NotNull SocketChannel ch
+                ) {
+                    getOrCreateClient(ch);
 
-                        if (checkRateLimit(ch.remoteAddress().getHostString())) {
-                            final String ipAddressFull = ch.remoteAddress().toString();
-                            log(ipAddressFull, Level.WARNING, "Hit rate limit, disconnecting");
-                            ch.close();
-                            return;
-                        }
-
-                        ch.closeFuture().addListener((ChannelFutureListener) f -> {
-                            handleClientDisconnected(getOrCreateClient(f.channel()));
-                        });
-
-                        ch.pipeline()
-                                .addLast("decoder", new ClientPacketDecoder())
-                                .addLast("encoder", new ServerPacketEncoder())
-                                .addLast("handler", new ServerHandler(Server.this));
+                    if (checkRateLimit(ch.remoteAddress().getHostString())) {
+                        final String ipAddressFull = ch.remoteAddress().toString();
+                        log(ipAddressFull, Level.WARNING, "Hit rate limit, disconnecting");
+                        ch.close();
+                        return;
                     }
-                })
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
+
+                    ch.closeFuture().addListener((ChannelFutureListener) f -> {
+                        handleClientDisconnected(getOrCreateClient(f.channel()));
+                    });
+
+                    ch.pipeline()
+                        .addLast(PacketHelpers.generatePacketLengthPrefixHandlers())
+                        .addLast("decoder", new ServerboundProtocol.Decoder())
+                        .addLast("encoder", new ClientboundProtocol.Encoder())
+                        .addLast("handler", new ServerHandler(Server.this));
+                }
+            })
+            .option(ChannelOption.SO_BACKLOG, 128)
+            .childOption(ChannelOption.SO_KEEPALIVE, true);
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             childGroup.shutdownGracefully();
@@ -173,7 +176,7 @@ public class Server {
 
     @NotNull
     synchronized public ClientSession getOrCreateClient(@NotNull Channel channel) {
-        final Attribute<ClientSession> attribute = channel.attr(AttributeKey.valueOf("client"));
+        final Attribute<ClientSession> attribute = channel.attr(AttributeKey.valueOf(ClientSession.class, "client"));
         ClientSession client = attribute.get();
         if (client == null) {
             client = new ClientSession(channel);
@@ -215,10 +218,6 @@ public class Server {
         log(getSessionDescriptor(client), level, msg, null);
     }
 
-    public static void log(@NotNull ClientSession client, @NotNull Level level, @NotNull String msg, @Nullable Throwable e) {
-        log(getSessionDescriptor(client), level, msg, e);
-    }
-
     public static void log(@NotNull String sessionDescriptor, @NotNull Level level, @NotNull String msg) {
         logToLogger(sessionDescriptor, level, msg, null);
     }
@@ -245,10 +244,10 @@ public class Server {
 
     private static String getSessionDescriptor(@NotNull ClientSession client) {
         String sessionDescriptor = client.channel.id().toString();
-        if (client.getCivRealmsAccount() != null) {
-            sessionDescriptor += " " + client.getCivRealmsAccount();
-        } else if (client.clientAccount != null) {
-            sessionDescriptor += " (" + client.clientAccount + ")";
+        if (client.getCivUsername() != null) {
+            sessionDescriptor += " " + client.getCivUsername();
+        } else if (client.claimedUsername != null) {
+            sessionDescriptor += " (" + client.claimedUsername + ")";
         }
         return sessionDescriptor;
     }
@@ -270,10 +269,10 @@ public class Server {
         log(client, Level.INFO, "Connected");
     }
 
-    synchronized public String handleClientHandshaking(ClientSession client, CHandshake handshake) {
-        client.gameAddress = handshake.gameAddress;
+    synchronized public String handleClientHandshaking(ClientSession client, ServerboundHandshake handshake) {
+        client.gameAddress = handshake.gameAddress();
         if (!isAllowedGameServer(client)) {
-            kick(client, "Invalid game server: " + handshake.gameAddress);
+            kick(client, "Invalid game server: " + handshake.gameAddress());
         }
 
         client.whitelisted = true;
@@ -301,10 +300,10 @@ public class Server {
         }
 
         UUID mojUuid = client.getMojangUuid();
-        String mojAccount = client.getMojangAccount();
+        String mojAccount = client.getMojangUsername();
         log(client, Level.INFO, "Authenticated as " + mojAccount
                 + " " + mojUuid
-                + " CivRealms name: " + client.getCivRealmsAccount());
+                + " CivRealms name: " + client.getCivUsername());
 
         if (!userList.contains(client.getMojangUuid())) {
             kick(client, "Not whitelisted: " + mojUuid + " as " + mojAccount + " (?)");
@@ -321,7 +320,7 @@ public class Server {
         ingressCountInLastInterval++;
 
         if (!client.whitelisted) return;
-        if (client.getCivRealmsAccount() == null) return;
+        if (client.getCivUsername() == null) return;
         final Object payload = packet.getPayload();
         if (payload == null) return;
 
@@ -329,7 +328,7 @@ public class Server {
             final ObservationImpl observation = (ObservationImpl) payload;
 
             // in case client is broken or malicious
-            observation.witness = client.getCivRealmsAccount();
+            observation.witness = client.getCivUsername();
             observation.time = Math.max(now - 5000, Math.min(observation.time, now));
 
             final boolean isNew = playerTracker.recordObservation(observation);
@@ -353,23 +352,6 @@ public class Server {
 
             receiver.send(packet);
             egressCountInLastInterval++;
-        }
-    }
-
-    synchronized public void handleWhitelistPacket(ClientSession admin, CWhitelist whitelistPkt) {
-        adminList.load(null); // load before every check, may have been changed manually
-        if (!adminList.contains(admin.getMojangUuid())) {
-            log(admin, Level.WARNING, "Disallowed changing whitelist to: " + String.join(" ", whitelistPkt.accounts));
-            return;
-        }
-
-        userList.setList(whitelistPkt.accounts);
-        log(admin, Level.WARNING, "Changed whitelist to: " + String.join(" ", whitelistPkt.accounts));
-
-        for (ClientSession client : connectedPlayers.values()) {
-            if (client != admin && !userList.contains(client.getMojangUuid())) {
-                kick(client, "Removed from whitelist");
-            }
         }
     }
 }

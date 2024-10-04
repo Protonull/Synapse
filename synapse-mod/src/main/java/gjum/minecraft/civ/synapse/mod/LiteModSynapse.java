@@ -3,12 +3,10 @@ package gjum.minecraft.civ.synapse.mod;
 import static gjum.minecraft.civ.synapse.common.Util.lowerCaseSet;
 import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
 import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getEntityPosition;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getSelfAccount;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.addCoordClickEvent;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.formatObservationStatic;
 
+import gjum.minecraft.civ.synapse.common.network.packets.JsonPacket;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.Observation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
@@ -22,7 +20,6 @@ import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
 import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
-import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
 import gjum.minecraft.civ.synapse.mod.config.AccountsConfig;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import gjum.minecraft.civ.synapse.mod.config.PersonsConfig;
@@ -39,6 +36,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -89,7 +87,7 @@ public class LiteModSynapse {
 
     public static LiteModSynapse instance;
 
-    private static final File modConfigDir = new File(getMc().gameDirectory, MOD_NAME);
+    private static final File modConfigDir = new File(Minecraft.getInstance().gameDirectory, MOD_NAME);
 
     public LiteModSynapse() {
         instance = this;
@@ -108,7 +106,7 @@ public class LiteModSynapse {
 //        LiteLoader.getInstance().writeConfig(this);
 
         // move old config if it exists
-        File oldConfigDir = new File(getMc().gameDirectory, "Hydrate");
+        File oldConfigDir = new File(Minecraft.getInstance().gameDirectory, "Hydrate");
         if (oldConfigDir.exists() && !modConfigDir.exists()) {
             oldConfigDir.renameTo(modConfigDir);
         }
@@ -191,7 +189,7 @@ public class LiteModSynapse {
     }
 
     private void onModDeactivated() {
-        final ClientLevel world = getMc().level;
+        final ClientLevel world = Minecraft.getInstance().level;
         if (world != null) {
             for (final AbstractClientPlayer player : world.players()) {
                 player.setGlowingTag(false);
@@ -272,13 +270,13 @@ public class LiteModSynapse {
 //            this.gui = gui;
 //        } // else: some Minecraft gui; don't retain it
 //        if (gui instanceof GuiRoot) ((GuiRoot) gui).rebuild();
-        getMc().setScreen(gui);
+        Minecraft.getInstance().setScreen(gui);
     }
 
     public void openLastGui() {
         // TODO: Uncomment
 //        if (gui == null) gui = new MainGui(null);
-        getMc().setScreen(gui);
+        Minecraft.getInstance().setScreen(gui);
     }
 
     // TODO: Uncomment
@@ -317,11 +315,11 @@ public class LiteModSynapse {
 //                    focusEntityUnderCrosshair();
 //                }
 //                if (SynapseMod.CHAT_POS_KEYBIND.isDown()) {
-//                    final Pos pos = getEntityPosition(getMc().player);
-//                    getMc().displayGuiScreen(new GuiChat(String.format(
+//                    final Pos pos = McUtil.getEntityPosition(Minecraft.getInstance().player);
+//                    Minecraft.getInstance().displayGuiScreen(new GuiChat(String.format(
 //                            "[x:%s y:%s z:%s name:%s]",
 //                            pos.x, pos.y, pos.z,
-//                            getSelfAccount())));
+//                            McUtil.getSelfAccount())));
 //                }
 //                if (SynapseMod.OPEN_GUI_KEYBIND.isDown()) {
 //                    openLastGui();
@@ -341,19 +339,19 @@ public class LiteModSynapse {
 
     private void syncComms() {
         if (!comms.isEncrypted()) return;
-        if (getMc().level == null) return;
+        if (Minecraft.getInstance().level == null) return;
         /*
         boolean flushEveryPacket = false;
-        for (EntityPlayer player : getMc().world.playerEntities) {
-            if (player == getMc().player) continue; // send more info for self at the end
+        for (EntityPlayer player : Minecraft.getInstance().world.playerEntities) {
+            if (player == Minecraft.getInstance().player) continue; // send more info for self at the end
             // TODO don't send if pos didn't change
-            comms.sendEncrypted(new JsonPacket(new PlayerState(getSelfAccount(),
-                    player.getName(), getEntityPosition(player), worldName)
+            comms.sendEncrypted(new JsonPacket(new PlayerState(McUtil.getSelfAccount(),
+                    player.getName(), McUtil.getEntityPosition(player), worldName)
             ), flushEveryPacket);
         }*/
-        final PlayerState selfState = new PlayerState(getSelfAccount(),
-                getSelfAccount(), getEntityPosition(getMc().player), worldName);
-        //selfState.heading = headingFromYawDegrees(getMc().player.rotationYawHead);
+        final PlayerState selfState = new PlayerState(McUtil.getSelfAccount(),
+                McUtil.getSelfAccount(), McUtil.getEntityPosition(Minecraft.getInstance().player), worldName);
+        //selfState.heading = headingFromYawDegrees(Minecraft.getInstance().player.rotationYawHead);
         //selfState.health = getHealth();
         //selfState.hpotCount = getNumHealthPots();
         // TODO send combat tag end, min armor dura
@@ -363,7 +361,7 @@ public class LiteModSynapse {
     // TODO: Uncomment
 //    @Override
 //    public void onPostRender(float partialTicks) {
-//        for (AbstractClientPlayer player : getMc().level.players()) {
+//        for (AbstractClientPlayer player : Minecraft.getInstance().level.players()) {
 //            renderDecorators(player, partialTicks);
 //        }
 //    }
@@ -452,7 +450,7 @@ public class LiteModSynapse {
 
     // TODO: Uncomment
 //    private void renderBox(Entity entity, float partialTicks, FloatColor color) {
-//        final EntityPlayerSP player = getMc().player;
+//        final EntityPlayerSP player = Minecraft.getInstance().player;
 //        double playerX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
 //        double playerY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
 //        double playerZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
@@ -475,7 +473,7 @@ public class LiteModSynapse {
 
     // TODO: Uncomment
 //    private void renderHoop(Entity entity, double radius, double yOffset, float partialTicks, FloatColor color) {
-//        final EntityPlayerSP player = getMc().player;
+//        final EntityPlayerSP player = Minecraft.getInstance().player;
 //        float playerX = (float) (player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks);
 //        float playerY = (float) (player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks);
 //        float playerZ = (float) (player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks);
@@ -621,7 +619,7 @@ public class LiteModSynapse {
         if (!(observation instanceof AccountObservation)) return Visibility.SHOW;
         final AccountObservation accObs = (AccountObservation) observation;
         final Standing standing = getStanding(accObs.getAccount());
-        final boolean isOurs = observation.getWitness().equals(getSelfAccount());
+        final boolean isOurs = observation.getWitness().equals(McUtil.getSelfAccount());
         if (!isOurs) {
             return Visibility.HIDE;
         }
@@ -634,13 +632,13 @@ public class LiteModSynapse {
 
     private boolean isClose(@NotNull AccountObservation observation) {
         // TODO: Uncomment
-//        final EntityPlayer playerEntity = getMc().world.getPlayerEntityByName(observation.getAccount());
+//        final EntityPlayer playerEntity = Minecraft.getInstance().world.getPlayerEntityByName(observation.getAccount());
 //        boolean isClose = playerEntity != null;
-//        final EntityPlayerSP self = getMc().player;
+//        final EntityPlayerSP self = Minecraft.getInstance().player;
 //        if (self != null) {
 //            Pos pos = null;
 //            if (playerEntity != null) {
-//                pos = getEntityPosition(playerEntity);
+//                pos = McUtil.getEntityPosition(playerEntity);
 //            } else if (observation instanceof AccountPosObservation) {
 //                pos = ((AccountPosObservation) observation).getPos();
 //            }
@@ -676,7 +674,7 @@ public class LiteModSynapse {
         if (obs instanceof PlayerState) {
             final PlayerState playerState = (PlayerState) obs;
             // don't update waypoint if that player is on radar anyway
-            if (waypointManager != null && null == McUtil.findFirstPlayerByName(getMc().level, playerState.getAccount())) {
+            if (waypointManager != null && null == McUtil.findFirstPlayerByName(Minecraft.getInstance().level, playerState.getAccount())) {
                 try {
                     waypointManager.updateAccountLocation(playerState);
                 } catch (Throwable e) {
@@ -695,11 +693,11 @@ public class LiteModSynapse {
 //            try {
 //                final ITextComponent formattedMsg = formatObservationWithVisibility(null, obs, originalChat);
 //                if (formattedMsg != null) {
-//                    getMc().ingameGUI.getChatGUI().printChatMessage(formattedMsg);
+//                    Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(formattedMsg);
 //                }
 //            } catch (Throwable e) {
 //                printErrorRateLimited(e);
-//                if (originalChat != null) getMc().ingameGUI.getChatGUI().printChatMessage(originalChat);
+//                if (originalChat != null) Minecraft.getInstance().ingameGUI.getChatGUI().printChatMessage(originalChat);
 //            }
         }
 
@@ -722,7 +720,7 @@ public class LiteModSynapse {
             }
         }
 
-        if (getSelfAccount().equals(obs.getWitness()) && comms != null) {
+        if (McUtil.getSelfAccount().equals(obs.getWitness()) && comms != null) {
             comms.sendEncrypted(new JsonPacket(obs));
         }
     }
@@ -740,13 +738,13 @@ public class LiteModSynapse {
         // TODO: Uncomment
 //        try {
 //            if (!isModActive()) return;
-//            if (getMc().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) return;
-//            Entity entityHit = getMc().objectMouseOver.entityHit;
+//            if (Minecraft.getInstance().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) return;
+//            Entity entityHit = Minecraft.getInstance().objectMouseOver.entityHit;
 //            if (entityHit == null) { // do long trace only if default short trace didn't hit yet
-//                Vec3d traceStart = EntityUtilities.getPositionEyes(getMc().player, getMc().getRenderPartialTicks());
+//                Vec3d traceStart = EntityUtilities.getPositionEyes(Minecraft.getInstance().player, Minecraft.getInstance().getRenderPartialTicks());
 //                final Method method = EntityUtilities.class.getDeclaredMethod("rayTraceEntities", Entity.class, double.class, float.class, double.class, Vec3d.class);
 //                method.setAccessible(true);
-//                final Object trace = method.invoke(null, getMc().player, 64.0, getMc().getRenderPartialTicks(), 64.0, traceStart);
+//                final Object trace = method.invoke(null, Minecraft.getInstance().player, 64.0, Minecraft.getInstance().getRenderPartialTicks(), 64.0, traceStart);
 //                final Field entityField = trace.getClass().getDeclaredField("entity");
 //                entityField.setAccessible(true);
 //                entityHit = (Entity) entityField.get(trace);
@@ -783,8 +781,8 @@ public class LiteModSynapse {
         focusedAccounts = sortedUniqListIgnoreCase(focusedAccounts);
         setFocusedAccountNames(focusedAccounts);
         comms.sendEncrypted(new JsonPacket(new FocusAnnouncement(
-                getSelfAccount(), focusedAccounts)));
-        getMc().gui.getChat().addMessage(Component.literal("Focusing: " + String.join(" ", focusedAccounts)));
+                McUtil.getSelfAccount(), focusedAccounts)));
+        Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Focusing: " + String.join(" ", focusedAccounts)));
     }
 
     @NotNull
@@ -834,14 +832,14 @@ public class LiteModSynapse {
         // TODO: Find out what the player-spawn packet is
         // TODO: Uncomment
 //        final UUID uuid = packet.getUniqueId();
-//        final String accountName = getMc().getConnection().getPlayerInfo(uuid)
+//        final String accountName = Minecraft.getInstance().getConnection().getPlayerInfo(uuid)
 //                .getGameProfile().getName().replaceAll("§.", "");
 //        final Pos pos = new Pos(
 //                MathHelper.floor(packet.getX()),
 //                MathHelper.floor(packet.getY()),
 //                MathHelper.floor(packet.getZ()));
 //        final RadarChange observation = new RadarChange(
-//                getSelfAccount(), accountName, pos, worldName, Action.APPEARED);
+//                McUtil.getSelfAccount(), accountName, pos, worldName, Action.APPEARED);
 //        try {
 //            if (config.isPlayRadarSound()) {
 //                final Standing standing = mapNonNull(serverConfig, sc ->
@@ -858,11 +856,11 @@ public class LiteModSynapse {
     private void handlePacketDestroyEntities(ClientboundRemoveEntitiesPacket packet) {
         // TODO: Uncomment
 //        for (int eid : packet.getEntityIDs()) {
-//            final Entity entity = getMc().world.getEntityByID(eid);
+//            final Entity entity = Minecraft.getInstance().world.getEntityByID(eid);
 //            if (!(entity instanceof EntityPlayer)) continue;
 //            final EntityPlayer player = (EntityPlayer) entity;
 //            final RadarChange observation = new RadarChange(
-//                    getSelfAccount(), player.getName(), getEntityPosition(player), worldName, Action.DISAPPEARED);
+//                    McUtil.getSelfAccount(), player.getName(), McUtil.getEntityPosition(player), worldName, Action.DISAPPEARED);
 //            handleObservation(observation);
 //        }
     }
@@ -876,7 +874,7 @@ public class LiteModSynapse {
 //                if (profile.getName() == null || profile.getName().isEmpty()) continue;
 //                if (profile.getName().contains("~")) continue; // dummy entry by TabListPlus
 //
-//                final NetworkPlayerInfo existingPlayerInfo = getMc().getConnection().getPlayerInfo(profile.getId());
+//                final NetworkPlayerInfo existingPlayerInfo = Minecraft.getInstance().getConnection().getPlayerInfo(profile.getId());
 //                if (existingPlayerInfo != null) continue; // already logged in
 //
 //                final String accountName = profile.getName().replaceAll("§.", "").trim();
@@ -889,10 +887,10 @@ public class LiteModSynapse {
 //                }
 //
 //                final Skynet observation = new Skynet(
-//                        getSelfAccount(), uuid, accountName, action, entry.getGameMode().getID());
+//                        McUtil.getSelfAccount(), uuid, accountName, action, entry.getGameMode().getID());
 //                handleObservation(observation);
 //            } else if (packet.getAction() == SPacketPlayerListItem.Action.REMOVE_PLAYER) {
-//                final NetworkPlayerInfo playerInfo = getMc().getConnection()
+//                final NetworkPlayerInfo playerInfo = Minecraft.getInstance().getConnection()
 //                        .getPlayerInfo(uuid);
 //                if (playerInfo == null) continue;
 //                final GameProfile existingProfile = playerInfo.getGameProfile();
@@ -903,7 +901,7 @@ public class LiteModSynapse {
 //                if (accountName.isEmpty()) continue;
 //
 //                final Skynet observation = new Skynet(
-//                        getSelfAccount(), uuid, accountName, Action.LOGOUT, playerInfo.getGameType().getID());
+//                        McUtil.getSelfAccount(), uuid, accountName, Action.LOGOUT, playerInfo.getGameType().getID());
 //                handleObservation(observation);
 //            }
 //        }
@@ -914,7 +912,7 @@ public class LiteModSynapse {
 //        if (soundName.isEmpty() || "none".equalsIgnoreCase(soundName)) return;
 //        float playerPitch = 0.5F + 1.5F * (new Random(playerUuid.hashCode())).nextFloat();
 //        final ResourceLocation resource = new ResourceLocation(soundName);
-//        getMc().player.playSound(new SoundEvent(resource), 1.0F, playerPitch);
+//        Minecraft.getInstance().player.playSound(new SoundEvent(resource), 1.0F, playerPitch);
     }
 
     public long getLoginTime() {
@@ -922,20 +920,20 @@ public class LiteModSynapse {
     }
 
     public void handleCommsConnected() {
-        getMc().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             // XXX store msg for gui, update gui if open
         });
     }
 
     public void handleCommsEncryptionSuccess(String message) {
-        getMc().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
 
             // XXX store msg for gui, update gui if open
         });
     }
 
     public void handleCommsDisconnected(Throwable cause) {
-        getMc().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             // XXX store msg for gui, update gui if open
         });
     }
@@ -943,7 +941,7 @@ public class LiteModSynapse {
     // TODO: brb
 
     public void handleCommsJson(Object payload) {
-        getMc().execute(() -> {
+        Minecraft.getInstance().execute(() -> {
             if (payload instanceof Observation) {
                 handleObservation((Observation) payload);
             }

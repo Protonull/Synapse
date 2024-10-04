@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.ExecuteJava
-
 plugins {
     id("java")
     id("application")
@@ -13,6 +11,7 @@ version = "SNAPSHOT"
 dependencies {
     implementation(project(":synapse-common"))
     implementation(libs.bundles.common)
+    implementation(libs.bundles.nonmc)
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("org.slf4j:slf4j-simple:2.0.16")

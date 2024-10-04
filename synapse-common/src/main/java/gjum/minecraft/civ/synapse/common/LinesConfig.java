@@ -13,7 +13,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 public abstract class LinesConfig {
     public static long saveLaterTimeout = 300;
@@ -23,6 +25,8 @@ public abstract class LinesConfig {
     File configFile;
 
     protected boolean isLoading = false;
+
+    protected abstract @NotNull Logger getLogger();
 
     protected abstract Collection<String> getLines();
 

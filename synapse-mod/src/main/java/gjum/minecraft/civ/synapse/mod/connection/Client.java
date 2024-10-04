@@ -2,9 +2,12 @@ package gjum.minecraft.civ.synapse.mod.connection;
 
 import static gjum.minecraft.civ.synapse.mod.LiteModSynapse.MOD_NAME;
 
-import gjum.minecraft.civ.synapse.common.packet.JsonPacket;
-import gjum.minecraft.civ.synapse.common.packet.Packet;
-import gjum.minecraft.civ.synapse.common.packet.client.CHandshake;
+import gjum.minecraft.civ.synapse.common.network.packets.JsonPacket;
+import gjum.minecraft.civ.synapse.common.network.packets.Packet;
+import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundProtocol;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundHandshake;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundProtocol;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -12,7 +15,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -79,12 +81,16 @@ public class Client {
                 bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
                 bootstrap.handler(new ChannelInitializer<SocketChannel>() {
                     @Override
-                    public void initChannel(SocketChannel ch) {
-                        ChannelPipeline p = ch.pipeline();
-                        p.addLast(
-                                new ServerPacketDecoder(),
-                                new ClientPacketEncoder(),
-                                new ClientHandler(Client.this));
+                    public void initChannel(
+                        final @NotNull SocketChannel ch
+                    ) {
+                        ch.pipeline()
+                            .addLast(PacketHelpers.generatePacketLengthPrefixHandlers())
+                            .addLast(
+                                new ClientboundProtocol.Decoder(),
+                                new ServerboundProtocol.Encoder(),
+                                new ClientHandler(Client.this)
+                            );
                         if (proxy_address != null && proxy_address.contains(":")) {
                             String[] proxy_split = proxy_address.split(":");
                             if (proxy_split.length != 2) {
@@ -112,7 +118,7 @@ public class Client {
             if (channel != null) {
                 logger.info("[" + MOD_NAME + "] Connected to " + address);
 
-                channel.writeAndFlush(new CHandshake(
+                channel.writeAndFlush(new ServerboundHandshake(
                     LiteModSynapse.instance.getVersion(),
                     Minecraft.getInstance().getUser().getName(),
                     LiteModSynapse.instance.gameAddress

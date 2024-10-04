@@ -1,7 +1,6 @@
 package gjum.minecraft.civ.synapse.mod.config;
 
 import static gjum.minecraft.civ.synapse.common.Util.mapNonNull;
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
 
 import com.google.gson.annotations.Expose;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
@@ -15,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import net.minecraft.util.Tuple;
 import org.jetbrains.annotations.NotNull;
@@ -174,7 +174,7 @@ public class ServerConfig extends JsonConfig {
 
     @NotNull
     public Standing getFactionStanding(@NotNull String faction) {
-        return nonNullOr(factionStandings.get(faction.toLowerCase()), Standing.UNSET);
+        return Objects.requireNonNullElse(factionStandings.get(faction.toLowerCase()), Standing.UNSET);
     }
 
     @NotNull
@@ -185,7 +185,7 @@ public class ServerConfig extends JsonConfig {
         if (isPersonFocused) return Standing.FOCUS;
         final String faction = getMostRelevantFaction(person.getFactions());
         final Standing standing = mapNonNull(faction, this::getFactionStanding);
-        return nonNullOr(standing, Standing.UNSET);
+        return Objects.requireNonNullElse(standing, Standing.UNSET);
     }
 
     @NotNull
@@ -193,7 +193,7 @@ public class ServerConfig extends JsonConfig {
         if (LiteModSynapse.instance.isFocusedAccount(account)) return Standing.FOCUS;
         final PersonsRegistry personsRegistry = LiteModSynapse.instance.getPersonsRegistry();
         if (personsRegistry == null) return Standing.UNSET;
-        return nonNullOr(mapNonNull(personsRegistry.personByAccountName(account),
+        return Objects.requireNonNullElse(mapNonNull(personsRegistry.personByAccountName(account),
                 this::getStanding), Standing.UNSET);
     }
 

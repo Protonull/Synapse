@@ -1,5 +1,7 @@
 package gjum.minecraft.civ.synapse.common;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -207,17 +208,6 @@ public class Util {
         return transform.apply(input);
     }
 
-    /**
-     * @deprecated Please use {@link java.util.Objects#requireNonNullElse(Object, Object)} instead.
-     */
-    @Deprecated
-    public static <T> @NotNull T nonNullOr(
-        final T input,
-        final @NotNull T defaultVal
-    ) {
-        return Objects.requireNonNullElse(input, defaultVal);
-    }
-
     public static @Nullable Integer intOrNull(
         final String string
     ) {
@@ -244,5 +234,14 @@ public class Util {
             }
         }
         return count;
+    }
+
+    public static @NotNull MessageDigest sha1() {
+        try {
+            return MessageDigest.getInstance("SHA-1");
+        }
+        catch (final NoSuchAlgorithmException e) {
+            throw new IllegalStateException("This should not be possible!", e);
+        }
     }
 }

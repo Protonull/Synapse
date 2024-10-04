@@ -1,10 +1,7 @@
 package gjum.minecraft.civ.synapse.mod.integrations;
 
-import static gjum.minecraft.civ.synapse.common.Util.nonNullOr;
 import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
-import static gjum.minecraft.civ.synapse.mod.McUtil.getMc;
 import static gjum.minecraft.civ.synapse.mod.McUtil.isJourneyMapLoaded;
-import static gjum.minecraft.civ.synapse.mod.integrations.VoxelMapHelper.isVoxelMapActive;
 
 import gjum.minecraft.civ.synapse.common.Pos;
 import gjum.minecraft.civ.synapse.mod.FloatColor;
@@ -13,7 +10,9 @@ import gjum.minecraft.civ.synapse.mod.McUtil;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.regex.Pattern;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import org.jetbrains.annotations.NotNull;
 
@@ -93,7 +92,7 @@ class MultiWaypoint {
     }
 
     public void setImage(VmImage image) {
-        vmImage = nonNullOr(image, VmImage.small);
+        vmImage = Objects.requireNonNullElse(image, VmImage.small);
     }
 
     private void updateSuffixAndSetUpdateTimer() {
@@ -136,7 +135,7 @@ class MultiWaypoint {
         hiddenForAge = lastPosUpdate < System.currentTimeMillis() - LiteModSynapse.instance.config.getMaxWaypointAge();
 
         // hide redundant waypoints whose account entity is in radar distance
-        final AbstractClientPlayer player = McUtil.findFirstPlayerByName(getMc().level, account);
+        final AbstractClientPlayer player = McUtil.findFirstPlayerByName(Minecraft.getInstance().level, account);
         hiddenForNearby = player != null;
 
         final boolean modActive = LiteModSynapse.instance.isModActive();
@@ -155,7 +154,7 @@ class MultiWaypoint {
         }
 
         try {
-            if (isVoxelMapActive()) {
+            if (IntegrationHelpers.isVoxelMapPresent()) {
                 if (modActive && globalConfig.isUseVoxelMap()) {
                     VoxelMapHelper.updateWaypoint(this);
                 } else {
