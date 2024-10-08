@@ -25,3 +25,21 @@ allprojects {
         }
     }
 }
+
+tasks {
+    create("testClient") {
+        dependsOn(
+            ":synapse-mod:clean",
+            ":synapse-mod:runClient"
+        )
+    }
+    create("testServer") {
+        doFirst {
+            project.ext.set("synapseLoggerLevel", "DEBUG")
+        }
+        finalizedBy(
+            ":synapse-server:clean",
+            ":synapse-server:run"
+        )
+    }
+}

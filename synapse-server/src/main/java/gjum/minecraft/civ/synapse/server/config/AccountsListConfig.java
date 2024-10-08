@@ -1,6 +1,7 @@
 package gjum.minecraft.civ.synapse.server.config;
 
 import com.google.common.collect.Collections2;
+import gjum.minecraft.civ.synapse.common.configs.LinesConfig;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * file format: ACCOUNT\tUUID\n... or ACCOUNT\n...
  */
-public final class AccountsListConfig extends LoggingLinesConfig {
+public final class AccountsListConfig extends LinesConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountsListConfig.class);
 
     private final UuidsConfig uuidMapper;

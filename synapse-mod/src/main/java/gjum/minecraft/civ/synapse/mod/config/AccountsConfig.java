@@ -2,7 +2,7 @@ package gjum.minecraft.civ.synapse.mod.config;
 
 import static gjum.minecraft.civ.synapse.common.Util.scoreSimilarity;
 
-import gjum.minecraft.civ.synapse.common.LinesConfig;
+import gjum.minecraft.civ.synapse.common.configs.LinesConfig;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.mod.PersonsRegistry;
 import java.io.File;

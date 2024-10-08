@@ -2,6 +2,7 @@ package gjum.minecraft.civ.synapse.server.config;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import gjum.minecraft.civ.synapse.common.configs.LinesConfig;
 import java.util.Collection;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
 /**
  * file format: ACCOUNT\tUUID\n...
  */
-public final class UuidsConfig extends LoggingLinesConfig {
+public final class UuidsConfig extends LinesConfig {
     private final Logger LOGGER = LoggerFactory.getLogger(getClass());
     private final BiMap<UUID, String> accounts = HashBiMap.create();
 

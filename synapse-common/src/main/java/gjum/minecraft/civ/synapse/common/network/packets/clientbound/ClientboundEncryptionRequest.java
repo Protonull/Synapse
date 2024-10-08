@@ -1,25 +1,23 @@
 package gjum.minecraft.civ.synapse.common.network.packets.clientbound;
 
-import com.google.common.base.Strings;
 import gjum.minecraft.civ.synapse.common.network.packets.LengthPrefix;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.security.KeyFactory;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+/**
+ * Prev: {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket}
+ * Next: {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse}
+ */
 public record ClientboundEncryptionRequest(
-    @NotNull PublicKey key,
-    byte @NotNull [] verifyToken,
-    @Nullable String message
+    byte @NotNull [] publicKey,
+    byte @NotNull [] verifyToken
 ) implements Packet {
     public ClientboundEncryptionRequest {
-        Objects.requireNonNull(key);
+        Objects.requireNonNull(publicKey);
         Objects.requireNonNull(verifyToken);
     }
 
@@ -27,18 +25,16 @@ public record ClientboundEncryptionRequest(
     public void encode(
         final @NotNull DataOutput out
     ) throws Exception {
-        PacketHelpers.writeBytes(out, LengthPrefix.i32, key().getEncoded());
-        PacketHelpers.writeBytes(out, LengthPrefix.i32, verifyToken());
-        out.writeUTF(Objects.requireNonNullElse(message(), ""));
+        PacketHelpers.writeBytes(out, LengthPrefix.i16, publicKey());
+        PacketHelpers.writeBytes(out, LengthPrefix.i16, verifyToken());
     }
 
     public static @NotNull ClientboundEncryptionRequest decode(
         final @NotNull DataInput in
     ) throws Exception {
         return new ClientboundEncryptionRequest(
-            KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(PacketHelpers.readBytes(in, in.readInt()))),
-            PacketHelpers.readBytes(in, in.readInt()),
-            Strings.emptyToNull(in.readUTF())
+            PacketHelpers.readBytes(in, LengthPrefix.i16),
+            PacketHelpers.readBytes(in, LengthPrefix.i16)
         );
     }
 }

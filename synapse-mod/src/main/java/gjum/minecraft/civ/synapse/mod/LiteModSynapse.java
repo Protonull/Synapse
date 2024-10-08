@@ -6,7 +6,6 @@ import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.addCoordClickEvent;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.formatObservationStatic;
 
-import gjum.minecraft.civ.synapse.common.network.packets.JsonPacket;
 import gjum.minecraft.civ.synapse.common.observations.AccountObservation;
 import gjum.minecraft.civ.synapse.common.observations.Observation;
 import gjum.minecraft.civ.synapse.common.observations.ObservationImpl;
@@ -24,7 +23,6 @@ import gjum.minecraft.civ.synapse.mod.config.AccountsConfig;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import gjum.minecraft.civ.synapse.mod.config.PersonsConfig;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
-import gjum.minecraft.civ.synapse.mod.connection.Client;
 import gjum.minecraft.civ.synapse.mod.integrations.WaypointManager;
 import gjum.minecraft.civ.synapse.mod.integrations.combatradar.CombatRadarHelpers;
 import java.awt.Color;
@@ -75,9 +73,6 @@ public class LiteModSynapse {
     @NotNull
     private PlayerTracker playerTracker = new PlayerTrackerIngame(null);
     private long lastSync = 0;
-
-    @NotNull
-    private Client comms = new Client("none?", "none?");
 
     @NotNull
     private Collection<String> focusedAccountNames = Collections.emptyList();
@@ -165,27 +160,12 @@ public class LiteModSynapse {
     }
 
     private void onModActivated() {
-        checkCommsAddress();
-
         if (Objects.equals(playerTracker.gameAddress, gameAddress)) {
             return; // mod is already active
         }
 
         playerTracker = new PlayerTrackerIngame(gameAddress);
         if (waypointManager != null) waypointManager.updateAllWaypoints();
-    }
-
-    public void checkCommsAddress() {
-        if (serverConfig != null) {
-            if (comms != null && (!serverConfig.getCommsAddress().equals(comms.address)
-                    || !serverConfig.getProxyAddress().equals(comms.proxy_address))) {
-                comms.disconnect();
-                comms.address = serverConfig.getCommsAddress();
-                comms.proxy_address = serverConfig.getProxyAddress();
-            }
-            if (comms == null) comms = new Client(serverConfig.getCommsAddress(), serverConfig.getProxyAddress());
-            if (!comms.isEncrypted()) comms.connect();
-        }
     }
 
     private void onModDeactivated() {
@@ -196,7 +176,6 @@ public class LiteModSynapse {
             }
         }
         if (waypointManager != null) waypointManager.updateAllWaypoints();
-        comms.disconnect();
     }
 
     private void loadServerRelatedConfigs(boolean create) {
@@ -338,7 +317,6 @@ public class LiteModSynapse {
 //    }
 
     private void syncComms() {
-        if (!comms.isEncrypted()) return;
         if (Minecraft.getInstance().level == null) return;
         /*
         boolean flushEveryPacket = false;
@@ -355,7 +333,8 @@ public class LiteModSynapse {
         //selfState.health = getHealth();
         //selfState.hpotCount = getNumHealthPots();
         // TODO send combat tag end, min armor dura
-        comms.sendEncrypted(new JsonPacket(selfState), true);
+        // TODO: Uncomment
+//        comms.sendEncrypted(new JsonPacket(selfState), true);
     }
 
     // TODO: Uncomment
@@ -720,9 +699,10 @@ public class LiteModSynapse {
             }
         }
 
-        if (McUtil.getSelfAccount().equals(obs.getWitness()) && comms != null) {
-            comms.sendEncrypted(new JsonPacket(obs));
-        }
+//        if (McUtil.getSelfAccount().equals(obs.getWitness()) && comms != null) {
+//            // TODO: Uncomment
+////            comms.sendEncrypted(new JsonPacket(obs));
+//        }
     }
 
     public void onJoinedWorldFromChat(String world) {
@@ -780,8 +760,9 @@ public class LiteModSynapse {
     public void announceFocusedAccounts(@NotNull Collection<String> focusedAccounts) {
         focusedAccounts = sortedUniqListIgnoreCase(focusedAccounts);
         setFocusedAccountNames(focusedAccounts);
-        comms.sendEncrypted(new JsonPacket(new FocusAnnouncement(
-                McUtil.getSelfAccount(), focusedAccounts)));
+        // TODO: Uncomment
+//        comms.sendEncrypted(new JsonPacket(new FocusAnnouncement(
+//                McUtil.getSelfAccount(), focusedAccounts)));
         Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Focusing: " + String.join(" ", focusedAccounts)));
     }
 

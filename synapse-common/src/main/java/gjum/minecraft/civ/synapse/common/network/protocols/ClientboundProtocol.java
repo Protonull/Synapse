@@ -1,24 +1,23 @@
-package gjum.minecraft.civ.synapse.common.network.packets.clientbound;
+package gjum.minecraft.civ.synapse.common.network.protocols;
 
 import gjum.minecraft.civ.synapse.common.network.handlers.PacketDecoder;
 import gjum.minecraft.civ.synapse.common.network.handlers.PacketEncoder;
-import gjum.minecraft.civ.synapse.common.network.packets.JsonPacket;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
 import java.io.DataInput;
 import org.jetbrains.annotations.NotNull;
 
 public final class ClientboundProtocol {
-    private static final byte ENCRYPTION_REQUEST_PACKET = 0;
-    private static final byte JSON_PACKET = 1;
-
     public static final class Encoder extends PacketEncoder {
         @Override
         protected byte getPacketId(
             final @NotNull Packet packet
         ) throws Exception {
             return switch (packet) {
-                case final ClientboundEncryptionRequest ignored -> ENCRYPTION_REQUEST_PACKET;
-                case final JsonPacket ignored -> JSON_PACKET;
+                // Handshake
+                case final ClientboundEncryptionRequest ignored -> Packet.CLIENTBOUND_ENCRYPTION_REQUEST;
+                case final ClientboundIdentityRequest ignored -> Packet.CLIENTBOUND_IDENTITY_REQUEST;
                 default -> throw new IllegalArgumentException("Unknown server packet class '" + packet.getClass().getName() + "': " + packet);
             };
         }
@@ -31,9 +30,10 @@ public final class ClientboundProtocol {
             final byte packetId
         ) throws Exception {
             return switch (packetId) {
-                case ENCRYPTION_REQUEST_PACKET -> ClientboundEncryptionRequest.decode(in);
-                case JSON_PACKET -> JsonPacket.decode(in);
-                default -> throw new IllegalArgumentException("Unknown server packet id `" + packetId + "` 0x{}" + Integer.toHexString(packetId));
+                // Handshake
+                case Packet.CLIENTBOUND_ENCRYPTION_REQUEST -> ClientboundEncryptionRequest.decode(in);
+                case Packet.CLIENTBOUND_IDENTITY_REQUEST -> ClientboundIdentityRequest.decode(in);
+                default -> throw new IllegalArgumentException("Unknown server packet id `" + packetId + "` 0x" + Integer.toHexString(packetId));
             };
         }
     }

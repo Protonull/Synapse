@@ -4,6 +4,7 @@
     "package": "gjum.minecraft.civ.synapse.mod.mixins",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "ClientHolderMixin",
         "ClientPacketListenerMixin",
         "EntityMixin",
         "PlayerTabOverlayMixin"

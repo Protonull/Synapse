@@ -1,28 +1,25 @@
 package gjum.minecraft.civ.synapse.server;
 
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
+import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
+import gjum.minecraft.civ.synapse.server.states.ServerConnectionState;
 import io.netty.channel.Channel;
+import io.netty.util.AttributeKey;
 import java.util.Objects;
-import java.util.UUID;
-import java.util.logging.Level;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ClientSession {
-    public final long connectTime = System.currentTimeMillis();
-    public @NotNull final Channel channel;
-    public @Nullable String synapseVersion = null;
-    /**
-     * arbitrary, as sent by client during handshake. use with caution
-     */
-    public @Nullable String claimedUsername = null;
-    public byte @Nullable [] verifyToken = null;
-    private @Nullable UUID mojangUuid = null;
-    private @Nullable String mojangUsername = null;
-    private @Nullable String civUsername = null;
-    public boolean whitelisted = false;
-    public @Nullable String gameAddress = null;
-    public @Nullable String disconnectReason = null;
+public final class ClientSession {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClientSession.class);
+    public static final AttributeKey<ClientSession> KEY = AttributeKey.valueOf(ClientSession.class, "client");
+    private static long lastClientId = 0;
+
+    public final long id = ++lastClientId;
+    public final Channel channel;
 
     public ClientSession(
         final @NotNull Channel channel
@@ -30,53 +27,45 @@ public class ClientSession {
         this.channel = Objects.requireNonNull(channel);
     }
 
-    public @Nullable UUID getMojangUuid() {
-        return this.mojangUuid;
+    public @NotNull String getLoggerName() {
+        return "Client" + this.id;
     }
 
-    public @Nullable String getMojangUsername() {
-        return this.mojangUsername;
+    public synchronized void handlePacket(
+        final @NotNull Packet received
+    ) throws Exception {
+        LOGGER.debug("[{}] Received: {}", getLoggerName(), received);
+        switch (received) {
+            // Handshake
+            case final ServerboundBeginHandshakePacket packet -> ServerConnectionState.handleBeginHandshake(this, packet);
+            case final ServerboundEncryptionResponse packet -> ServerConnectionState.handleEncryptionResponse(this, packet);
+            case final ServerboundIdentityResponse packet -> ServerConnectionState.handleIdentityResponse(this, packet);
+            default -> throw new UnexpectedPacketException(received);
+        }
     }
 
-    public void setAccountInfo(
-        final @Nullable UUID mojangUuid,
-        final @Nullable String mojangAccount,
-        final @Nullable String civRealmsAccount
-    ) {
-        this.mojangUuid = mojangUuid;
-        this.mojangUsername = mojangAccount;
-        this.civUsername = civRealmsAccount;
-    }
-
-    public @Nullable String getCivUsername() {
-        return this.civUsername;
-    }
-
-    public boolean isHandshaked() {
-        return this.verifyToken != null;
-    }
-
-    public boolean isAuthenticated() {
-        return this.mojangUuid != null && this.mojangUsername != null;
-    }
-
-    public void send(
+    public synchronized void send(
         final @NotNull Packet packet
     ) {
         if (this.channel.isOpen()) {
+            LOGGER.debug("[{}] Sending: {}", getLoggerName(), packet);
             this.channel.writeAndFlush(packet);
+            return;
         }
-        else {
-            Server.log(this, Level.WARNING, "Connection already closed; dropping packet " + packet);
-        }
+        LOGGER.warn("[{}] Connection already closed; dropping packet: {}", getLoggerName(), packet);
     }
 
-    public void addDisconnectReason(
-        String reason
+    public synchronized void kick(
+        final @NotNull String reason
     ) {
-        if (this.disconnectReason != null) {
-            reason += " - " + this.disconnectReason;
-        }
-        this.disconnectReason = reason;
+        LOGGER.info("[{}] Being kicked: {}", getLoggerName(), reason);
+        this.channel.disconnect();
+    }
+
+    public synchronized void kick(
+        final @NotNull Throwable cause
+    ) {
+        LOGGER.warn("[{}] Being kicked", getLoggerName(), cause);
+        this.channel.disconnect();
     }
 }

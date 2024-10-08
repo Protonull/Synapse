@@ -1,5 +1,7 @@
 package gjum.minecraft.civ.synapse.common;
 
+import com.google.common.collect.Collections2;
+import com.google.common.net.HostAndPort;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -10,12 +12,12 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.jetbrains.annotations.NotNull;
@@ -178,12 +180,6 @@ public class Util {
                 "$1-$2-$3-$4-$5");
     }
 
-    public static @NotNull String bytesToHex(
-        final byte[] bytes
-    ) {
-        return bytes == null ? "null" : HexFormat.of().formatHex(bytes);
-    }
-
     @NotNull
     public static String formatAge(long timestamp) {
         final long age = System.currentTimeMillis() - timestamp;
@@ -208,21 +204,6 @@ public class Util {
         return transform.apply(input);
     }
 
-    public static @Nullable Integer intOrNull(
-        final String string
-    ) {
-        if (string == null) {
-            return null;
-        }
-        try {
-            return Integer.parseInt(string);
-        }
-        catch (final NumberFormatException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
     public static <T> @Range(from = 0, to = Integer.MAX_VALUE) int countMatches(
         final @NotNull Collection<T> collection,
         final @NotNull Predicate<T> predicate
@@ -243,5 +224,26 @@ public class Util {
         catch (final NoSuchAlgorithmException e) {
             throw new IllegalStateException("This should not be possible!", e);
         }
+    }
+
+    public static <T> @NotNull String formatCollection(
+        final @NotNull Collection<T> collection,
+        final @NotNull Function<T, String> formatter
+    ) {
+        return "[" + String.join(", ", Collections2.transform(collection, formatter::apply)) + "]";
+    }
+
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-zA-Z0-9_]{2,16}$");
+    public static boolean isValidMinecraftUsername(
+        final String username
+    ) {
+        return username != null && USERNAME_PATTERN.matcher(username).matches();
+    }
+
+    public static @NotNull String ensureFullAddress(
+        final @NotNull String address,
+        final int defaultPort
+    ) {
+        return HostAndPort.fromString(address).withDefaultPort(defaultPort).toString();
     }
 }

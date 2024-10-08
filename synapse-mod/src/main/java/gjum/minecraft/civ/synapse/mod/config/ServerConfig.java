@@ -110,7 +110,7 @@ public class ServerConfig extends JsonConfig {
 
     public void setProxyAddress(@NotNull String proxyAddress) {
         this.proxyAddress = proxyAddress;
-        LiteModSynapse.instance.checkCommsAddress();
+//        LiteModSynapse.instance.checkCommsAddress();
         saveLater(null);
     }
 
@@ -120,7 +120,7 @@ public class ServerConfig extends JsonConfig {
 
     public void setCommsAddress(String address) {
         commsAddress = address;
-        LiteModSynapse.instance.checkCommsAddress();
+//        LiteModSynapse.instance.checkCommsAddress();
         saveLater(null);
     }
 

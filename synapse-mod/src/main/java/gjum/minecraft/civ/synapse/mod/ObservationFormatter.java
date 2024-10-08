@@ -153,7 +153,7 @@ public class ObservationFormatter {
         };
         return Objects.requireNonNullElse(
             formatted,
-            // unknown key or can't be used with this observation
+            // unknown publicKey or can't be used with this observation
             Component.literal("%" + key + "%")
         );
     }

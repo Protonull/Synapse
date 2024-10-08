@@ -14,7 +14,7 @@ dependencies {
     implementation(libs.bundles.nonmc)
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("org.slf4j:slf4j-simple:2.0.16")
+    runtimeOnly("ch.qos.logback:logback-classic:1.5.8")
 }
 
 base {
@@ -37,9 +37,18 @@ tasks {
     shadowJar {
         mergeServiceFiles()
     }
+    processResources {
+        filesMatching("logback.xml") {
+            expand(
+                "logger_level" to (rootProject.findProperty("synapseLoggerLevel") ?: "INFO")
+            )
+        }
+    }
     getByName<JavaExec>("run") {
-        environment("UUID_MAPPER_PATH" to "synapse/uuids.tsv")
-        environment("USER_LIST_PATH" to "synapse/users.tsv")
-        environment("ADMIN_LIST_PATH" to "synapse/admins.tsv")
+        environment("SYNAPSE_GAME_ADDRESS" to "localhost:25565")
+        environment("SYNAPSE_REQUIRES_AUTH" to "false")
+        environment("SYNAPSE_UUID_MAPPER_PATH" to "synapse/uuids.tsv")
+        environment("SYNAPSE_USER_LIST_PATH" to "synapse/users.tsv")
+        environment("SYNAPSE_ADMIN_LIST_PATH" to "synapse/admins.tsv")
     }
 }
