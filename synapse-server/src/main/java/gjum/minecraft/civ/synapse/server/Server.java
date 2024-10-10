@@ -1,6 +1,6 @@
 package gjum.minecraft.civ.synapse.server;
 
-import gjum.minecraft.civ.synapse.common.Util;
+import com.google.common.net.HostAndPort;
 import gjum.minecraft.civ.synapse.common.configs.StringParsing;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
@@ -27,7 +27,6 @@ import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongCollection;
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
@@ -41,18 +40,14 @@ public final class Server {
         System.getenv("SYNAPSE_PORT"),
         22001
     );
-    public static final String GAME_ADDRESS = Util.ensureFullAddress(StringParsing.parse(
+    public static final String GAME_ADDRESS = HostAndPort.fromString(StringParsing.parse(
         System.getenv("SYNAPSE_GAME_ADDRESS"),
         "play.civmc.net"
-    ), 25565);
+    )).withDefaultPort(25565).toString();
     public static final boolean REQUIRES_AUTH = StringParsing.parseBoolean(
         System.getenv("SYNAPSE_REQUIRES_AUTH"),
         true
     );
-    private static final long STATS_INTERVAL = TimeUnit.SECONDS.toMillis(StringParsing.parseLong(
-        System.getenv("SYNAPSE_STATS_INTERVAL"),
-        300 // seconds
-    ));
     private static final long CONNECT_RATE_LIMIT_WINDOW = TimeUnit.MINUTES.toMillis(StringParsing.parseLong(
         System.getenv("SYNAPSE_CONNECT_RATE_LIMIT_WINDOW"),
         1 // minute
@@ -66,12 +61,10 @@ public final class Server {
     private final AccountsListConfig userList = new AccountsListConfig(this.uuidMapper);
     private final AccountsListConfig adminList = new AccountsListConfig(this.uuidMapper);
 
-    public final Long2ObjectMap<ClientSession> connections = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
-    private final PlayerTracker playerTracker = new PlayerTracker(null);
+    private final Long2ObjectMap<ClientSession> connections = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
+    public final PlayerTracker playerTracker = new PlayerTracker(null);
 
     private final HashMap<String, LongCollection> rateLimitTracker = new HashMap<>();
-    private long ingressCountInLastInterval = 0;
-    private long egressCountInLastInterval = 0;
 
     public static void main(
         final @NotNull String @NotNull [] args
@@ -167,7 +160,7 @@ public final class Server {
                                 if (cause instanceof IOException && "Connection reset by peer".equals(cause.getMessage())) {
                                     return;
                                 }
-                                client.kick(cause);
+                                client.kick(cause, "Something went wrong!");
                             }
                             @Override
                             public void channelRead(
@@ -191,26 +184,6 @@ public final class Server {
 
         // Bind and start to accept incoming connections.
         final ChannelFuture serverFuture = bootstrap.bind(PORT).sync();
-
-        final String intervalMinStr = new DecimalFormat("#.#").format(TimeUnit.MILLISECONDS.toMinutes(STATS_INTERVAL)) + "min";
-        final long initialDelay = STATS_INTERVAL - (System.currentTimeMillis() % STATS_INTERVAL);
-        parentGroup.scheduleAtFixedRate(
-            () -> {
-                if (this.ingressCountInLastInterval != 0 && this.egressCountInLastInterval != 0) {
-                    LOGGER.info(
-                        "ingress: {} egress: {} over past {}",
-                        this.ingressCountInLastInterval,
-                        this.egressCountInLastInterval,
-                        intervalMinStr
-                    );
-                }
-                this.ingressCountInLastInterval = 0;
-                this.egressCountInLastInterval = 0;
-            },
-            initialDelay,
-            STATS_INTERVAL,
-            TimeUnit.MILLISECONDS
-        );
 
         // Wait until the server socket is closed.
         serverFuture.channel().closeFuture().sync();

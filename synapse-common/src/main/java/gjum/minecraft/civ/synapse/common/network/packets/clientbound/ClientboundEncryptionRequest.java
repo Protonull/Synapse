@@ -9,7 +9,7 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * Prev: {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket}
+ * Prev: {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake}
  * Next: {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse}
  */
 public record ClientboundEncryptionRequest(

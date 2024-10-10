@@ -2,7 +2,8 @@ package gjum.minecraft.civ.synapse.server;
 
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
-import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundKick;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import gjum.minecraft.civ.synapse.server.states.ServerConnectionState;
@@ -37,7 +38,7 @@ public final class ClientSession {
         LOGGER.debug("[{}] Received: {}", getLoggerName(), received);
         switch (received) {
             // Handshake
-            case final ServerboundBeginHandshakePacket packet -> ServerConnectionState.handleBeginHandshake(this, packet);
+            case final ServerboundBeginHandshake packet -> ServerConnectionState.handleBeginHandshake(this, packet);
             case final ServerboundEncryptionResponse packet -> ServerConnectionState.handleEncryptionResponse(this, packet);
             case final ServerboundIdentityResponse packet -> ServerConnectionState.handleIdentityResponse(this, packet);
             default -> throw new UnexpectedPacketException(received);
@@ -56,16 +57,20 @@ public final class ClientSession {
     }
 
     public synchronized void kick(
-        final @NotNull String reason
+        final @NotNull String serverReason,
+        final @NotNull String clientReason
     ) {
-        LOGGER.info("[{}] Being kicked: {}", getLoggerName(), reason);
+        LOGGER.info("[{}] Being kicked: {}", getLoggerName(), serverReason);
+        send(new ClientboundKick(clientReason));
         this.channel.disconnect();
     }
 
     public synchronized void kick(
-        final @NotNull Throwable cause
+        final @NotNull Throwable cause,
+        final @NotNull String clientReason
     ) {
         LOGGER.warn("[{}] Being kicked", getLoggerName(), cause);
+        send(new ClientboundKick(clientReason));
         this.channel.disconnect();
     }
 }

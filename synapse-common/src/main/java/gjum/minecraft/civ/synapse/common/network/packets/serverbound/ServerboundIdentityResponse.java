@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * Prev: {@link gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest}
+ * Next: {@link gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundWelcome}
  */
 public record ServerboundIdentityResponse(
     boolean authenticated,

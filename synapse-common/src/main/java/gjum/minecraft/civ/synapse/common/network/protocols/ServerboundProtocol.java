@@ -3,7 +3,7 @@ package gjum.minecraft.civ.synapse.common.network.protocols;
 import gjum.minecraft.civ.synapse.common.network.handlers.PacketDecoder;
 import gjum.minecraft.civ.synapse.common.network.handlers.PacketEncoder;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
-import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import java.io.DataInput;
@@ -17,7 +17,7 @@ public final class ServerboundProtocol {
         ) throws Exception {
             return switch (packet) {
                 // Handshake
-                case final ServerboundBeginHandshakePacket ignored -> Packet.SERVERBOUND_BEGIN_HANDSHAKE;
+                case final ServerboundBeginHandshake ignored -> Packet.SERVERBOUND_BEGIN_HANDSHAKE;
                 case final ServerboundEncryptionResponse ignored -> Packet.SERVERBOUND_ENCRYPTION_RESPONSE;
                 case final ServerboundIdentityResponse ignored -> Packet.SERVERBOUND_IDENTITY_RESPONSE;
                 default -> throw new IllegalArgumentException("Unknown client packet class '" + packet.getClass().getName() + "': " + packet);
@@ -33,7 +33,7 @@ public final class ServerboundProtocol {
         ) throws Exception {
             return switch (packetId) {
                 // Handshake
-                case Packet.SERVERBOUND_BEGIN_HANDSHAKE -> ServerboundBeginHandshakePacket.decode(in);
+                case Packet.SERVERBOUND_BEGIN_HANDSHAKE -> ServerboundBeginHandshake.decode(in);
                 case Packet.SERVERBOUND_ENCRYPTION_RESPONSE -> ServerboundEncryptionResponse.decode(in);
                 case Packet.SERVERBOUND_IDENTITY_RESPONSE -> ServerboundIdentityResponse.decode(in);
                 default -> throw new IllegalArgumentException("Unknown client packet id `" + packetId + "` 0x" + Integer.toHexString(packetId));

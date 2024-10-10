@@ -1,11 +1,13 @@
 package gjum.minecraft.civ.synapse.mod.network;
 
+import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundKick;
 import gjum.minecraft.civ.synapse.common.network.protocols.ClientboundProtocol;
 import gjum.minecraft.civ.synapse.common.network.protocols.ServerboundProtocol;
 import gjum.minecraft.civ.synapse.mod.network.states.ClientConnectionState;
@@ -47,6 +49,11 @@ public final class Client {
     ) throws Exception {
         LOGGER.info("Received from [{}]: {}", this.address, received); // TODO: Find a way to make DEBUG work
         switch (received) {
+            case final ClientboundKick packet -> disconnect("Kicked: " + Objects.requireNonNullElse(
+                Strings.emptyToNull(packet.reason()),
+                "<no reason given>"
+            ));
+            // Handshake
             case final ClientboundEncryptionRequest packet -> ClientConnectionState.handleEncryptionRequest(this, packet);
             case final ClientboundIdentityRequest packet -> ClientConnectionState.handleIdentityRequest(this, packet);
             default -> {} // break

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * Next: {@link gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest}
  */
-public record ServerboundBeginHandshakePacket(
+public record ServerboundBeginHandshake(
     int synapseProtocol
 ) implements Packet {
     @Override
@@ -20,10 +20,10 @@ public record ServerboundBeginHandshakePacket(
         out.writeInt(synapseProtocol());
     }
 
-    public static @NotNull ServerboundBeginHandshakePacket decode(
+    public static @NotNull ServerboundBeginHandshake decode(
         final @NotNull DataInput in
     ) throws Exception {
-        return new ServerboundBeginHandshakePacket(
+        return new ServerboundBeginHandshake(
             in.readInt()
         );
     }

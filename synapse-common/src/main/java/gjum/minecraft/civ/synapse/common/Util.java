@@ -1,7 +1,6 @@
 package gjum.minecraft.civ.synapse.common;
 
 import com.google.common.collect.Collections2;
-import com.google.common.net.HostAndPort;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -238,12 +237,5 @@ public class Util {
         final String username
     ) {
         return username != null && USERNAME_PATTERN.matcher(username).matches();
-    }
-
-    public static @NotNull String ensureFullAddress(
-        final @NotNull String address,
-        final int defaultPort
-    ) {
-        return HostAndPort.fromString(address).withDefaultPort(defaultPort).toString();
     }
 }

@@ -5,12 +5,15 @@ import java.io.DataOutput;
 import org.jetbrains.annotations.NotNull;
 
 public interface Packet {
+    byte CLIENTBOUND_KICK = 0;
+
     // Handshake
-    byte SERVERBOUND_BEGIN_HANDSHAKE = 0;
-    byte CLIENTBOUND_ENCRYPTION_REQUEST = 1;
-    byte SERVERBOUND_ENCRYPTION_RESPONSE = 2;
-    byte CLIENTBOUND_IDENTITY_REQUEST = 3;
-    byte SERVERBOUND_IDENTITY_RESPONSE = 4;
+    byte SERVERBOUND_BEGIN_HANDSHAKE = 1;
+    byte CLIENTBOUND_ENCRYPTION_REQUEST = 2;
+    byte SERVERBOUND_ENCRYPTION_RESPONSE = 3;
+    byte CLIENTBOUND_IDENTITY_REQUEST = 4;
+    byte SERVERBOUND_IDENTITY_RESPONSE = 5;
+    byte CLIENTBOUND_WELCOME = 6;
 
     void encode(
         @NotNull DataOutput out

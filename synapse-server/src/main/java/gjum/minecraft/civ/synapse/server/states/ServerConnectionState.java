@@ -10,7 +10,7 @@ import gjum.minecraft.civ.synapse.common.network.handlers.PacketEncrypter;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
-import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import gjum.minecraft.civ.synapse.common.network.states.ConnectionState;
@@ -58,7 +58,7 @@ public final class ServerConnectionState implements ConnectionState {
     }
     private static final byte[] PUBLIC_KEY_BYTES = KEY_PAIR.getPublic().getEncoded();
 
-    /** Awaiting {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket} */
+    /** Awaiting {@link gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake} */
     private record AwaitingHandshake() implements ConnectionState {
 
     }
@@ -71,7 +71,7 @@ public final class ServerConnectionState implements ConnectionState {
 
     public static void handleBeginHandshake(
         final @NotNull ClientSession client,
-        final @NotNull ServerboundBeginHandshakePacket packet
+        final @NotNull ServerboundBeginHandshake packet
     ) throws Exception {
         final Attribute<ConnectionState> attr = client.channel.attr(ServerConnectionState.KEY);
         if (!(attr.getAndSet(null) instanceof AwaitingHandshake)) {
@@ -124,7 +124,10 @@ public final class ServerConnectionState implements ConnectionState {
 
         final byte[] decryptedVerifyToken = DECRYPT.transform(packet.verifyToken());
         if (!Arrays.equals(state.verifyToken(), decryptedVerifyToken)) {
-            client.kick("verifyToken does not match!");
+            client.kick(
+                "verifyToken does not match!",
+                "Incorrect verification token!"
+            );
             return;
         }
 
@@ -173,16 +176,25 @@ public final class ServerConnectionState implements ConnectionState {
                 packet.mojangUsername()
             );
             if (account == null) {
-                client.kick("could not authenticate!");
+                client.kick(
+                    "could not authenticate!",
+                    "You are not authenticated!"
+                );
                 return;
             }
             if (!Objects.equals(account.uuid(), packet.uuid())) {
-                client.kick("claimed UUID of [" + packet.uuid() + "] did not match auth UUID of [" + account.uuid() + "]");
+                client.kick(
+                    "claimed UUID of [" + packet.uuid() + "] did not match auth UUID of [" + account.uuid() + "]",
+                    "You are not who you claim to be! \uD83E\uDD28"
+                );
                 return;
             }
         }
         else if (Server.REQUIRES_AUTH) {
-            client.kick("Did not authenticate when required!");
+            client.kick(
+                "Did not authenticate when required!",
+                "This Synapse server requires that you be authenticated!"
+            );
             return;
         }
         else {
@@ -193,7 +205,10 @@ public final class ServerConnectionState implements ConnectionState {
         }
 
         if (!Server.GAME_ADDRESS.equals(packet.gameAddress())) {
-            client.kick("game address of [" + packet.gameAddress() + "] did not match supported address of [" + Server.GAME_ADDRESS + "]");
+            client.kick(
+                "game address of [" + packet.gameAddress() + "] did not match supported address of [" + Server.GAME_ADDRESS + "]",
+                "This Synapse server isn't for " + packet.gameAddress()
+            );
             return;
         }
 

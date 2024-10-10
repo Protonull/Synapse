@@ -1,5 +1,6 @@
 package gjum.minecraft.civ.synapse.mod.network.states;
 
+import com.google.common.net.HostAndPort;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import gjum.minecraft.civ.synapse.common.Util;
 import gjum.minecraft.civ.synapse.common.network.handlers.PacketDecrypter;
@@ -7,7 +8,7 @@ import gjum.minecraft.civ.synapse.common.network.handlers.PacketEncrypter;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
-import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshakePacket;
+import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import gjum.minecraft.civ.synapse.common.network.states.ConnectionState;
@@ -60,7 +61,7 @@ public final class ClientConnectionState implements ConnectionState {
         final @NotNull Client client
     ) {
         client.channel.attr(ClientConnectionState.KEY).set(new AwaitingEncryptionRequest());
-        client.send(new ServerboundBeginHandshakePacket(
+        client.send(new ServerboundBeginHandshake(
             0 // TODO: Make this value actually mean something
         ));
     }
@@ -174,7 +175,7 @@ public final class ClientConnectionState implements ConnectionState {
             namelayerName,
             mojangName,
             playerUuid,
-            Util.ensureFullAddress(serverData.ip, 25565)
+            HostAndPort.fromString(serverData.ip).withDefaultPort(25565).toString()
         ));
     }
 }
