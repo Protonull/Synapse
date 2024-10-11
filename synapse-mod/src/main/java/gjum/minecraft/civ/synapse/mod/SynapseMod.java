@@ -1,10 +1,12 @@
 package gjum.minecraft.civ.synapse.mod;
 
 import com.mojang.blaze3d.platform.InputConstants;
+import gjum.minecraft.civ.synapse.mod.events.EventBus;
 import gjum.minecraft.civ.synapse.mod.features.SynapseHud;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import org.jetbrains.annotations.ApiStatus;
 
 public final class SynapseMod {
@@ -32,6 +34,8 @@ public final class SynapseMod {
         InputConstants.UNKNOWN.getValue(),
         "category.synapse"
     );
+
+    public static final EventBus EVENTS = new EventBus("Synapse-Main-Thread-Events", Minecraft.getInstance());
 
     public static volatile boolean enabled = true;
     @Deprecated

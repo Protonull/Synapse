@@ -1,4 +1,8 @@
+[versions]
+adventure = "4.17.0"
+
 [libraries]
+# common
 annotations = { group = "org.jetbrains", name = "annotations", version = "25.0.0" }
 gson = { group = "com.google.code.gson", name = "gson", version = "2.11.0" }
 netty = { group = "io.netty", name = "netty-all", version = "4.1.114.Final" }
@@ -6,15 +10,21 @@ fastutil = { group = "it.unimi.dsi", name = "fastutil", version = "8.5.14" }
 guava = { group = "com.google.guava", name = "guava", version = "32.1.2-jre" }
 slf4j = { group = "org.slf4j", name = "slf4j-api", version = "2.0.16" }
 
+# depsCommonCompileServerImpl
+adventure = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
+adventure_nbt = { group = "net.kyori", name = "adventure-nbt", version.ref = "adventure" }
+
 [bundles]
 common = [
     "annotations",
     "gson",
     "netty",
-    "fastutil"
-]
-# This is for dependencies that would be useful in common/server that are present in Minecraft
-nonmc = [
+    "fastutil",
     "guava",
     "slf4j"
+]
+
+depsCommonCompileServerImpl = [
+    "adventure",
+    "adventure_nbt"
 ]

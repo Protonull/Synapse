@@ -1,6 +1,5 @@
 package gjum.minecraft.civ.synapse.mod.network;
 
-import com.google.common.base.Strings;
 import com.google.common.net.HostAndPort;
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
@@ -8,12 +7,14 @@ import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketExcepti
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundKick;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundWelcome;
 import gjum.minecraft.civ.synapse.common.network.protocols.ClientboundProtocol;
 import gjum.minecraft.civ.synapse.common.network.protocols.ServerboundProtocol;
 import gjum.minecraft.civ.synapse.mod.network.states.ClientConnectionState;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
@@ -49,16 +50,13 @@ public final class Client {
     ) throws Exception {
         LOGGER.info("Received from [{}]: {}", this.address, received); // TODO: Find a way to make DEBUG work
         switch (received) {
-            case final ClientboundKick packet -> disconnect("Kicked: " + Objects.requireNonNullElse(
-                Strings.emptyToNull(packet.reason()),
-                "<no reason given>"
-            ));
+            case final ClientboundKick packet -> disconnect("Kicked: " + packet.reason());
             // Handshake
             case final ClientboundEncryptionRequest packet -> ClientConnectionState.handleEncryptionRequest(this, packet);
             case final ClientboundIdentityRequest packet -> ClientConnectionState.handleIdentityRequest(this, packet);
+            case final ClientboundWelcome packet -> ClientConnectionState.handleWelcome(this, packet);
             default -> {} // break
         }
-        throw new UnexpectedPacketException(received);
     }
 
     public synchronized void send(
@@ -84,11 +82,6 @@ public final class Client {
     ) {
         LOGGER.info("Disconnecting from [{}]", this.address, cause);
         this.channel.disconnect();
-    }
-
-    public synchronized void deinit() {
-        this.channel.close();
-        this.channel.attr(KEY).set(null);
     }
 
     public static @NotNull Client connect(
@@ -129,12 +122,11 @@ public final class Client {
                                 final @NotNull Object received
                             ) throws Exception {
                                 if (received instanceof final Packet packet) {
-                                    LOGGER.info("Receiving packet: {}", packet.getClass().getSimpleName());
                                     client.handlePacket(packet);
-                                    LOGGER.info("Handled packet: {}", packet.getClass().getSimpleName());
                                     return;
                                 }
-                                LOGGER.info("Received non-packet!: {}", received.getClass().getName());
+                                LOGGER.warn("Received non-packet from [{}]: {}", address, received.getClass().getName());
+                                client.channel.disconnect();
                             }
                             @Override
                             public void exceptionCaught(
@@ -157,6 +149,9 @@ public final class Client {
         final ChannelFuture channelFuture = bootstrap.connect(address.getHost(), address.getPort());
         final var client = new Client(channelFuture.channel(), address);
         client.channel.attr(KEY).set(client);
+        client.channel.closeFuture().addListener((ChannelFutureListener) (future) -> {
+            client.channel.attr(KEY).set(null);
+        });
         return client;
     }
 
@@ -172,5 +167,22 @@ public final class Client {
         void synapse$setConnection(
             Client client
         );
+
+        default @NotNull Client synapse$connect(
+            final @NotNull HostAndPort address
+        ) {
+            synchronized (this) {
+                final Client previousConnection = synapse$getConnection();
+                if (previousConnection != null) {
+                    previousConnection.channel.close();
+                }
+                final Client connection = Client.connect(address);
+                synapse$setConnection(connection);
+                connection.channel.closeFuture().addListener((ChannelFutureListener) (future) -> {
+                    synapse$setConnection(null);
+                });
+                return connection;
+            }
+        }
     }
 }

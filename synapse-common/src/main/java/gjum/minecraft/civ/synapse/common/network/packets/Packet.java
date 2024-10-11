@@ -15,6 +15,12 @@ public interface Packet {
     byte SERVERBOUND_IDENTITY_RESPONSE = 5;
     byte CLIENTBOUND_WELCOME = 6;
 
+    // Config
+    byte SERVERBOUND_SET_CONFIG = 7;
+
+    // Points of Interest
+    byte SERVERBOUND_REPORT_POSITION = 8;
+
     void encode(
         @NotNull DataOutput out
     ) throws Exception;

@@ -8,10 +8,13 @@ import gjum.minecraft.civ.synapse.common.network.handlers.PacketEncrypter;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundEncryptionRequest;
 import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundIdentityRequest;
+import gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundWelcome;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import gjum.minecraft.civ.synapse.common.network.states.ConnectionState;
+import gjum.minecraft.civ.synapse.mod.SynapseMod;
+import gjum.minecraft.civ.synapse.mod.events.SynapseConnectedEvent;
 import gjum.minecraft.civ.synapse.mod.network.Client;
 import io.netty.util.Attribute;
 import java.security.KeyFactory;
@@ -91,6 +94,8 @@ public final class ClientConnectionState implements ConnectionState {
             .addFirst("encrypt", new PacketEncrypter(secretKey))
             .addFirst("decrypt", new PacketDecrypter(secretKey));
 
+        LOGGER.debug("Connection to [{}] now encrypted!", client.address);
+
         attr.set(new AwaitingIdentityRequest(
             sharedSecret,
             publicKey
@@ -137,6 +142,7 @@ public final class ClientConnectionState implements ConnectionState {
         final User session = Minecraft.getInstance().getUser();
         boolean authenticated;
         if (FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            LOGGER.debug("Skipping authentication for [{}] since this is a dev environment!", client.address);
             authenticated = false;
         }
         else {
@@ -153,6 +159,7 @@ public final class ClientConnectionState implements ConnectionState {
                     sha
                 );
                 authenticated = true;
+                LOGGER.debug("Authentication for [{}]!", client.address);
             }
             catch (final AuthenticationException e) {
                 LOGGER.warn("Could not authenticate!", e);
@@ -164,7 +171,7 @@ public final class ClientConnectionState implements ConnectionState {
         final String mojangName = session.getName();
         final UUID playerUuid = session.getProfileId();
 
-        attr.set(new ConnectionState.GreenCard(
+        attr.set(new AwaitingWelcome(
             namelayerName,
             mojangName,
             playerUuid
@@ -177,5 +184,40 @@ public final class ClientConnectionState implements ConnectionState {
             playerUuid,
             HostAndPort.fromString(serverData.ip).withDefaultPort(25565).toString()
         ));
+    }
+
+    // ============================================================
+    // Welcome
+    // ============================================================
+
+    /** Awaiting {@link gjum.minecraft.civ.synapse.common.network.packets.clientbound.ClientboundWelcome} */
+    private record AwaitingWelcome(
+        @NotNull String namelayerUsername,
+        @NotNull String mojangUsername,
+        @NotNull UUID playerUuid
+    ) implements ConnectionState {
+        public AwaitingWelcome {
+            Objects.requireNonNull(namelayerUsername);
+            Objects.requireNonNull(mojangUsername);
+            Objects.requireNonNull(playerUuid);
+        }
+    }
+
+    public static void handleWelcome(
+        final @NotNull Client client,
+        final @NotNull ClientboundWelcome packet
+    ) throws Exception {
+        final Attribute<ConnectionState> attr = client.channel.attr(ClientConnectionState.KEY);
+        if (!(attr.getAndSet(null) instanceof final AwaitingWelcome state)) {
+            throw new UnexpectedPacketException(packet);
+        }
+
+        attr.set(new ConnectionState.GreenCard(
+            state.namelayerUsername(),
+            state.mojangUsername(),
+            state.playerUuid()
+        ));
+
+        SynapseMod.EVENTS.post(new SynapseConnectedEvent(client));
     }
 }

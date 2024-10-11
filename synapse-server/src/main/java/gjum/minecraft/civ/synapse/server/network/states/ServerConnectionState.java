@@ -1,4 +1,4 @@
-package gjum.minecraft.civ.synapse.server.states;
+package gjum.minecraft.civ.synapse.server.network.states;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -14,8 +14,8 @@ import gjum.minecraft.civ.synapse.common.network.packets.serverbound.Serverbound
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
 import gjum.minecraft.civ.synapse.common.network.states.ConnectionState;
-import gjum.minecraft.civ.synapse.server.ClientSession;
-import gjum.minecraft.civ.synapse.server.Server;
+import gjum.minecraft.civ.synapse.server.config.ServerEnvironment;
+import gjum.minecraft.civ.synapse.server.network.TcpClient;
 import io.netty.util.Attribute;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -64,13 +64,13 @@ public final class ServerConnectionState implements ConnectionState {
     }
 
     public static void handleConnected(
-        final @NotNull ClientSession client
+        final @NotNull TcpClient client
     ) {
         client.channel.attr(ServerConnectionState.KEY).set(new AwaitingHandshake());
     }
 
     public static void handleBeginHandshake(
-        final @NotNull ClientSession client,
+        final @NotNull TcpClient client,
         final @NotNull ServerboundBeginHandshake packet
     ) throws Exception {
         final Attribute<ConnectionState> attr = client.channel.attr(ServerConnectionState.KEY);
@@ -114,7 +114,7 @@ public final class ServerConnectionState implements ConnectionState {
     }
 
     public static void handleEncryptionResponse(
-        final @NotNull ClientSession client,
+        final @NotNull TcpClient client,
         final @NotNull ServerboundEncryptionResponse packet
     ) throws Exception {
         final Attribute<ConnectionState> attr = client.channel.attr(ServerConnectionState.KEY);
@@ -137,6 +137,8 @@ public final class ServerConnectionState implements ConnectionState {
         client.channel.pipeline()
             .addFirst("encrypt", new PacketEncrypter(key))
             .addFirst("decrypt", new PacketDecrypter(key));
+
+        LOGGER.debug("[{}] Connection is now encrypted!", client.getLoggerName());
 
         attr.set(new AwaitingIdentityResponse(
             sharedSecret
@@ -161,7 +163,7 @@ public final class ServerConnectionState implements ConnectionState {
     }
 
     public static void handleIdentityResponse(
-        final @NotNull ClientSession client,
+        final @NotNull TcpClient client,
         final @NotNull ServerboundIdentityResponse packet
     ) throws Exception {
         final Attribute<ConnectionState> attr = client.channel.attr(ServerConnectionState.KEY);
@@ -182,15 +184,15 @@ public final class ServerConnectionState implements ConnectionState {
                 );
                 return;
             }
-            if (!Objects.equals(account.uuid(), packet.uuid())) {
+            if (!Objects.equals(account.uuid(), packet.playerUuid())) {
                 client.kick(
-                    "claimed UUID of [" + packet.uuid() + "] did not match auth UUID of [" + account.uuid() + "]",
+                    "claimed UUID of [" + packet.playerUuid() + "] did not match auth UUID of [" + account.uuid() + "]",
                     "You are not who you claim to be! \uD83E\uDD28"
                 );
                 return;
             }
         }
-        else if (Server.REQUIRES_AUTH) {
+        else if (ServerEnvironment.REQUIRES_AUTH) {
             client.kick(
                 "Did not authenticate when required!",
                 "This Synapse server requires that you be authenticated!"
@@ -200,13 +202,13 @@ public final class ServerConnectionState implements ConnectionState {
         else {
             account = new NameAndUuid(
                 packet.mojangUsername(),
-                packet.uuid()
+                packet.playerUuid()
             );
         }
 
-        if (!Server.GAME_ADDRESS.equals(packet.gameAddress())) {
+        if (!ServerEnvironment.GAME_ADDRESS.equals(packet.gameAddress())) {
             client.kick(
-                "game address of [" + packet.gameAddress() + "] did not match supported address of [" + Server.GAME_ADDRESS + "]",
+                "game address of [" + packet.gameAddress() + "] did not match supported address of [" + ServerEnvironment.GAME_ADDRESS + "]",
                 "This Synapse server isn't for " + packet.gameAddress()
             );
             return;

@@ -1,34 +1,9 @@
 package gjum.minecraft.civ.synapse.server;
 
-import com.google.common.net.HostAndPort;
-import gjum.minecraft.civ.synapse.common.configs.StringParsing;
-import gjum.minecraft.civ.synapse.common.network.packets.Packet;
-import gjum.minecraft.civ.synapse.common.network.packets.PacketHelpers;
-import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
-import gjum.minecraft.civ.synapse.common.network.protocols.ClientboundProtocol;
-import gjum.minecraft.civ.synapse.common.network.protocols.ServerboundProtocol;
-import gjum.minecraft.civ.synapse.common.observations.PlayerTracker;
 import gjum.minecraft.civ.synapse.server.config.AccountsListConfig;
+import gjum.minecraft.civ.synapse.server.config.ServerEnvironment;
 import gjum.minecraft.civ.synapse.server.config.UuidsConfig;
-import gjum.minecraft.civ.synapse.server.states.ServerConnectionState;
-import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.LongArrayList;
-import it.unimi.dsi.fastutil.longs.LongCollection;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
+import gjum.minecraft.civ.synapse.server.network.TcpServer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,167 +11,29 @@ import org.slf4j.LoggerFactory;
 public final class Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(Server.class);
 
-    public static final int PORT = StringParsing.parseInt(
-        System.getenv("SYNAPSE_PORT"),
-        22001
-    );
-    public static final String GAME_ADDRESS = HostAndPort.fromString(StringParsing.parse(
-        System.getenv("SYNAPSE_GAME_ADDRESS"),
-        "play.civmc.net"
-    )).withDefaultPort(25565).toString();
-    public static final boolean REQUIRES_AUTH = StringParsing.parseBoolean(
-        System.getenv("SYNAPSE_REQUIRES_AUTH"),
-        true
-    );
-    private static final long CONNECT_RATE_LIMIT_WINDOW = TimeUnit.MINUTES.toMillis(StringParsing.parseLong(
-        System.getenv("SYNAPSE_CONNECT_RATE_LIMIT_WINDOW"),
-        1 // minute
-    ));
-    private static final int CONNECT_RATE_LIMIT_COUNT = StringParsing.parseInt(
-        System.getenv("SYNAPSE_CONNECT_RATE_LIMIT_COUNT"),
-        7 // 7 connections over the past rateLimitWindow
-    );
-
-    public final UuidsConfig uuidMapper = new UuidsConfig();
-    private final AccountsListConfig userList = new AccountsListConfig(this.uuidMapper);
-    private final AccountsListConfig adminList = new AccountsListConfig(this.uuidMapper);
-
-    private final Long2ObjectMap<ClientSession> connections = Long2ObjectMaps.synchronize(new Long2ObjectOpenHashMap<>());
-    public final PlayerTracker playerTracker = new PlayerTracker(null);
-
-    private final HashMap<String, LongCollection> rateLimitTracker = new HashMap<>();
+    public static final UuidsConfig UUIDS = new UuidsConfig();
+    public static final AccountsListConfig USERS = new AccountsListConfig(UUIDS);
+    public static final AccountsListConfig ADMINS = new AccountsListConfig(UUIDS);
 
     public static void main(
         final @NotNull String @NotNull [] args
-    ) {
-        try {
-            final var server = new Server();
-            server.run();
-        }
-        catch (final Throwable e) {
-            LOGGER.error("", e);
-        }
-    }
-
-    public Server() {
+    ) throws Throwable {
         // must be loaded first; others depend on it during loading
-        this.uuidMapper.load(new File(StringParsing.parse(
-            System.getenv("SYNAPSE_UUIDS_PATH"),
-            "uuids.tsv"
-        )));
-        this.uuidMapper.saveLater(null);
+        UUIDS.load(ServerEnvironment.UUIDS_PATH);
+        UUIDS.saveLater(null);
 
-        this.userList.load(new File(StringParsing.parse(
-            System.getenv("SYNAPSE_USERS_PATH"),
-            "users.tsv"
-        )));
-        this.userList.saveLater(null);
+        USERS.load(ServerEnvironment.USERS_PATH);
+        USERS.saveLater(null);
 
-        this.adminList.load(new File(StringParsing.parse(
-            System.getenv("SYNAPSE_ADMINS_PATH"),
-            "admins.tsv"
-        )));
-        this.adminList.saveLater(null);
+        ADMINS.load(ServerEnvironment.ADMINS_PATH);
+        ADMINS.saveLater(null);
 
+        TcpServer.start();
         LOGGER.info(
             "Starting server. PORT={}, GAME_ADDRESS={}, REQUIRES_AUTH={}",
-            PORT,
-            GAME_ADDRESS,
-            REQUIRES_AUTH
+            ServerEnvironment.PORT,
+            ServerEnvironment.GAME_ADDRESS,
+            ServerEnvironment.REQUIRES_AUTH
         );
-    }
-
-    public void run() throws InterruptedException {
-        final var parentGroup = new NioEventLoopGroup();
-        final var childGroup = new NioEventLoopGroup();
-        final var bootstrap = new ServerBootstrap();
-        bootstrap.group(parentGroup, childGroup)
-            .channel(NioServerSocketChannel.class)
-            .option(ChannelOption.SO_BACKLOG, 128)
-            .childOption(ChannelOption.SO_KEEPALIVE, true)
-            .childHandler(new ChannelInitializer<SocketChannel>() {
-                @Override
-                public void initChannel(
-                    final @NotNull SocketChannel ch
-                ) {
-                    final ClientSession client = new ClientSession(ch);
-                    ch.attr(ClientSession.KEY).set(client);
-
-                    if (checkRateLimit(ch.remoteAddress().getHostString())) {
-                        LOGGER.warn(
-                            "[{}@{}] Has hit rate limit, disconnecting!",
-                            client.getLoggerName(),
-                            ch.remoteAddress()
-                        );
-                        ch.close();
-                        return;
-                    }
-
-                    ch.pipeline()
-                        .addLast(PacketHelpers.generatePacketLengthPrefixHandlers())
-                        .addLast("decoder", new ServerboundProtocol.Decoder())
-                        .addLast("encoder", new ClientboundProtocol.Encoder())
-                        .addLast("handler", new ChannelInboundHandlerAdapter() {
-                            @Override
-                            public void channelActive(
-                                final @NotNull ChannelHandlerContext ctx
-                            ) throws Exception {
-                                LOGGER.info("[{}] Connected", client.getLoggerName());
-                                Server.this.connections.put(client.id, client);
-                                ServerConnectionState.handleConnected(client);
-                            }
-                            @Override
-                            public void channelInactive(
-                                final @NotNull ChannelHandlerContext ctx
-                            ) throws Exception {
-                                LOGGER.info("[{}] Disconnected", client.getLoggerName());
-                                Server.this.connections.remove(client.id);
-                            }
-                            @Override
-                            public void exceptionCaught(
-                                final @NotNull ChannelHandlerContext ctx,
-                                final @NotNull Throwable cause
-                            ) {
-                                if (cause instanceof IOException && "Connection reset by peer".equals(cause.getMessage())) {
-                                    return;
-                                }
-                                client.kick(cause, "Something went wrong!");
-                            }
-                            @Override
-                            public void channelRead(
-                                final @NotNull ChannelHandlerContext ctx,
-                                final @NotNull Object received
-                            ) throws Exception {
-                                if (received instanceof final Packet packet) {
-                                    client.handlePacket(packet);
-                                    return;
-                                }
-                                throw new UnexpectedPacketException("Received a non-packet! [" + received + "]");
-                            }
-                        });
-                }
-            });
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            childGroup.shutdownGracefully();
-            parentGroup.shutdownGracefully();
-        }));
-
-        // Bind and start to accept incoming connections.
-        final ChannelFuture serverFuture = bootstrap.bind(PORT).sync();
-
-        // Wait until the server socket is closed.
-        serverFuture.channel().closeFuture().sync();
-    }
-
-    /**
-     * @return true iff the connection should be denied
-     */
-    private synchronized boolean checkRateLimit(String source) {
-        final LongCollection lastConnectTimes = this.rateLimitTracker.computeIfAbsent(source, (_source) -> new LongArrayList(2));
-        final long now = System.currentTimeMillis();
-        lastConnectTimes.removeIf((timestamp) -> timestamp < now - CONNECT_RATE_LIMIT_WINDOW);
-        lastConnectTimes.add(now);
-        return lastConnectTimes.size() > CONNECT_RATE_LIMIT_COUNT;
     }
 }

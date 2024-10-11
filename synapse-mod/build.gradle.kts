@@ -73,9 +73,7 @@ base {
 
 loom {
     runConfigs.configureEach {
-        ideConfigGenerated(true)
-        this.programArgs
-            .addAll("--username LocalModTester".split(" "))
+//        this.programArgs.addAll("--username LocalModTester".split(" "))
     }
 }
 

@@ -11,7 +11,7 @@ version = "SNAPSHOT"
 dependencies {
     implementation(project(":synapse-common"))
     implementation(libs.bundles.common)
-    implementation(libs.bundles.nonmc)
+    implementation(libs.bundles.depsCommonCompileServerImpl)
 
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     runtimeOnly("ch.qos.logback:logback-classic:1.5.8")

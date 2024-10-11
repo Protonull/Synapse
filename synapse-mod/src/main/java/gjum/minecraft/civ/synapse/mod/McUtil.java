@@ -33,6 +33,12 @@ public class McUtil {
         return Minecraft.getInstance();
     }
 
+    public static void assertOnMinecraftThread() {
+        if (!Minecraft.getInstance().isSameThread()) {
+            throw new IllegalStateException("Must be called on the Minecraft thread!");
+        }
+    }
+
     public static boolean isJourneyMapLoaded() {
         return FabricLoader.getInstance().isModLoaded("journeymap") && JourneyMapPlugin.jmApi != null;
     }

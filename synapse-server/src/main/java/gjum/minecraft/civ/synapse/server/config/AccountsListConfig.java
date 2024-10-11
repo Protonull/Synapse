@@ -59,7 +59,7 @@ public final class AccountsListConfig extends LinesConfig {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet())
         );
-        LOGGER.info("Loaded list of {} accounts by uuid", this.uuids.size());
+        LOGGER.info("Loaded list of {} accounts by playerUuid", this.uuids.size());
     }
 
     public void setList(

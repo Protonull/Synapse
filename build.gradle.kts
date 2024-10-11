@@ -28,7 +28,7 @@ allprojects {
 
 tasks {
     create("testClient") {
-        dependsOn(
+        finalizedBy(
             ":synapse-mod:clean",
             ":synapse-mod:runClient"
         )

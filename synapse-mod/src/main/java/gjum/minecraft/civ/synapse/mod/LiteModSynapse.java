@@ -812,8 +812,8 @@ public class LiteModSynapse {
     private void handlePacketSpawnPlayer(Object packet) {
         // TODO: Find out what the player-spawn packet is
         // TODO: Uncomment
-//        final UUID uuid = packet.getUniqueId();
-//        final String accountName = Minecraft.getInstance().getConnection().getPlayerInfo(uuid)
+//        final UUID playerUuid = packet.getUniqueId();
+//        final String accountName = Minecraft.getInstance().getConnection().getPlayerInfo(playerUuid)
 //                .getGameProfile().getName().replaceAll("§.", "");
 //        final Pos pos = new Pos(
 //                MathHelper.floor(packet.getX()),
@@ -826,7 +826,7 @@ public class LiteModSynapse {
 //                final Standing standing = mapNonNull(serverConfig, sc ->
 //                        sc.getAccountStanding(accountName));
 //                final String soundName = config.getStandingSound(standing);
-//                if (soundName != null) playSound(soundName, uuid);
+//                if (soundName != null) playSound(soundName, playerUuid);
 //            }
 //        } catch (Throwable e) {
 //            printErrorRateLimited(e);
@@ -850,7 +850,7 @@ public class LiteModSynapse {
         // TODO: Uncomment
 //        for (SPacketPlayerListItem.AddPlayerData entry : packet.getEntries()) {
 //            final GameProfile profile = entry.getProfile();
-//            final UUID uuid = profile.getId();
+//            final UUID playerUuid = profile.getId();
 //            if (packet.getAction() == SPacketPlayerListItem.Action.ADD_PLAYER) {
 //                if (profile.getName() == null || profile.getName().isEmpty()) continue;
 //                if (profile.getName().contains("~")) continue; // dummy entry by TabListPlus
@@ -861,18 +861,18 @@ public class LiteModSynapse {
 //                final String accountName = profile.getName().replaceAll("§.", "").trim();
 //                accountsConfig.addAccount(accountName);
 //
-//                // TODO detect combat logger by comparing uuid
+//                // TODO detect combat logger by comparing playerUuid
 //                Action action = Action.LOGIN;
 //                if (entry.getGameMode() == GameType.NOT_SET) {
 //                    action = Action.CTLOG;
 //                }
 //
 //                final Skynet observation = new Skynet(
-//                        McUtil.getSelfAccount(), uuid, accountName, action, entry.getGameMode().getID());
+//                        McUtil.getSelfAccount(), playerUuid, accountName, action, entry.getGameMode().getID());
 //                handleObservation(observation);
 //            } else if (packet.getAction() == SPacketPlayerListItem.Action.REMOVE_PLAYER) {
 //                final NetworkPlayerInfo playerInfo = Minecraft.getInstance().getConnection()
-//                        .getPlayerInfo(uuid);
+//                        .getPlayerInfo(playerUuid);
 //                if (playerInfo == null) continue;
 //                final GameProfile existingProfile = playerInfo.getGameProfile();
 //                if (existingProfile.getName() == null) continue;
@@ -882,7 +882,7 @@ public class LiteModSynapse {
 //                if (accountName.isEmpty()) continue;
 //
 //                final Skynet observation = new Skynet(
-//                        McUtil.getSelfAccount(), uuid, accountName, Action.LOGOUT, playerInfo.getGameType().getID());
+//                        McUtil.getSelfAccount(), playerUuid, accountName, Action.LOGOUT, playerInfo.getGameType().getID());
 //                handleObservation(observation);
 //            }
 //        }

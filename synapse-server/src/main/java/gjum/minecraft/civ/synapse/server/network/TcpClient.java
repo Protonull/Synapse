@@ -1,4 +1,4 @@
-package gjum.minecraft.civ.synapse.server;
+package gjum.minecraft.civ.synapse.server.network;
 
 import gjum.minecraft.civ.synapse.common.network.packets.Packet;
 import gjum.minecraft.civ.synapse.common.network.packets.UnexpectedPacketException;
@@ -6,30 +6,39 @@ import gjum.minecraft.civ.synapse.common.network.packets.clientbound.Clientbound
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundBeginHandshake;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundEncryptionResponse;
 import gjum.minecraft.civ.synapse.common.network.packets.serverbound.ServerboundIdentityResponse;
-import gjum.minecraft.civ.synapse.server.states.ServerConnectionState;
+import gjum.minecraft.civ.synapse.common.network.states.ConnectionState;
+import gjum.minecraft.civ.synapse.server.network.states.ServerConnectionState;
 import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import java.util.Objects;
+import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class ClientSession {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientSession.class);
-    public static final AttributeKey<ClientSession> KEY = AttributeKey.valueOf(ClientSession.class, "client");
+public final class TcpClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TcpClient.class);
+    public static final AttributeKey<TcpClient> KEY = AttributeKey.valueOf(TcpClient.class, "client");
     private static long lastClientId = 0;
 
     public final long id = ++lastClientId;
     public final Channel channel;
 
-    public ClientSession(
+    public TcpClient(
         final @NotNull Channel channel
     ) {
         this.channel = Objects.requireNonNull(channel);
     }
 
     public @NotNull String getLoggerName() {
-        return "Client" + this.id;
+        return "Client-" + this.id + getGreenCard().map((state) -> "-" + state.namelayerName()).orElse("");
+    }
+
+    public Optional<ConnectionState.GreenCard> getGreenCard() {
+        if (this.channel.attr(ConnectionState.KEY).get() instanceof final ConnectionState.GreenCard greenCard) {
+            return Optional.of(greenCard);
+        }
+        return Optional.empty();
     }
 
     public synchronized void handlePacket(

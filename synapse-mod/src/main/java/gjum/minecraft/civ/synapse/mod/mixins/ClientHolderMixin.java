@@ -38,7 +38,7 @@ public abstract class ClientHolderMixin implements Client.Holder {
         final @NotNull CallbackInfo ci
     ) {
         // TODO: Add an 'auto-connect' option
-        synapse$setConnection(Client.connect(HostAndPort.fromString("localhost:22001").withDefaultPort(22001)));
+        synapse$connect(HostAndPort.fromString("localhost:22001").withDefaultPort(22001));
     }
 
     @Inject(
