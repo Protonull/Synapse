@@ -23,6 +23,8 @@ dependencies {
         include(it)
     }
 
+    modImplementation("dev.isxander:yet-another-config-lib:${project.extra["yacl_version"]}")
+
     // This is quite literally just for LegacyComponentSerializer. If some other way is found to convert chat components
     // into fully legacy-formatted strings, please do let me know.
     "net.kyori:adventure-platform-fabric:5.14.1".also {
@@ -55,6 +57,16 @@ dependencies {
 repositories {
     maven(url = "https://maven.parchmentmc.org") {
         name = "ParchmentMC"
+    }
+    // For YACL
+    maven(url = "https://maven.isxander.dev/releases/") {
+        name = "Xander Maven"
+        content {
+            @Suppress("UnstableApiUsage")
+            includeGroupAndSubgroups("dev.isxander")
+            @Suppress("UnstableApiUsage")
+            includeGroupAndSubgroups("org.quiltmc")
+        }
     }
     maven(url = "https://api.modrinth.com/maven") {
         name = "Modrinth"
@@ -92,7 +104,8 @@ tasks {
 
                 "minecraft_version" to project.extra["minecraft_version"],
                 "fabric_loader_version" to project.extra["fabric_loader_version"],
-                "fabric_api_version" to project.extra["fabric_api_version"]
+                "fabric_api_version" to project.extra["fabric_api_version"],
+                "yacl_version" to project.extra["yacl_version"],
             )
         }
         filesMatching("assets/synapse/lang/en_us.json") {

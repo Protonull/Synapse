@@ -1,10 +1,9 @@
 package gjum.minecraft.civ.synapse.mod.features;
 
-import gjum.minecraft.civ.synapse.common.observations.accountpos.AccountPosObservation;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.mod.McUtil;
 import gjum.minecraft.civ.synapse.mod.Standing;
-import gjum.minecraft.civ.synapse.mod.SynapseMod;
+import gjum.minecraft.civ.synapse.mod.config.SynapseConfig;
 import java.awt.Color;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -16,17 +15,10 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 public final class SynapseHud {
-    public static volatile boolean showHealthPotCount = true;
-    public static volatile boolean showPlayerCount = true;
-    public static volatile boolean showFocus = true;
-
     public static void renderHud(
         final @NotNull GuiGraphics guiGraphics,
         final @NotNull DeltaTracker delta
     ) {
-        if (!SynapseMod.enabled) {
-            return;
-        }
         final Minecraft minecraft = Minecraft.getInstance();
         final boolean hasChatOpen = minecraft.screen instanceof ChatScreen;
         final int chatBoxHeight = minecraft.gui.getChat().getHeight();
@@ -35,7 +27,7 @@ public final class SynapseHud {
         }
         final int screenHeight = minecraft.getWindow().getGuiScaledHeight();
         int y = (screenHeight - 10 * 8) / 2;
-        if (showHealthPotCount) {
+        if (SynapseConfig.HANDLER.instance().hudShowHealthPotCount) {
             renderHealthPotCountHud(
                 minecraft,
                 guiGraphics,
@@ -43,35 +35,16 @@ public final class SynapseHud {
             );
             y += 10;
         }
-        if (showPlayerCount) {
-            // TODO hide each nearby player count if zero?
+        if (SynapseConfig.HANDLER.instance().hudShowNearbyHostileCount) {
             renderPlayerCountHud(minecraft, guiGraphics, y += 10, "hostile", Standing.HOSTILE);
-            renderPlayerCountHud(minecraft, guiGraphics, y += 10, "friendly", Standing.FRIENDLY);
-            renderPlayerCountHud(minecraft, guiGraphics, y += 10, "total", null);
-            y += 10;
         }
-        final int wrapWidth = 200;
-        AccountPosObservation lastFocusObservation = null;
-        // TODO: Uncommen
-//        if (showFocus && !focusedAccountNames.isEmpty()) {
-//            lastFocusObservation = playerTracker.getMostRecentPosObservationForAccounts(focusedAccountNames);
-//            final int focusColor = LiteModSynapse.getStandingColor(Standing.FOCUS).getRGB();
-//            String text = null;
-//            if (lastFocusObservation != null) {
-//                final ITextComponent msg = formatObservationWithVisibility(
-//                    null, lastFocusObservation, null);
-//                if (msg != null) {
-//                    String age = Util.formatAge(lastFocusObservation.getTime());
-//                    text = age + " " + msg.getFormattedText();
-//                }
-//            }
-//            if (text == null) {
-//                text = String.join(" ", Util.sortedUniqListIgnoreCase(focusedAccountNames));
-//            }
-//            y += 10 * drawSplitStringWithShadow(text,
-//                1, y + 10, wrapWidth, focusColor);
-//            y += 10;
-//        }
+        if (SynapseConfig.HANDLER.instance().hudShowNearbyFriendlyCount) {
+            renderPlayerCountHud(minecraft, guiGraphics, y += 10, "friendly", Standing.FRIENDLY);
+        }
+        if (SynapseConfig.HANDLER.instance().hudShowNearbyPlayerCount) {
+            renderPlayerCountHud(minecraft, guiGraphics, y += 10, "total", null);
+        }
+        y += 10;
     }
 
     private static void renderHealthPotCountHud(
