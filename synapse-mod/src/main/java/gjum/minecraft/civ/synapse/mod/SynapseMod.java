@@ -53,6 +53,6 @@ public final class SynapseMod {
     public static @NotNull Screen newConfigScreen(
         final Screen previousScreen
     ) {
-        return SynapseConfig.newScreenGenerator(SynapseConfig.HANDLER.instance()).generateScreen(previousScreen);
+        return SynapseConfig.newScreenGenerator().generateScreen(previousScreen);
     }
 }

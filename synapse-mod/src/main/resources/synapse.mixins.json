@@ -7,6 +7,7 @@
         "ClientHolderMixin",
         "ClientPacketListenerMixin",
         "EntityMixin",
+        "HealthPotCounterMixin",
         "PlayerTabOverlayMixin"
     ],
     "injectors": {

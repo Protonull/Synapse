@@ -1,5 +1,15 @@
 {
     "key.synapse.settings": "Open settings GUI",
     "key.synapse.print-position": "Pre-fill position into chat",
-    "category.synapse": "${mod_name}"
+    "category.synapse": "${mod_name}",
+
+    "synapse.config.category.hud": "HUD Settings",
+    "synapse.config.option.hud.showHealthPotCount": "Show number of health potions",
+    "synapse.config.option.hud.showHealthPotCount.tooltip": "Shows the number of splash health potions there are in your inventory.",
+    "synapse.config.option.hud.showNearbyHostileCount": "Show number of nearby baddies",
+    "synapse.config.option.hud.showNearbyHostileCount.tooltip": "Shows how many nearby players are considered hostile.",
+    "synapse.config.option.hud.showNearbyFriendlyCount": "Show number of nearby friendlies",
+    "synapse.config.option.hud.showNearbyFriendlyCount.tooltip": "Shows how many nearby players are considered friendly.",
+    "synapse.config.option.hud.showNearbyPlayerCount": "Show number of nearby players",
+    "synapse.config.option.hud.showNearbyPlayerCount.tooltip": "Shows how many nearby players there are."
 }

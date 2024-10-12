@@ -1,7 +1,6 @@
 package gjum.minecraft.civ.synapse.mod;
 
 import gjum.minecraft.civ.synapse.common.Pos;
-import gjum.minecraft.civ.synapse.common.Util;
 import gjum.minecraft.civ.synapse.mod.integrations.JourneyMapPlugin;
 import net.fabricmc.loader.api.FabricLoader;
 import net.kyori.adventure.text.ComponentLike;
@@ -14,16 +13,10 @@ import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.item.alchemy.Potions;
 import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -125,25 +118,6 @@ public class McUtil {
             return fullySanitiseComponent(player.getName());
         }
         return fullySanitiseString(account.getName());
-    }
-
-    public static int getNumHealthPots() {
-        final Inventory playerInventory = Minecraft.getInstance().player.getInventory();
-        return Util.countMatches(playerInventory.items, McUtil::isHealthPot)
-            + Util.countMatches(playerInventory.offhand, McUtil::isHealthPot);
-    }
-
-    private static boolean isHealthPot(
-        final @NotNull ItemStack item
-    ) {
-        if (item.getItem() != Items.SPLASH_POTION) {
-            return false;
-        }
-        final PotionContents potion = item.get(DataComponents.POTION_CONTENTS);
-        if (potion == null) {
-            return false;
-        }
-        return potion.is(Potions.HEALING) || potion.is(Potions.STRONG_HEALING);
     }
 
     public static @Nullable BlockPos getLookedAtBlockPos(

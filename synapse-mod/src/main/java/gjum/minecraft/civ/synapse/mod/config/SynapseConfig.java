@@ -3,45 +3,21 @@ package gjum.minecraft.civ.synapse.mod.config;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
-import dev.isxander.yacl3.config.v2.api.autogen.AutoGen;
-import dev.isxander.yacl3.config.v2.api.autogen.TickBox;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 public final class SynapseConfig {
-    // ============================================================
-    // Hud Config
-    // ============================================================
-
-    public static final String HUD_CATEGORY = "synapse.config.category.hud";
-
-    @SerialEntry(value = "hud.showHealthPotCount")
-    @AutoGen(category = HUD_CATEGORY)
-    @TickBox
-    public volatile boolean hudShowHealthPotCount = true;
-
-    @SerialEntry(value = "hud.showNearbyHostileCount")
-    @AutoGen(category = HUD_CATEGORY)
-    @TickBox
-    public volatile boolean hudShowNearbyHostileCount = true;
-
-    @SerialEntry(value = "hud.showNearbyFriendlyCount")
-    @AutoGen(category = HUD_CATEGORY)
-    @TickBox
-    public volatile boolean hudShowNearbyFriendlyCount = true;
-
-    @SerialEntry(value = "hud.showNearbyPlayerCount")
-    @AutoGen(category = HUD_CATEGORY)
-    @TickBox
-    public volatile boolean hudShowNearbyPlayerCount = true;
+    @SerialEntry(value = "hud")
+    public final HudConfig hudConfig = new HudConfig();
 
     // ============================================================
     // Serialisation
     // ============================================================
 
-    public static ConfigClassHandler<SynapseConfig> HANDLER = ConfigClassHandler.createBuilder(SynapseConfig.class)
+    public static final ConfigClassHandler<SynapseConfig> HANDLER = ConfigClassHandler.createBuilder(SynapseConfig.class)
         .id(ResourceLocation.tryBuild("synapse", "config"))
         .serializer((config) -> {
             return GsonConfigSerializerBuilder.create(config)
@@ -55,9 +31,12 @@ public final class SynapseConfig {
     // Screen generation
     // ============================================================
 
-    public static @NotNull YetAnotherConfigLib newScreenGenerator(
-        final @NotNull SynapseConfig config
-    ) {
-        return HANDLER.generateGui();
+    public static @NotNull YetAnotherConfigLib newScreenGenerator() {
+        final SynapseConfig instance = HANDLER.instance(), defaults = HANDLER.defaults();
+        return YetAnotherConfigLib.createBuilder()
+            .title(Component.translatable("category.synapse"))
+            .category(HudConfig.generateCategory(instance.hudConfig, defaults.hudConfig))
+            .save(HANDLER::save)
+            .build();
     }
 }

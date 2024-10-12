@@ -15,6 +15,8 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 public final class SynapseHud {
+    public static volatile int HEALTH_POT_COUNT = 0;
+
     public static void renderHud(
         final @NotNull GuiGraphics guiGraphics,
         final @NotNull DeltaTracker delta
@@ -27,7 +29,7 @@ public final class SynapseHud {
         }
         final int screenHeight = minecraft.getWindow().getGuiScaledHeight();
         int y = (screenHeight - 10 * 8) / 2;
-        if (SynapseConfig.HANDLER.instance().hudShowHealthPotCount) {
+        if (SynapseConfig.HANDLER.instance().hudConfig.showHealthPotCount) {
             renderHealthPotCountHud(
                 minecraft,
                 guiGraphics,
@@ -35,13 +37,13 @@ public final class SynapseHud {
             );
             y += 10;
         }
-        if (SynapseConfig.HANDLER.instance().hudShowNearbyHostileCount) {
+        if (SynapseConfig.HANDLER.instance().hudConfig.showNearbyHostileCount) {
             renderPlayerCountHud(minecraft, guiGraphics, y += 10, "hostile", Standing.HOSTILE);
         }
-        if (SynapseConfig.HANDLER.instance().hudShowNearbyFriendlyCount) {
+        if (SynapseConfig.HANDLER.instance().hudConfig.showNearbyFriendlyCount) {
             renderPlayerCountHud(minecraft, guiGraphics, y += 10, "friendly", Standing.FRIENDLY);
         }
-        if (SynapseConfig.HANDLER.instance().hudShowNearbyPlayerCount) {
+        if (SynapseConfig.HANDLER.instance().hudConfig.showNearbyPlayerCount) {
             renderPlayerCountHud(minecraft, guiGraphics, y += 10, "total", null);
         }
         y += 10;
@@ -52,10 +54,9 @@ public final class SynapseHud {
         final @NotNull GuiGraphics guiGraphics,
         final int y
     ) {
-        final long numHealthPots = McUtil.getNumHealthPots(); // TODO: Store this value somewhere. We should NOT be inspecting items on render.
         guiGraphics.drawStringWithBackdrop(
             minecraft.font,
-            Component.literal(numHealthPots + " hpots"),
+            Component.literal(HEALTH_POT_COUNT + " hpots"),
             1,
             y,
             0, // TODO: This probably needs a revisit
