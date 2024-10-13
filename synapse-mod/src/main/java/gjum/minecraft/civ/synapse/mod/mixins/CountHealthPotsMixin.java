@@ -25,7 +25,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * calculated every single frame.
  */
 @Mixin(ClientPacketListener.class)
-public abstract class HealthPotCounterMixin {
+public abstract class CountHealthPotsMixin {
     @Inject(
         method = "handleContainerContent",
         at = @At("TAIL")

@@ -6,8 +6,9 @@
     "client": [
         "ClientHolderMixin",
         "ClientPacketListenerMixin",
+        "CountHealthPotsMixin",
         "EntityMixin",
-        "HealthPotCounterMixin",
+        "PlayerStandingHolderMixin",
         "PlayerTabOverlayMixin"
     ],
     "injectors": {

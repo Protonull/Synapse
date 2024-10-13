@@ -4,6 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import gjum.minecraft.civ.synapse.mod.config.SynapseConfig;
 import gjum.minecraft.civ.synapse.mod.events.EventBus;
 import gjum.minecraft.civ.synapse.mod.features.SynapseHud;
+import java.awt.Color;
+import java.util.Objects;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
@@ -47,6 +49,8 @@ public final class SynapseMod {
             while (OPEN_GUI_KEYBIND.consumeClick()) {
                 minecraft.setScreen(newConfigScreen(minecraft.screen));
             }
+
+            SynapseHud.calculateNearbyPlayers();
         });
     }
 
@@ -54,5 +58,17 @@ public final class SynapseMod {
         final Screen previousScreen
     ) {
         return SynapseConfig.newScreenGenerator().generateScreen(previousScreen);
+    }
+
+    public static @NotNull Color getStandingColor(
+        final Standing standing
+    ) {
+        if (standing == null) {
+            return Color.WHITE;
+        }
+        return Objects.requireNonNullElse(
+            SynapseConfig.HANDLER.instance().standingConfig.get(standing),
+            Color.WHITE
+        );
     }
 }

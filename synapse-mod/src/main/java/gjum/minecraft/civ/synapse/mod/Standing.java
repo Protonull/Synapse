@@ -1,10 +1,11 @@
 package gjum.minecraft.civ.synapse.mod;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
  * sorted by confidence
  */
 public enum Standing {
-    FOCUS,
     HOSTILE,
     FRIENDLY,
     NEUTRAL,
@@ -14,5 +15,13 @@ public enum Standing {
         final Standing other
     ) {
         return other == null || compareTo(other) < 0;
+    }
+
+    public interface Holder {
+        @NotNull Standing synapse$getStanding();
+
+        void synapse$setStanding(
+            @NotNull Standing standing
+        );
     }
 }

@@ -185,8 +185,6 @@ public class GlobalConfig extends JsonConfig {
 
     protected void fillDefaults() {
         //
-        if (getStandingColor(Standing.FOCUS) == null)
-            setStandingColor(Standing.FOCUS, ChatFormatting.YELLOW);
         if (getStandingColor(Standing.FRIENDLY) == null)
             setStandingColor(Standing.FRIENDLY, ChatFormatting.GREEN);
         if (getStandingColor(Standing.HOSTILE) == null)
@@ -204,8 +202,6 @@ public class GlobalConfig extends JsonConfig {
             setStandingSound(Standing.NEUTRAL, "block.note.harp");
         if (getStandingSound(Standing.UNSET) == null)
             setStandingSound(Standing.UNSET, getStandingSound(Standing.NEUTRAL));
-        if (getStandingSound(Standing.FOCUS) == null)
-            setStandingSound(Standing.FOCUS, getStandingSound(Standing.HOSTILE));
     }
 
     @Override
@@ -243,12 +239,10 @@ public class GlobalConfig extends JsonConfig {
 
     public boolean matchesStandingFilter(@NotNull Standing standing, @NotNull StandingFilter standingFilter) {
         switch (standingFilter) {
-            case FOCUSED:
-                return standing == Standing.FOCUS;
             case HOSTILE:
-                return standing == Standing.HOSTILE || standing == Standing.FOCUS;
+                return standing == Standing.HOSTILE;
             case HOSTILE_FRIENDLY:
-                return standing == Standing.FRIENDLY || standing == Standing.HOSTILE || standing == Standing.FOCUS;
+                return standing == Standing.FRIENDLY || standing == Standing.HOSTILE;
             case NOT_FRIENDLY:
                 return standing != Standing.FRIENDLY;
             default:
@@ -262,7 +256,6 @@ public class GlobalConfig extends JsonConfig {
         switch (standing) {
             case FRIENDLY:
                 return isClose ? getVisibilityNearbyFriendly() : getVisibilityFarFriendly();
-            case FOCUS:
             case HOSTILE:
                 return isClose ? getVisibilityNearbyHostile() : getVisibilityFarHostile();
             case NEUTRAL:

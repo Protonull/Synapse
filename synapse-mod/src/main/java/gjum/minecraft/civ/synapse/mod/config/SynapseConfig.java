@@ -13,6 +13,9 @@ public final class SynapseConfig {
     @SerialEntry(value = "hud")
     public final HudConfig hudConfig = new HudConfig();
 
+    @SerialEntry(value = "standing")
+    public final StandingConfig standingConfig = new StandingConfig();
+
     // ============================================================
     // Serialisation
     // ============================================================
@@ -36,6 +39,7 @@ public final class SynapseConfig {
         return YetAnotherConfigLib.createBuilder()
             .title(Component.translatable("category.synapse"))
             .category(HudConfig.generateCategory(instance.hudConfig, defaults.hudConfig))
+            .category(StandingConfig.generateCategory(instance.standingConfig, defaults.standingConfig))
             .save(HANDLER::save)
             .build();
     }

@@ -12,7 +12,7 @@ public final class HudConfig {
     @SerialEntry
     public volatile boolean showHealthPotCount = true;
     private static @NotNull Option<?> showHealthPotCountOption(
-        final @NotNull HudConfig hudConfig,
+        final @NotNull HudConfig instance,
         final @NotNull HudConfig defaults
     ) {
         return Option.<Boolean>createBuilder()
@@ -21,8 +21,8 @@ public final class HudConfig {
             .controller(BooleanControllerBuilder::create)
             .binding(
                 defaults.showHealthPotCount,
-                () -> hudConfig.showHealthPotCount,
-                (show) -> hudConfig.showHealthPotCount = show
+                () -> instance.showHealthPotCount,
+                (show) -> instance.showHealthPotCount = show
             )
             .build();
     }
@@ -30,7 +30,7 @@ public final class HudConfig {
     @SerialEntry
     public volatile boolean showNearbyHostileCount = true;
     private static @NotNull Option<?> showNearbyHostileCountOption(
-        final @NotNull HudConfig hudConfig,
+        final @NotNull HudConfig instance,
         final @NotNull HudConfig defaults
     ) {
         return Option.<Boolean>createBuilder()
@@ -39,8 +39,8 @@ public final class HudConfig {
             .controller(BooleanControllerBuilder::create)
             .binding(
                 defaults.showNearbyHostileCount,
-                () -> hudConfig.showNearbyHostileCount,
-                (show) -> hudConfig.showNearbyHostileCount = show
+                () -> instance.showNearbyHostileCount,
+                (show) -> instance.showNearbyHostileCount = show
             )
             .build();
     }
@@ -48,7 +48,7 @@ public final class HudConfig {
     @SerialEntry
     public volatile boolean showNearbyFriendlyCount = true;
     private static @NotNull Option<?> showNearbyFriendlyCountOption(
-        final @NotNull HudConfig hudConfig,
+        final @NotNull HudConfig instance,
         final @NotNull HudConfig defaults
     ) {
         return Option.<Boolean>createBuilder()
@@ -57,8 +57,8 @@ public final class HudConfig {
             .controller(BooleanControllerBuilder::create)
             .binding(
                 defaults.showNearbyFriendlyCount,
-                () -> hudConfig.showNearbyFriendlyCount,
-                (show) -> hudConfig.showNearbyFriendlyCount = show
+                () -> instance.showNearbyFriendlyCount,
+                (show) -> instance.showNearbyFriendlyCount = show
             )
             .build();
     }
@@ -66,7 +66,7 @@ public final class HudConfig {
     @SerialEntry
     public volatile boolean showNearbyPlayerCount = true;
     private static @NotNull Option<?> showNearbyPlayerCountOption(
-        final @NotNull HudConfig hudConfig,
+        final @NotNull HudConfig instance,
         final @NotNull HudConfig defaults
     ) {
         return Option.<Boolean>createBuilder()
@@ -75,8 +75,8 @@ public final class HudConfig {
             .controller(BooleanControllerBuilder::create)
             .binding(
                 defaults.showNearbyPlayerCount,
-                () -> hudConfig.showNearbyPlayerCount,
-                (show) -> hudConfig.showNearbyPlayerCount = show
+                () -> instance.showNearbyPlayerCount,
+                (show) -> instance.showNearbyPlayerCount = show
             )
             .build();
     }

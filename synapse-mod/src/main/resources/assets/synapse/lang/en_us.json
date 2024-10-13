@@ -11,5 +11,9 @@
     "synapse.config.option.hud.showNearbyFriendlyCount": "Show number of nearby friendlies",
     "synapse.config.option.hud.showNearbyFriendlyCount.tooltip": "Shows how many nearby players are considered friendly.",
     "synapse.config.option.hud.showNearbyPlayerCount": "Show number of nearby players",
-    "synapse.config.option.hud.showNearbyPlayerCount.tooltip": "Shows how many nearby players there are."
+    "synapse.config.option.hud.showNearbyPlayerCount.tooltip": "Shows how many nearby players there are.",
+
+
+    "synapse.config.category.standing": "Standings",
+    "synapse.config.option.standing.colour": "%s colour"
 }

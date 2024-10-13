@@ -1,8 +1,6 @@
 package gjum.minecraft.civ.synapse.mod;
 
-import static gjum.minecraft.civ.synapse.common.Util.lowerCaseSet;
 import static gjum.minecraft.civ.synapse.common.Util.printErrorRateLimited;
-import static gjum.minecraft.civ.synapse.common.Util.sortedUniqListIgnoreCase;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.addCoordClickEvent;
 import static gjum.minecraft.civ.synapse.mod.ObservationFormatter.formatObservationStatic;
 
@@ -25,19 +23,11 @@ import gjum.minecraft.civ.synapse.mod.config.PersonsConfig;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import gjum.minecraft.civ.synapse.mod.integrations.WaypointManager;
 import gjum.minecraft.civ.synapse.mod.integrations.combatradar.CombatRadarHelpers;
-import java.awt.Color;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -74,12 +64,6 @@ public class LiteModSynapse {
     private PlayerTracker playerTracker = new PlayerTrackerIngame(null);
     private long lastSync = 0;
 
-    @NotNull
-    private Collection<String> focusedAccountNames = Collections.emptyList();
-
-    @Nullable
-    public Screen gui = null;
-
     public static LiteModSynapse instance;
 
     private static final File modConfigDir = new File(Minecraft.getInstance().gameDirectory, MOD_NAME);
@@ -97,25 +81,12 @@ public class LiteModSynapse {
     }
 
     public void init(File configPath) {
-        // TODO: Uncomment
-//        LiteLoader.getInstance().writeConfig(this);
-
-        // move old config if it exists
-        File oldConfigDir = new File(Minecraft.getInstance().gameDirectory, "Hydrate");
-        if (oldConfigDir.exists() && !modConfigDir.exists()) {
-            oldConfigDir.renameTo(modConfigDir);
-        }
-
-        modConfigDir.mkdirs();
-        config.load(new File(modConfigDir, "config.json"));
-        config.saveLater(null);
         accountsConfig.load(new File(modConfigDir, "accounts.txt"));
         accountsConfig.saveLater(null);
 
         // enabled by default on this server; but don't override existing config
         final File civRealmsConfigDir = new File(modConfigDir, "servers/civrealms.com");
         if (civRealmsConfigDir.mkdirs()) {
-            new ServerConfig().saveLater(new File(civRealmsConfigDir, "server.json"));
             new PersonsConfig().saveLater(new File(civRealmsConfigDir, "persons.json"));
         }
 
@@ -169,12 +140,6 @@ public class LiteModSynapse {
     }
 
     private void onModDeactivated() {
-        final ClientLevel world = Minecraft.getInstance().level;
-        if (world != null) {
-            for (final AbstractClientPlayer player : world.players()) {
-                player.setGlowingTag(false);
-            }
-        }
         if (waypointManager != null) waypointManager.updateAllWaypoints();
     }
 
@@ -182,8 +147,7 @@ public class LiteModSynapse {
         try {
             if (gameAddress == null) return;
 
-            if (serverConfig != null
-                    && personsConfig != null
+            if (personsConfig != null
                     && waypointManager != null
             ) return;
 
@@ -193,12 +157,6 @@ public class LiteModSynapse {
             final CombatRadarHelpers combatRadarHelper = new CombatRadarHelpers();
             waypointManager = new WaypointManager();
 
-            serverConfig = new ServerConfig();
-            serverConfig.registerChangeHandler(combatRadarHelper);
-            serverConfig.registerChangeHandler(waypointManager);
-            serverConfig.load(new File(serverConfigDir, "server.json"));
-            serverConfig.saveLater(null);
-
             personsConfig = new PersonsConfig();
             personsConfig.getPersonsRegistry().registerChangeHandler(combatRadarHelper);
             personsConfig.getPersonsRegistry().registerChangeHandler(waypointManager);
@@ -206,7 +164,6 @@ public class LiteModSynapse {
             personsConfig.saveLater(null);
         } catch (Throwable e) {
             printErrorRateLimited(e);
-            serverConfig = null;
             personsConfig = null;
             waypointManager = null;
         }
@@ -241,21 +198,6 @@ public class LiteModSynapse {
         } else {
             return null;
         }
-    }
-
-    public void showGuiAndRemember(@Nullable Screen gui) {
-        // TODO: Uncomment
-//        if (gui == null || gui instanceof GuiRoot) {
-//            this.gui = gui;
-//        } // else: some Minecraft gui; don't retain it
-//        if (gui instanceof GuiRoot) ((GuiRoot) gui).rebuild();
-        Minecraft.getInstance().setScreen(gui);
-    }
-
-    public void openLastGui() {
-        // TODO: Uncomment
-//        if (gui == null) gui = new MainGui(null);
-        Minecraft.getInstance().setScreen(gui);
     }
 
     // TODO: Uncomment
@@ -314,185 +256,6 @@ public class LiteModSynapse {
 //        } catch (Throwable e) {
 //            printErrorRateLimited(e);
 //        }
-//    }
-
-    private void syncComms() {
-        if (Minecraft.getInstance().level == null) return;
-        /*
-        boolean flushEveryPacket = false;
-        for (EntityPlayer player : Minecraft.getInstance().world.playerEntities) {
-            if (player == Minecraft.getInstance().player) continue; // send more info for self at the end
-            // TODO don't send if pos didn't change
-            comms.sendEncrypted(new JsonPacket(new PlayerState(McUtil.getSelfAccount(),
-                    player.getName(), McUtil.getEntityPosition(player), worldName)
-            ), flushEveryPacket);
-        }*/
-        final PlayerState selfState = new PlayerState(McUtil.getSelfAccount(),
-                McUtil.getSelfAccount(), McUtil.getEntityPosition(Minecraft.getInstance().player), worldName);
-        //selfState.heading = headingFromYawDegrees(Minecraft.getInstance().player.rotationYawHead);
-        //selfState.health = getHealth();
-        //selfState.hpotCount = getNumHealthPots();
-        // TODO send combat tag end, min armor dura
-        // TODO: Uncomment
-//        comms.sendEncrypted(new JsonPacket(selfState), true);
-    }
-
-    // TODO: Uncomment
-//    @Override
-//    public void onPostRender(float partialTicks) {
-//        for (AbstractClientPlayer player : Minecraft.getInstance().level.players()) {
-//            renderDecorators(player, partialTicks);
-//        }
-//    }
-
-    public void renderDecorators(
-        AbstractClientPlayer entity,
-        float partialTicks
-    ) {
-        // TODO: Uncomment
-//        try {
-//            if (!isModActive()) return;
-//            if (legalToRenderDecorations(entity) && shouldRenderPlayerDecoration(entity)) {
-//                try {
-//                    prepareRenderPlayerDecorations(entity, partialTicks);
-//                    PlayerTeam team = null;
-//                    FloatColor color = null;
-//                    boolean computedTeam = false;
-//                    if (config.isPlayerMiddleHoop()) {
-//                        if (!computedTeam) {
-//                            team = config.getStandingTeam(getStanding(entity.getName()));
-//                            if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
-//                            computedTeam = true;
-//                        }
-//                        if (team != null) {
-//                            renderHoop(entity, 0.5, 1, partialTicks, color);
-//                        }
-//                    }
-//                    if (config.isPlayerOuterHoops()) {
-//                        if (!computedTeam) {
-//                            team = config.getStandingTeam(getStanding(entity.getName()));
-//                            if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
-//                            computedTeam = true;
-//                        }
-//                        if (team != null) {
-//                            renderHoop(entity, 0.3, 0.01, partialTicks, color);
-//                            renderHoop(entity, 0.3, 1.8, partialTicks, color);
-//                        }
-//                    }
-//                    if (config.isPlayerBox()) {
-//                        if (!computedTeam) {
-//                            team = config.getStandingTeam(getStanding(entity.getName()));
-//                            if (team != null) color = FloatColor.fromChatFormatting(team.getColor());
-//                            computedTeam = true;
-//                        }
-//                        if (team != null) {
-//                            renderBox(entity, partialTicks, color);
-//                        }
-//                    }
-//                } finally {
-//                    resetRenderPlayerDecorations();
-//                }
-//            }
-//        } catch (Throwable e) {
-//            printErrorRateLimited(e);
-//        }
-    }
-
-    // TODO: Uncomment
-//    private boolean legalToRenderDecorations(EntityPlayer player) {
-//        return !player.isInvisible() && !player.isSneaking();
-//    }
-
-    // TODO: Uncomment
-//    private void prepareRenderPlayerDecorations(@NotNull Entity entity, float partialTicks) {
-//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//        GlStateManager.disableTexture2D();
-//        GlStateManager.disableLighting();
-//        GlStateManager.enableBlend();
-//        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//        GL11.glEnable(GL11.GL_LINE_SMOOTH);
-//        GlStateManager.glLineWidth(config.getPlayerLineWidth());
-//
-//        GlStateManager.disableDepth();
-//        GlStateManager.depthMask(false);
-//    }
-
-    // TODO: Uncomment
-//    private void resetRenderPlayerDecorations() {
-//        GlStateManager.enableTexture2D();
-//        GlStateManager.enableLighting();
-//        GlStateManager.disableBlend();
-//        GlStateManager.enableDepth();
-//        GlStateManager.depthMask(true);
-//        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-//    }
-
-    // TODO: Uncomment
-//    private void renderBox(Entity entity, float partialTicks, FloatColor color) {
-//        final EntityPlayerSP player = Minecraft.getInstance().player;
-//        double playerX = player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks;
-//        double playerY = player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks;
-//        double playerZ = player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks;
-//
-//        float entityX = (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks);
-//        float entityY = (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks);
-//        float entityZ = (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks);
-//
-//        double renderX = entityX - playerX;
-//        double renderY = entityY - playerY;
-//        double renderZ = entityZ - playerZ;
-//
-//        final double halfWidth = entity.width / 2;
-//        final AxisAlignedBB box = new AxisAlignedBB(
-//                renderX - halfWidth, renderY, renderZ - halfWidth,
-//                renderX + halfWidth, renderY + entity.height, renderZ + halfWidth);
-//
-//        RenderGlobal.drawSelectionBoundingBox(box, color.r, color.g, color.b, 1);
-//    }
-
-    // TODO: Uncomment
-//    private void renderHoop(Entity entity, double radius, double yOffset, float partialTicks, FloatColor color) {
-//        final EntityPlayerSP player = Minecraft.getInstance().player;
-//        float playerX = (float) (player.lastTickPosX + (player.posX - player.lastTickPosX) * (double) partialTicks);
-//        float playerY = (float) (player.lastTickPosY + (player.posY - player.lastTickPosY) * (double) partialTicks);
-//        float playerZ = (float) (player.lastTickPosZ + (player.posZ - player.lastTickPosZ) * (double) partialTicks);
-//
-//        float entityX = (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks);
-//        float entityY = (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks);
-//        float entityZ = (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks);
-//
-//        try {
-//            GlStateManager.pushMatrix();
-//            GlStateManager.translate(entityX - playerX, entityY - playerY, entityZ - playerZ);
-//
-//            Tessellator tessellator = Tessellator.getInstance();
-//            BufferBuilder bufferBuilder = tessellator.getBuffer();
-//            bufferBuilder.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
-//            double theta = 0.19634954084936207D;
-//            double c = Math.cos(theta);
-//            double s = Math.sin(theta);
-//            double x = radius;
-//            double y = 0.0D;
-//            for (int circleSegment = 0; circleSegment < 32; circleSegment++) {
-//                bufferBuilder.pos(x, yOffset, y).color(color.r, color.g, color.b, 1f).endVertex();
-//                double t = x;
-//                x = c * x - s * y;
-//                y = s * t + c * y;
-//            }
-//            tessellator.draw();
-//        } finally {
-//            GlStateManager.popMatrix();
-//        }
-//    }
-
-    // TODO: Uncomment
-//    private static boolean shouldRenderPlayerDecoration(Entity ent) {
-//        if (ent != Minecraft.getMinecraft().getRenderViewEntity()) return true;
-//        if (Minecraft.getMinecraft().gameSettings.thirdPersonView != 0) return true;
-//        final GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-//        final boolean guiShowsPlayer = screen instanceof GuiInventory || screen instanceof GuiContainerCreative;
-//        return guiShowsPlayer && Minecraft.getMinecraft().getRenderManager().playerViewY == 180.0F;
-//        return false;
 //    }
 
     @Nullable
@@ -628,14 +391,6 @@ public class LiteModSynapse {
     }
 
     @NotNull
-    public static Color getStandingColor(@Nullable Standing standing) {
-        // TODO: Uncomment
-//        final ChatFormatting standingFmt = LiteModSynapse.instance.config.getStandingColor(standing);
-//        return FloatColor.fromChatFormatting(standingFmt).toColor();
-        return Color.CYAN;
-    }
-
-    @NotNull
     public ChatFormatting getDistanceColor(int distance) {
         if (distance < closeDistance) return ChatFormatting.GOLD;
         if (distance < 500) return ChatFormatting.YELLOW;
@@ -650,8 +405,7 @@ public class LiteModSynapse {
     public void handleChatObservation(@NotNull Observation obs, @Nullable Component originalChat) {
         final boolean isNew = getPlayerTracker().recordObservation(obs);
 
-        if (obs instanceof PlayerState) {
-            final PlayerState playerState = (PlayerState) obs;
+        if (obs instanceof PlayerState playerState) {
             // don't update waypoint if that player is on radar anyway
             if (waypointManager != null && null == McUtil.findFirstPlayerByName(Minecraft.getInstance().level, playerState.getAccount())) {
                 try {
@@ -680,8 +434,7 @@ public class LiteModSynapse {
 //            }
         }
 
-        if (obs instanceof AccountPosObservation) {
-            final AccountPosObservation apObs = (AccountPosObservation) obs;
+        if (obs instanceof AccountPosObservation apObs) {
             if (waypointManager != null) {
                 try {
                     waypointManager.updateAccountLocation(apObs);
@@ -707,63 +460,6 @@ public class LiteModSynapse {
 
     public void onJoinedWorldFromChat(String world) {
         this.worldName = world;
-    }
-
-    public boolean isFocusedAccount(@NotNull String account) {
-        if (focusedAccountNames.isEmpty()) return false;
-        return focusedAccountNames.contains(account.toLowerCase());
-    }
-
-    private void focusEntityUnderCrosshair() {
-        // TODO: Uncomment
-//        try {
-//            if (!isModActive()) return;
-//            if (Minecraft.getInstance().objectMouseOver.typeOfHit == RayTraceResult.Type.BLOCK) return;
-//            Entity entityHit = Minecraft.getInstance().objectMouseOver.entityHit;
-//            if (entityHit == null) { // do long trace only if default short trace didn't hit yet
-//                Vec3d traceStart = EntityUtilities.getPositionEyes(Minecraft.getInstance().player, Minecraft.getInstance().getRenderPartialTicks());
-//                final Method method = EntityUtilities.class.getDeclaredMethod("rayTraceEntities", Entity.class, double.class, float.class, double.class, Vec3d.class);
-//                method.setAccessible(true);
-//                final Object trace = method.invoke(null, Minecraft.getInstance().player, 64.0, Minecraft.getInstance().getRenderPartialTicks(), 64.0, traceStart);
-//                final Field entityField = trace.getClass().getDeclaredField("entity");
-//                entityField.setAccessible(true);
-//                entityHit = (Entity) entityField.get(trace);
-//            }
-//            if (!(entityHit instanceof EntityPlayer)) return;
-//            final EntityPlayer player = (EntityPlayer) entityHit;
-//            // allow re-sending focus message
-////            if (isFocusedAccount(player.getName())) return;
-//            announceFocusedAccount(player.getName());
-//        } catch (Throwable e) {
-//            printErrorRateLimited(e);
-//        }
-    }
-
-    public void setFocusedAccountNames(@Nullable Collection<String> accounts) {
-        final Collection<String> impactedAccounts = new ArrayList<>(focusedAccountNames);
-        focusedAccountNames = lowerCaseSet(accounts);
-        impactedAccounts.addAll(focusedAccountNames);
-        final PersonsRegistry personsRegistry = getPersonsRegistry();
-        if (personsRegistry != null) {
-            personsRegistry.propagateLargeChange(impactedAccounts.stream()
-                    .map(personsRegistry::personByAccountName)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet()));
-        }
-        if (waypointManager != null) waypointManager.updateAllWaypoints();
-    }
-
-    public void announceFocusedAccount(@NotNull String account) {
-        announceFocusedAccounts(Collections.singletonList(account));
-    }
-
-    public void announceFocusedAccounts(@NotNull Collection<String> focusedAccounts) {
-        focusedAccounts = sortedUniqListIgnoreCase(focusedAccounts);
-        setFocusedAccountNames(focusedAccounts);
-        // TODO: Uncomment
-//        comms.sendEncrypted(new JsonPacket(new FocusAnnouncement(
-//                McUtil.getSelfAccount(), focusedAccounts)));
-        Minecraft.getInstance().gui.getChat().addMessage(Component.literal("Focusing: " + String.join(" ", focusedAccounts)));
     }
 
     @NotNull
@@ -898,34 +594,5 @@ public class LiteModSynapse {
 
     public long getLoginTime() {
         return loginTime;
-    }
-
-    public void handleCommsConnected() {
-        Minecraft.getInstance().execute(() -> {
-            // XXX store msg for gui, update gui if open
-        });
-    }
-
-    public void handleCommsEncryptionSuccess(String message) {
-        Minecraft.getInstance().execute(() -> {
-
-            // XXX store msg for gui, update gui if open
-        });
-    }
-
-    public void handleCommsDisconnected(Throwable cause) {
-        Minecraft.getInstance().execute(() -> {
-            // XXX store msg for gui, update gui if open
-        });
-    }
-
-    // TODO: brb
-
-    public void handleCommsJson(Object payload) {
-        Minecraft.getInstance().execute(() -> {
-            if (payload instanceof Observation) {
-                handleObservation((Observation) payload);
-            }
-        });
     }
 }

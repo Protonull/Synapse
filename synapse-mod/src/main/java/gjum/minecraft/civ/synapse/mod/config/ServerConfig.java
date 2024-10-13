@@ -180,9 +180,6 @@ public class ServerConfig extends JsonConfig {
     @NotNull
     public Standing getStanding(@Nullable Person person) {
         if (person == null) return Standing.UNSET;
-        final boolean isPersonFocused = person.getAccounts().stream()
-                .anyMatch(LiteModSynapse.instance::isFocusedAccount);
-        if (isPersonFocused) return Standing.FOCUS;
         final String faction = getMostRelevantFaction(person.getFactions());
         final Standing standing = mapNonNull(faction, this::getFactionStanding);
         return Objects.requireNonNullElse(standing, Standing.UNSET);
@@ -190,7 +187,6 @@ public class ServerConfig extends JsonConfig {
 
     @NotNull
     public Standing getAccountStanding(@NotNull String account) {
-        if (LiteModSynapse.instance.isFocusedAccount(account)) return Standing.FOCUS;
         final PersonsRegistry personsRegistry = LiteModSynapse.instance.getPersonsRegistry();
         if (personsRegistry == null) return Standing.UNSET;
         return Objects.requireNonNullElse(mapNonNull(personsRegistry.personByAccountName(account),
@@ -206,10 +202,6 @@ public class ServerConfig extends JsonConfig {
      * If UNSET, all factions with a configured Standing are removed.
      */
     public void setPersonStanding(@NotNull Person person, @NotNull Standing standing) {
-        if (standing == Standing.FOCUS) {
-            LiteModSynapse.instance.announceFocusedAccounts(person.getAccounts());
-            return;
-        }
         if (standing == getStanding(person)) return;
 
         final Tuple<Collection<String>, String> changes = simulateSetPersonStanding(person, standing);
@@ -233,9 +225,6 @@ public class ServerConfig extends JsonConfig {
         }
         // TODO since we use the lowercase keys here, faction name upper/lowercase is lost
         switch (standing) {
-            case FOCUS:
-                // no factions added/removed
-                break;
             case FRIENDLY:
                 for (Map.Entry<String, Standing> e : factionStandings.entrySet()) {
                     if (e.getValue() == Standing.HOSTILE) removedFactions.add(e.getKey());

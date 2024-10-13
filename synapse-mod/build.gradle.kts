@@ -84,8 +84,9 @@ base {
 }
 
 loom {
+    accessWidenerPath = file("src/main/resources/synapse.accesswidener")
     runConfigs.configureEach {
-//        this.programArgs.addAll("--username LocalModTester".split(" "))
+        this.programArgs.addAll("--username LocalModTester".split(" "))
     }
 }
 
