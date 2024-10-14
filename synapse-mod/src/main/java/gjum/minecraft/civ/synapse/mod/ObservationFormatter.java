@@ -14,7 +14,6 @@ import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
 import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
-import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import gjum.minecraft.civ.synapse.mod.config.ServerConfig;
 import java.util.Objects;
 import java.util.Optional;
@@ -82,10 +81,6 @@ public class ObservationFormatter {
         final Component formatted = switch (observation) {
             case final CombatTagChat combatTag -> switch (key) {
                 case "CALLER" -> Component.literal(combatTag.witness);
-                default -> null;
-            };
-            case final FocusAnnouncement focused -> switch (key) {
-                case "CALLER" -> Component.literal(focused.witness);
                 default -> null;
             };
             case final GroupChat groupChat -> switch (key) {

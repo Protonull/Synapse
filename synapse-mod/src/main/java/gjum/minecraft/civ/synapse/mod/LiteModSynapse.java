@@ -16,7 +16,6 @@ import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
 import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
-import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import gjum.minecraft.civ.synapse.mod.config.AccountsConfig;
 import gjum.minecraft.civ.synapse.mod.config.GlobalConfig;
 import gjum.minecraft.civ.synapse.mod.config.PersonsConfig;
@@ -31,7 +30,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -202,48 +200,17 @@ public class LiteModSynapse {
 
     // TODO: Uncomment
 //    @Override
-//    public void onJoinGame(INetHandler netHandler, SPacketJoinGame joinGamePacket, ServerData serverData, RealmsServer realmsServer) {
-//        try {
-//            final String prevAddress = gameAddress;
-//            gameAddress = Minecraft.getMinecraft().getCurrentServerData()
-//                    .serverIP.split("/")[0]
-//                    .toLowerCase();
-//            loginTime = System.currentTimeMillis();
-//
-//            if (!gameAddress.equals(prevAddress)) {
-//                serverConfig = null;
-//                personsConfig = null;
-//                waypointManager = null;
-//                focusedAccountNames.clear();
-//            }
-//            checkModActive();
-//        } catch (Throwable e) {
-//            printErrorRateLimited(e);
-//        }
-//    }
-
-    // TODO: Uncomment
-//    @Override
 //    public void onTick(Minecraft minecraft, float partialTicks, boolean inGame, boolean isGameTick) {
 //        try {
 //            final boolean noGuiOpen = minecraft.currentScreen == null;
 //            final boolean handleKeyPresses = inGame && noGuiOpen;
 //            if (handleKeyPresses) {
-//                if (SynapseMod.TOGGLE_ENABLED_KEYBIND.isDown()) {
-//                    config.setModEnabled(!config.isModEnabled());
-//                }
-//                if (SynapseMod.SET_FOCUS_ENTITY_KEYBIND.isDown()) {
-//                    focusEntityUnderCrosshair();
-//                }
 //                if (SynapseMod.CHAT_POS_KEYBIND.isDown()) {
 //                    final Pos pos = McUtil.getEntityPosition(Minecraft.getInstance().player);
 //                    Minecraft.getInstance().displayGuiScreen(new GuiChat(String.format(
 //                            "[x:%s y:%s z:%s name:%s]",
 //                            pos.x, pos.y, pos.z,
 //                            McUtil.getSelfAccount())));
-//                }
-//                if (SynapseMod.OPEN_GUI_KEYBIND.isDown()) {
-//                    openLastGui();
 //                }
 //            }
 //            if (waypointManager != null && inGame && isGameTick) {
@@ -280,7 +247,6 @@ public class LiteModSynapse {
         if (observation instanceof PearlLocation) return config.getPearlLocationFormat();
         if (observation instanceof CombatTagChat) return config.getCombatTagFormat();
         if (observation instanceof GroupChat) return config.getGroupChatFormat();
-        if (observation instanceof FocusAnnouncement) return config.getFocusAnnouncementFormat();
         return null; // unknown observation type; use original message
     }
 
@@ -358,8 +324,7 @@ public class LiteModSynapse {
 
     @NotNull
     public Visibility getObservationVisibility(@NotNull Observation observation) {
-        if (!(observation instanceof AccountObservation)) return Visibility.SHOW;
-        final AccountObservation accObs = (AccountObservation) observation;
+        if (!(observation instanceof AccountObservation accObs)) return Visibility.SHOW;
         final Standing standing = getStanding(accObs.getAccount());
         final boolean isOurs = observation.getWitness().equals(McUtil.getSelfAccount());
         if (!isOurs) {
@@ -503,43 +468,6 @@ public class LiteModSynapse {
             printErrorRateLimited(e);
         }
         return original;
-    }
-
-    private void handlePacketSpawnPlayer(Object packet) {
-        // TODO: Find out what the player-spawn packet is
-        // TODO: Uncomment
-//        final UUID playerUuid = packet.getUniqueId();
-//        final String accountName = Minecraft.getInstance().getConnection().getPlayerInfo(playerUuid)
-//                .getGameProfile().getName().replaceAll("§.", "");
-//        final Pos pos = new Pos(
-//                MathHelper.floor(packet.getX()),
-//                MathHelper.floor(packet.getY()),
-//                MathHelper.floor(packet.getZ()));
-//        final RadarChange observation = new RadarChange(
-//                McUtil.getSelfAccount(), accountName, pos, worldName, Action.APPEARED);
-//        try {
-//            if (config.isPlayRadarSound()) {
-//                final Standing standing = mapNonNull(serverConfig, sc ->
-//                        sc.getAccountStanding(accountName));
-//                final String soundName = config.getStandingSound(standing);
-//                if (soundName != null) playSound(soundName, playerUuid);
-//            }
-//        } catch (Throwable e) {
-//            printErrorRateLimited(e);
-//        }
-//        handleObservation(observation);
-    }
-
-    private void handlePacketDestroyEntities(ClientboundRemoveEntitiesPacket packet) {
-        // TODO: Uncomment
-//        for (int eid : packet.getEntityIDs()) {
-//            final Entity entity = Minecraft.getInstance().world.getEntityByID(eid);
-//            if (!(entity instanceof EntityPlayer)) continue;
-//            final EntityPlayer player = (EntityPlayer) entity;
-//            final RadarChange observation = new RadarChange(
-//                    McUtil.getSelfAccount(), player.getName(), McUtil.getEntityPosition(player), worldName, Action.DISAPPEARED);
-//            handleObservation(observation);
-//        }
     }
 
     private void handlePacketPlayerListItem(ClientboundPlayerInfoUpdatePacket packet) {

@@ -11,7 +11,6 @@ import gjum.minecraft.civ.synapse.common.observations.game.CombatTagChat;
 import gjum.minecraft.civ.synapse.common.observations.game.GroupChat;
 import gjum.minecraft.civ.synapse.common.observations.game.PearlLocation;
 import gjum.minecraft.civ.synapse.common.observations.game.Skynet;
-import gjum.minecraft.civ.synapse.common.observations.instruction.FocusAnnouncement;
 import gjum.minecraft.civ.synapse.mod.LiteModSynapse;
 import gjum.minecraft.civ.synapse.mod.Standing;
 import gjum.minecraft.civ.synapse.mod.Visibility;
@@ -45,28 +44,7 @@ public class GlobalConfig extends JsonConfig {
     private boolean replaceNamePlates = true;
 
     @Expose
-    private boolean showHudHealthPotCount = true;
-
-    @Expose
-    private boolean showHudRadarPlayerCount = true;
-
-    @Expose
-    private boolean showHudFocus = true;
-
-    @Expose
     private boolean playRadarSound = true;
-
-    @Expose
-    private boolean playerMiddleHoop = false;
-
-    @Expose
-    private boolean playerOuterHoops = false;
-
-    @Expose
-    private boolean playerBox = true;
-
-    @Expose
-    private boolean playerGlow = false;
 
     @Expose
     private float playerLineWidth = 2;
@@ -147,11 +125,6 @@ public class GlobalConfig extends JsonConfig {
     private String groupChatFormat = "[%GROUP%] %ACCOUNTPERSON%: §f%MESSAGE%";
 
     @Expose
-    private VisibilityFormat focusAnnouncementVisibilityFormat = VisibilityFormat.FORMATTED;
-    @Expose
-    private String focusAnnouncementFormat = "[Focus] %ACCOUNTPERSON% %DISTANCEDELTA%%RELATIVE% %DISTANCE% [%XYZ%]%OFFWORLD% heading %HEADING%";
-
-    @Expose
     private HashMap<Standing, String> standingSounds = new HashMap<>();
 
     @Expose
@@ -225,7 +198,6 @@ public class GlobalConfig extends JsonConfig {
         if (observation instanceof PearlLocation) return getPearlLocationVisibilityFormat();
         if (observation instanceof CombatTagChat) return getCombatTagVisibilityFormat();
         if (observation instanceof GroupChat) return getGroupChatVisibilityFormat();
-        if (observation instanceof FocusAnnouncement) return getFocusAnnouncementVisibilityFormat();
         return VisibilityFormat.ORIGINAL;
     }
 
@@ -474,24 +446,6 @@ public class GlobalConfig extends JsonConfig {
         saveLater(null);
     }
 
-    public VisibilityFormat getFocusAnnouncementVisibilityFormat() {
-        return focusAnnouncementVisibilityFormat;
-    }
-
-    public void setFocusAnnouncementVisibilityFormat(VisibilityFormat enabled) {
-        this.focusAnnouncementVisibilityFormat = enabled;
-        saveLater(null);
-    }
-
-    public String getFocusAnnouncementFormat() {
-        return focusAnnouncementFormat;
-    }
-
-    public void setFocusAnnouncementFormat(String format) {
-        this.focusAnnouncementFormat = format;
-        saveLater(null);
-    }
-
     public ChatFormatting getStandingColor(@Nullable Standing standing) {
         if (standing == null) standing = Standing.UNSET;
         return standingColors.get(standing);
@@ -552,96 +506,5 @@ public class GlobalConfig extends JsonConfig {
 
     public PlayerTeam getStandingTeam(Standing standing) {
         return standingTeams.get(standing);
-    }
-
-    public boolean isPlayerGlow() {
-        return false;
-    }
-
-    public void setPlayerGlow(boolean playerGlow) {
-        this.playerGlow = playerGlow;
-        saveLater(null);
-    }
-
-    public boolean isPlayerMiddleHoop() {
-        return playerMiddleHoop;
-    }
-
-    public void setPlayerMiddleHoop(boolean playerMiddleHoop) {
-        this.playerMiddleHoop = playerMiddleHoop;
-        saveLater(null);
-    }
-
-    public boolean isPlayerOuterHoops() {
-        return playerOuterHoops;
-    }
-
-    public void setPlayerOuterHoops(boolean playerOuterHoops) {
-        this.playerOuterHoops = playerOuterHoops;
-        saveLater(null);
-    }
-
-    public boolean isPlayerBox() {
-        return playerBox;
-    }
-
-    public void setPlayerBox(boolean playerBox) {
-        this.playerBox = playerBox;
-        saveLater(null);
-    }
-
-    public float getPlayerLineWidth() {
-        if (playerLineWidth <= 0) playerLineWidth = 2;
-        return playerLineWidth;
-    }
-
-    public void setPlayerLineWidth(float playerLineWidth) {
-        this.playerLineWidth = playerLineWidth;
-        saveLater(null);
-    }
-
-    public long getSyncInterval() {
-        return syncInterval;
-    }
-
-    public void setSyncInterval(long ms) {
-        syncInterval = ms;
-        saveLater(null);
-    }
-
-    public boolean isReplaceNamePlates() {
-        return replaceNamePlates;
-    }
-
-    public void setReplaceNamePlates(boolean replaceNamePlates) {
-        this.replaceNamePlates = replaceNamePlates;
-        saveLater(null);
-    }
-
-    public boolean isShowHudHealthPotCount() {
-        return showHudHealthPotCount;
-    }
-
-    public void setShowHudHealthPotCount(boolean showHudHealthPotCount) {
-        this.showHudHealthPotCount = showHudHealthPotCount;
-        saveLater(null);
-    }
-
-    public boolean isShowHudRadarPlayerCount() {
-        return showHudRadarPlayerCount;
-    }
-
-    public void setShowHudRadarPlayerCount(boolean showHudRadarPlayerCount) {
-        this.showHudRadarPlayerCount = showHudRadarPlayerCount;
-        saveLater(null);
-    }
-
-    public boolean isShowHudFocus() {
-        return showHudFocus;
-    }
-
-    public void setShowHudFocus(boolean showHudFocus) {
-        this.showHudFocus = showHudFocus;
-        saveLater(null);
     }
 }
