@@ -2,8 +2,8 @@ plugins {
     id("fabric-loom") version "1.7-SNAPSHOT"
 }
 
-version = "${rootProject.version}-${project.extra["minecraft_version"]}"
-group = "${rootProject.group}.mod"
+version = "${rootProject.extra["project_version"]}-${project.extra["minecraft_version"]}"
+group = "${rootProject.extra["maven_group"]}.mod"
 
 dependencies {
     minecraft("com.mojang:minecraft:${project.extra["minecraft_version"]}")
@@ -95,7 +95,7 @@ tasks {
         filesMatching("fabric.mod.json") {
             expand(
                 "mod_name" to project.extra["mod_name"],
-                "mod_version" to rootProject.version,
+                "mod_version" to rootProject.extra["project_version"],
                 "mod_description" to project.extra["mod_description"],
                 "copyright_licence" to rootProject.extra["copyright_licence"],
 
